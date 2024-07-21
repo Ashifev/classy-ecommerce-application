@@ -16,7 +16,7 @@ const cartSchema = new mongoose.Schema({
                 type : Number
             }
         }
-    ]
+    ],
 })
 
 const cart = mongoose.model("carts",cartSchema);

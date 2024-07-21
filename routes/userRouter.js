@@ -67,6 +67,8 @@ router.patch('/deleteAddress/:id',userAuth.userAuthentication,addressController.
 //get User Cart Page
 router.get('/shopping-cart',userAuth.userAuthentication,cartController.getCart);
 router.post('/add-cart',userAuth.userAuthentication,cartController.addCart);
+router.post('/update-cart/:id',userAuth.userAuthentication,cartController.updateCart);
+// router.post('/decQuantity/:id',userAuth.userAuthentication,cartController.decCartQuant);
 
 
 //logout

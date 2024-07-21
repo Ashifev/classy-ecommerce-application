@@ -64,9 +64,9 @@
                                 <td class="quantity__item">
                                     <div class="quantity">
                                         <div class="pro-qty-2" data-max-quantity="<%= product.productId.stockQuantity %>" data-product-id="<%= product.productId._id %>">
-                                            <button class="decr qtybtn" aria-label="Decrease quantity">❮</button>
-                                            <input type="text" value="<%= product.quantity %>" readonly>
-                                            <button class="inc qtybtn" aria-label="Increase quantity">❯</button>
+                                            <span class="fa fa-angle-left dec decr qtybtn" onclick="dcreaseBtn('<%= product.productId._id %>','product.quantity')" aria-label="Decrease quantity"></span>
+                                            <input type="text" value="<%=product.quantity%>" readonly>
+                                            <span class="fa fa-angle-right inc qtybtn" onclick="incBtn('<%= product.productId._id %>')" aria-label="Increase quantity"></span>
                                         </div>
                                     </div>
                                 </td>
@@ -117,8 +117,9 @@
 
     <script>
         
-        //update the quantity
-        document.addEventListener('DOMContentLoaded', function() {
+    //update the quantity
+
+    document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.pro-qty-2').forEach(function(element) {
             const decrButton = element.querySelector('.decr');
             const incrButton = element.querySelector('.inc');
@@ -127,8 +128,7 @@
             const maxQuantity = parseInt(element.getAttribute('data-max-quantity'));
             const productId = element.getAttribute('data-product-id');
             
-            decrButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default button behavior
+            decrButton.addEventListener('click', function() {
                 let currentQuantity = parseInt(inputField.value);
                 if (currentQuantity > 1) {
                     currentQuantity -= 1;
@@ -137,8 +137,7 @@
                 }
             });
 
-            incrButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default button behavior
+            incrButton.addEventListener('click', function() {
                 let currentQuantity = parseInt(inputField.value);
                 if (currentQuantity < maxQuantity) {
                     currentQuantity += 1;
@@ -151,7 +150,44 @@
 
     function updateCartQuantity(productId, quantity) {
         $.ajax({
-            url: '/update-cart',
+            url: `/update-cart/${productId}`,
+            type: 'POST',
+            data: {
+                productId: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                console.log(response);
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 800,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: response.icon,
+                    title: response.msg
+                });
+
+                location.reload()
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update item quantity. Please try again.',
+                });
+            }
+        });
+    }
+
+    function decreaseQuantity(productId, quantity){
+        $.ajax({
+            url: `/decQuantity/${productId}`,
             type: 'POST',
             data: {
                 productId: productId,
