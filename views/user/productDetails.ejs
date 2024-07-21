@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Product Detail</title>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      type="text/css"
+    />
+
+    <!-- multiZoom CSS -->
+    <link rel="stylesheet" href="/stylesheets/multizoom.css" type="text/css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+  </head>
+  <body>
+    <!-- Header Section Begin -->
+    <%- include('../partials/userHeader') %>
+    <!-- Header Section End -->
+
+    <!-- Shop Details Section Begin -->
+    <section class="shop-details">
+      <div class="product__details__pic">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="product__details__breadcrumb">
+                <a href="/">Home</a>
+                <a href="/shop">Shop</a>
+                <span>Product Details</span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <ul class="nav nav-tabs" role="tablist">
+                <% products.image.forEach((image, index) => { %>
+                <li class="nav-item">
+                  <a
+                    class="nav-link <%= index === 0 ? 'active' : '' %>"
+                    data-toggle="tab"
+                    href="#tabs-<%= index + 1 %>"
+                    role="tab"
+                  >
+                    <div
+                      class="product__thumb__pic set-bg"
+                      style="background-image: url('<%= image %>')"
+                      data-setbg="<%= image %>"
+                    ></div>
+                  </a>
+                </li>
+                <% }) %>
+              </ul>
+            </div>
+            <div class="col-lg-6 col-md-9">
+              <div class="tab-content">
+                <% products.image.forEach((image, index) => { %>
+                <div
+                  class="tab-pane <%= index === 0 ? 'active' : '' %>"
+                  id="tabs-<%= index + 1 %>"
+                  role="tabpanel"
+                >
+                  <div class="product__details__pic__item">
+                    <img
+                      class="xzoom"
+                      id="multizoom1"
+                      src="<%= image %>"
+                      xoriginal="<%= image %>"
+                    />
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+              <div class="xzoom-thumbs mt-3">
+                <% products.image.forEach((image, index) => { %>
+                <a href="<%= image %>">
+                  <img
+                    class="xzoom-gallery"
+                    width="80"
+                    src="<%= image %>"
+                    xpreview="<%= image %>"
+                  />
+                </a>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product__details__content">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-8">
+              <div class="product__details__text">
+                <h4><%=products.name%></h4>
+                <div class="rating">
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star-o"></i>
+                  <span> - 5 Reviews</span>
+                </div>
+                <h3>₹<%=products.price%> <span>₹3000.00</span></h3>
+                <div class="product__details__cart__option">
+                  <a href="#" id="add-to-bag-btn" class="primary-btn" onclick="addToCart('<%=products._id%>')">add to cart</a>
+                <div class="product__details__btns__option">
+                  <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
+                  <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
+                </div>
+                <div class="product__details__last__option">
+                  <h5><span>Guaranteed Safe Checkout</span></h5>
+                  <img src="/images/shop-details/details-payment.png" alt="" />
+                  <ul>
+                    <li>
+                      <span>Categories:</span> <%=products.category.name%>
+                    </li>
+                    <li><span>Brand:</span> <%=products.brand.name%></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="product__details__tab">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link active"
+                      data-toggle="tab"
+                      href="#tabs-5"
+                      role="tab"
+                      >Description</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      data-toggle="tab"
+                      href="#tabs-6"
+                      role="tab"
+                      >Customer Previews (5)</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      data-toggle="tab"
+                      href="#tabs-7"
+                      role="tab"
+                      >Additional information</a
+                    >
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tabs-5" role="tabpanel">
+                    <div class="product__details__tab__content">
+                      <p class="note">
+                        Nam tempus turpis at metus scelerisque placerat nulla
+                        deumantos solicitud felis. Pellentesque diam dolor,
+                        elementum etos lobortis des mollis ut risus. Sedcus
+                        faucibus an sullamcorper mattis drostique des commodo
+                        pharetras loremos.
+                      </p>
+                      <div class="product__details__tab__content__item">
+                        <h5>Products Information</h5>
+                        <p><%=products.description%></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tabs-6" role="tabpanel">
+                    <div class="product__details__tab__content">
+                      <div class="product__details__tab__content__item">
+                        <h5>Products Information</h5>
+                        <p>
+                          A Pocket PC is a handheld computer, which features
+                          many of the same capabilities as a modern PC. These
+                          handy little devices allow individuals to retrieve and
+                          store e-mail messages, create a contact file,
+                          coordinate appointments, surf the internet, exchange
+                          text messages and more. Every product that is labeled
+                          as a Pocket PC must be accompanied with specific
+                          software to operate the unit and must feature a
+                          touchscreen and touchpad.
+                        </p>
+                        <p>
+                          As is the case with any new technology product, the
+                          cost of a Pocket PC was substantial during its early
+                          release. For approximately $700.00, consumers could
+                          purchase one of top-of-the-line Pocket PCs in 2003.
+                          These days, customers are finding that prices have
+                          become much more reasonable now that the newness is
+                          wearing off. For approximately $350.00, a new Pocket
+                          PC can now be purchased.
+                        </p>
+                      </div>
+                      <div class="product__details__tab__content__item">
+                        <h5>Material used</h5>
+                        <p>
+                          Polyester is deemed lower quality due to its
+                          non-natural quality’s. Made from synthetic materials,
+                          not natural like wool. Polyester suits become creased
+                          easily and are known for not being breathable.
+                          Polyester suits tend to have a shine to them compared
+                          to wool and cotton suits, this can make the suit look
+                          cheap. The texture of velvet is luxurious and
+                          breathable. Velvet is a great choice for dinner party
+                          jacket and can be worn all year round.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tabs-7" role="tabpanel">
+                    <div class="product__details__tab__content">
+                      <p class="note">
+                        Nam tempus turpis at metus scelerisque placerat nulla
+                        deumantos solicitud felis. Pellentesque diam dolor,
+                        elementum etos lobortis des mollis ut risus. Sedcus
+                        faucibus an sullamcorper mattis drostique des commodo
+                        pharetras loremos.
+                      </p>
+                      <div class="product__details__tab__content__item">
+                        <h5>Products Information</h5>
+                        <p>
+                          A Pocket PC is a handheld computer, which features
+                          many of the same capabilities as a modern PC. These
+                          handy little devices allow individuals to retrieve and
+                          store e-mail messages, create a contact file,
+                          coordinate appointments, surf the internet, exchange
+                          text messages and more. Every product that is labeled
+                          as a Pocket PC must be accompanied with specific
+                          software to operate the unit and must feature a
+                          touchscreen and touchpad.
+                        </p>
+                        <p>
+                          As is the case with any new technology product, the
+                          cost of a Pocket PC was substantial during its early
+                          release. For approximately $700.00, consumers could
+                          purchase one of top-of-the-line Pocket PCs in 2003.
+                          These days, customers are finding that prices have
+                          become much more reasonable now that the newness is
+                          wearing off. For approximately $350.00, a new Pocket
+                          PC can now be purchased.
+                        </p>
+                      </div>
+                      <div class="product__details__tab__content__item">
+                        <h5>Material used</h5>
+                        <p>
+                          Polyester is deemed lower quality due to its
+                          non-natural quality’s. Made from synthetic materials,
+                          not natural like wool. Polyester suits become creased
+                          easily and are known for not being breathable.
+                          Polyester suits tend to have a shine to them compared
+                          to wool and cotton suits, this can make the suit look
+                          cheap. The texture of velvet is luxurious and
+                          breathable. Velvet is a great choice for dinner party
+                          jacket and can be worn all year round.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Shop Details Section End -->
+
+    <!-- Related Section Begin -->
+    <section class="related spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="related-title">Related Product</h3>
+          </div>
+        </div>
+        <div class="row">
+          <% relateProduct.forEach(function(rProduct){ %>
+          <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
+            <div class="product__item">
+              <span class="label">New</span>
+              <ul class="product__hover">
+                <li>
+                  <a href="/product-details/<%= rProduct._id %>"
+                    ><img src="<%= rProduct.image[0] %>" alt=""
+                  /></a>
+                </li>
+              </ul>
+              <div class="product__item__text">
+                <h6><%= rProduct.name %></h6>
+                <a href="#" class="add-cart">+ Add To Cart</a>
+                <div class="rating">
+                  <i class="fa fa-star-o"></i>
+                  <i class="fa fa-star-o"></i>
+                  <i class="fa fa-star-o"></i>
+                  <i class="fa fa-star-o"></i>
+                  <i class="fa fa-star-o"></i>
+                </div>
+                <h5>₹<%= rProduct.price %></h5>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+    <!-- Related Section End -->
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"
+    ></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-BQ6xaEAZ5CSTpyxfz4YBgl2p5u2v7u6cSf16X+IT1jz3y/jp9F8njox1zJpdV+2O"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-pPQhsU71Iozx2ys6Qm0PZy6hvVq79Qsmz9GGd8EyV8Pcf7XK5vrbZ5R7lUFnBe14"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="/javascripts/multizoom.js"></script>
+
+    <script>
+      jQuery(document).ready(function ($) {
+        var largeImage = $(this).attr("src");
+        $('#multizoom1').addimagezoom({ // multi-zoom: options same as for previous Featured Image Zoomer's addimagezoom unless noted as '- new'
+          speed: 1500, // duration of fade in for new zoomable images (in milliseconds, optional) - new
+          descpos: true, // if set to true - description position follows image position at a set distance, defaults to false (optional) - new
+          imagevertcenter: true, // zoomable image centers vertically in its container (optional) - new
+          magvertcenter: true, // magnified area centers vertically in relation to the zoomable image (optional) - new
+          zoomrange: [3, 10],
+          magnifiersize: [250,250],
+          magnifierpos: 'right',
+          cursorshadecolor: '#fdffd5',
+          cursorshade: true //<-- No comma after last option!
+        });
+      });
+
+      $(document).ready(function () {
+        $(".xzoom, .xzoom-gallery").xzoom({
+          position: "right",
+          mposition: "inside",
+          rootOutput: true,
+          Xoffset: 0,
+          Yoffset: 0,
+          fadeIn: true,
+          fadeTrans: true,
+          fadeOut: false,
+          smooth: true,
+          smoothZoomMove: 3,
+          smoothLensMove: 1,
+          smoothScale: 6,
+          defaultScale: 0,
+          scroll: true,
+          tint: false,
+          tintOpacity: 0.5,
+          lens: false,
+          lensOpacity: 0.5,
+          lensShape: "box",
+          zoomWidth: "auto",
+          zoomHeight: "auto",
+          sourceClass: "xzoom-source",
+          loadingClass: "xzoom-loading",
+          lensClass: "xzoom-lens",
+          zoomClass: "xzoom-preview",
+          activeClass: "xactive",
+          hover: false,
+          adaptive: true,
+          lensReverse: false,
+          adaptiveReverse: false,
+          lensCollision: true,
+          title: false,
+          titleClass: "xzoom-caption",
+          bg: false,
+        });
+      });
+
+      jQuery(document).ready(function ($) {
+        $('#etalage').etalage({
+          thumb_image_width: 400,
+          thumb_image_height: 400,
+          source_image_width: 800,
+          source_image_height: 1000,
+          show_hint: true,
+        });
+      });
+
+      function addToCart(productId) {
+        var url = '/add-cart'
+
+        $.ajax({
+          url: url,
+          type: 'POST',
+          data:{
+            productId : productId
+          },
+          success: function(response) {
+            console.log(response)
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top",
+              showConfirmButton: false,
+              timer: 800,
+             
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            Toast.fire({
+              icon: response.icon,
+              title: response.msg
+            });
+          },
+          error: function(xhr, status, error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add item to cart. Please try again.',
+            });
+          }
+        });
+      }
+
+    </script>
+
+    <!-- Footer Section Begin -->
+    <%- include('../partials/userFooter') %>
+    <!-- Footer Section End -->
+  </body>
+</html>

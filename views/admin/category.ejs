@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>DASHMIN - Bootstrap Admin Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="/admin/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/admin/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS CDN -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Template Stylesheet -->
+    <link href="/admin/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Sidebar Start -->
+        <%- include('../partials/adminSideBar') %>
+        <!-- Sidebar End -->
+       
+        <!-- Content Start -->
+        <div class="content">
+
+            <!-- Navbar Start -->
+            <%- include('../partials/adminNav') %>
+            <!-- Navbar End -->
+
+            <!-- Widgets Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-light text-center rounded p-4">
+                    <% if (success) { %>
+                        <div class="alert alert-success text-center">
+                          <%= success %>
+                        </div>
+                        <% } else if(err){ %>
+                            <div class="alert alert-danger text-center">
+                                <%= err %>
+                              </div>
+                        <% } else{ %>
+                        <% } %>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">Category List</h6>
+                        <a href="/admin/add-category">Add Category</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="userTable" class="table">
+                            <thead>
+                                <tr class="text-dark">
+                                    <th scope="col">no</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <% category.forEach(function(cat,index) {%>
+                                <tr>
+                                    <td><%= index + 1%></td>
+                                    <td><%= cat.name%></td>
+                                    <td class="<%= cat.isActive === true ? true : false %>">
+                                        <%= cat.isActive === true ? 'Active' : 'Deactive' %>
+                                      </td>
+                                      <% if (cat.isActive) { %>
+                                        <td class="text-center">
+                                          <a>
+                                            <button
+                                            class="btn btn-sm btn-danger"
+                                              onclick="block_unblock('<%= cat._id %>')"
+                                            >
+                                              Block
+                                            </button>
+                                          </a>
+                                          <a class="btn btn-sm btn-primary" href="/admin/edit-category/<%=cat._id%>">Edit</a>
+                                        </td>
+                                        <% } else { %> 
+                                            <td class="text-center">
+                                                <a>
+                                                  <button
+                                                  class="btn btn-sm btn-success"
+                                                    onclick="block_unblock('<%= cat._id %>')"
+                                                  >
+                                                    Unblock
+                                                  </button>
+                                                </a>
+                                                <a class="btn btn-sm btn-primary" href="/admin/edit-category/<%=cat._id%>">Edit</a>
+                                              </td>
+                                              <% } %>                 
+                                </tr>
+                                <%})%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Widgets End -->
+
+
+            <!-- Footer Start -->
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/lib/chart/chart.min.js"></script>
+    <script src="/admin/lib/easing/easing.min.js"></script>
+    <script src="/admin/lib/waypoints/waypoints.min.js"></script>
+    <script src="/admin/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- DataTables JS CDN -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- Include only once -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        // category bolck and unblock
+      function block_unblock(id) {
+        console.log(id, "ggygygy");
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, bolck it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log("ajax working");
+            $.ajax({
+              url: "/admin/deleteCategory/" + `${id}`,
+              method: "patch",
+              success: function (res) {
+                Swal.fire({
+                  text: res.msg,
+                  icon: "success",
+                  timer: 3000,
+                  showConfirmButton: false,
+                });
+                console.log("loggggggg");
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              },
+              error: function (err) {
+                Swal.fire({
+                  text: "Something went wrong",
+                  icon: "error",
+                  timer: 3000,
+                  showConfirmButton: false,
+                });
+                console.log(err);
+              },
+            });
+          }
+        });
+      }
+
+
+    $(document).ready(function () {
+        $("#userTable").DataTable();
+      });
+    </script>
+    <!-- Template Javascript -->
+    <script src="/admin/js/main.js"></script>
+</body>
+
+</html>

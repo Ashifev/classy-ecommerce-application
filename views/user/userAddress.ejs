@@ -1,0 +1,258 @@
+<!-- Header Section Begin -->
+<%- include('../partials/userHeader') %>
+<!-- Header Section End -->
+
+<style>
+  /* General styles */
+  .containerr {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+
+  /* Form styles */
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .form-group {
+    flex: 1;
+    min-width: 150px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group.full-width {
+    flex: 1 100%;
+  }
+
+  label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    height: 100px;
+    resize: vertical;
+  }
+
+  button[type="submit"],
+  button[type="button"] {
+    width: 120px;
+    padding: 10px;
+    margin: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #4caf50;
+    color: white;
+  }
+
+  button[type="button"] {
+    background-color: #f44336;
+  }
+
+  button[type="submit"]:hover,
+  button[type="button"]:hover {
+    opacity: 0.8;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: -10px;
+  }
+</style>
+
+<section class="my-5">
+  <div class="containerr">
+    <div class="main-body">
+      <h2>Add Address</h2>
+      <form id="addAddressForm" action="/save-address/<%=userEmail%>" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input name="name" type="text" id="name" required />
+            <span class="error-message" id="nameError"></span>
+          </div>
+          <div class="form-group">
+            <label for="mobile">Mobile No.:</label>
+            <input name="mobile" type="tel" id="mobile" required pattern="[0-9]{10}" />
+            <span class="error-message" id="mobileError"></span>
+          </div>
+          <div class="form-group">
+            <label for="pincode">Pin code:</label>
+            <input name="pincode" type="text" id="pincode" required />
+            <span class="error-message" id="pincodeError"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="locality">Locality:</label>
+            <input name="locality" type="text" id="locality" required />
+            <span class="error-message" id="localityError"></span>
+          </div>
+          <div class="form-group">
+            <label for="city">City/District/Town:</label>
+            <input name="city" type="text" id="city" required />
+            <span class="error-message" id="cityError"></span>
+          </div>
+          <div class="form-group">
+            <label for="state">State:</label>
+            <select name="state" id="state" required>
+              <option value="">Select a state</option>
+              <option value="State 1">State 1</option>
+              <option value="State 2">State 2</option>
+              <option value="State 3">State 3</option>
+            </select>
+            <span class="error-message" id="stateError"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="address">Address:</label>
+            <textarea name="address" id="address" required></textarea>
+            <span class="error-message" id="addressError"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="landmark">Landmark (Optional):</label>
+            <input name="landmark" type="text" id="landmark" />
+            <span class="error-message" id="landmarkError"></span>
+          </div>
+          <div class="form-group">
+            <label for="alternatePhone">Alternate Phone (Optional):</label>
+            <input name="alternateMobile" type="tel" id="alternatePhone" pattern="[0-9]{10}" />
+            <span class="error-message" id="alternatePhoneError"></span>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button id="submitAddress" type="submit">Save</button>
+          <button type="button" onclick="window.location.href='/profile'">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('addAddressForm').addEventListener('submit', validateForm);
+
+  function validateForm(event) {
+    event.preventDefault();
+
+    let isValid = true;
+
+    // Clear previous error messages
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach(msg => msg.textContent = '');
+
+    // Get form values
+    const name = document.getElementById('name').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const pincode = document.getElementById('pincode').value.trim();
+    const locality = document.getElementById('locality').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const state = document.getElementById('state').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const alternatePhone = document.getElementById('alternatePhone').value.trim();
+
+    // Validate Name
+    if (!name) {
+      isValid = false;
+      document.getElementById('nameError').textContent = 'Name is required.';
+    }
+
+    // Validate Mobile
+    if (!mobile) {
+      isValid = false;
+      document.getElementById('mobileError').textContent = 'Mobile number is required.';
+    } else if (!/^[0-9]{10}$/.test(mobile)) {
+      isValid = false;
+      document.getElementById('mobileError').textContent = 'Mobile number must be 10 digits.';
+    }
+
+    // Validate Pin code
+    if (!pincode) {
+      isValid = false;
+      document.getElementById('pincodeError').textContent = 'Pin code is required.';
+    }
+
+    // Validate Locality
+    if (!locality) {
+      isValid = false;
+      document.getElementById('localityError').textContent = 'Locality is required.';
+    }
+
+    // Validate City/District/Town
+    if (!city) {
+      isValid = false;
+      document.getElementById('cityError').textContent = 'City/District/Town is required.';
+    }
+
+    // Validate State
+    if (!state) {
+      isValid = false;
+      document.getElementById('stateError').textContent = 'State is required.';
+    }
+
+    // Validate Address
+    if (!address) {
+      isValid = false;
+      document.getElementById('addressError').textContent = 'Address is required.';
+    }
+
+    // Validate Alternate Phone (Optional)
+    if (alternatePhone && !/^[0-9]{10}$/.test(alternatePhone)) {
+      isValid = false;
+      document.getElementById('alternatePhoneError').textContent = 'Alternate phone number must be 10 digits.';
+    }
+
+    if (isValid) {
+      // Form is valid, proceed with form submission or further processing
+      alert('Address saved successfully!');
+      // You can submit the form or send the data to the server here
+      document.getElementById('addAddressForm').submit();
+    }
+  }
+</script>
+
+<!-- Footer Section Begin -->
+<%- include('../partials/userFooter') %>
+<!-- Footer Section End -->

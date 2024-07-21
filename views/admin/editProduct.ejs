@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>DASHMIN - Bootstrap Admin Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="/admin/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/admin/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/admin/css/style.css" rel="stylesheet">
+
+    <!-- Cropper.js Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Sidebar Start -->
+        <%- include('../partials/adminSideBar') %>
+        <!-- Sidebar End -->
+       
+        <!-- Content Start -->
+        <div class="content">
+
+            <!-- Navbar Start -->
+            <%- include('../partials/adminNav') %>
+            <!-- Navbar End -->
+
+            <!-- Widgets Start -->
+            <div class="page-wrapper">
+                <div class="page-content">
+                  <!--breadcrumb-->
+                  
+                  <!--end breadcrumb-->
+                  <div class="row">
+                    <div class="col-xl-9 mx-auto mt-5">
+                      <h6 class="mb-0 text-uppercase">Edit Product</h6>
+                      <hr />
+                      <div class="card border-top border-0 border-4 border-danger">
+                        <div class="card-body p-5">
+                          <form
+                            class="row g-3"
+                            action="/admin/product-edited/<%=product._id%>"
+                            method="POST"
+                            enctype="multipart/form-data"
+                            id="productForm"
+                          >
+                            <div class="col-md-6">
+                              <label for="inputProductName" class="form-label">Product Name</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="inputProductName"
+                                name="name"
+                                value="<%=product.name%>"
+                                required
+                              />
+                              <span class="error-message" id="name-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                              <label for="inputPrice" class="form-label">Price</label>
+                              <input
+                                type="number"
+                                step="0.01"
+                                class="form-control"
+                                id="inputPrice"
+                                name="price"
+                                value="<%=product.price%>"
+                                required
+                              />
+                              <span class="error-message" id="price-error"></span>
+                            </div>
+                            <div class="col-md-12">
+                              <label for="inputDescription" class="form-label">Product Description</label>
+                              <textarea
+                                class="form-control"
+                                id="inputDescription"
+                                name="description"
+                                rows="4"
+                                required
+                              ><%=product.description%></textarea>
+                              <span class="error-message" id="description-error"></span>
+                            </div>
+                            <div class="col-md-12">
+                              <label for="images" class="form-label">Product Images</label>
+                              <input
+                                class="form-control"
+                                type="file"
+                                id="images"
+                                name="images"
+                                accept="image/*"
+                                multiple
+                                onchange="displaySelectedImages(this)"
+                              />
+                              <span class="error-message" id="images-error"></span>
+                            </div>
+                            <div id="existingImagesContainer" class="selected-images-container">
+                              <% if (product && product.image && product.image.length > 0) { %>
+                                <% for (let i = 0; i < product.image.length; i++) { %>
+                                    <div class="existing-image-wrapper">
+                                        <img src="<%= product.image[i] %>" alt="Existing Image" class="existing-image">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeExistingImage(this)">Remove</button>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                            </div>
+                            <div class="selected-images-container" id="selectedImagesContainer"></div>
+
+                            <div class="col-12">
+                              <label for="inputCategory" class="form-label">Category</label>
+                              <select
+                                class="form-select"
+                                id="inputCategory"
+                                name="category"
+                                required
+                              >
+                                <option selected disabled><%=product.category.name%></option>
+                                <% category.forEach(function(category) { %>
+                                  <% if (category.isActive) { %>
+                                    <option value="<%= category._id %>">
+                                      <%= category.name %>
+                                    </option>
+                                  <% } %>
+                                <% }); %>
+                              </select>
+                              <span class="error-message" id="category-error"></span>
+                            </div>
+                            <div class="col-12">
+                              <label for="inputBrand" class="form-label">Brand</label>
+                              <select
+                                class="form-select"
+                                id="inputBrand"
+                                name="brand"
+                                required
+                              >
+                                <option selected disabled><%=product.brand.name%></option>
+                                <% brand.forEach(function(brand) { %>
+                                  <% if (brand.isActive) { %>
+                                    <option value="<%= brand._id %>">
+                                      <%= brand.name %>
+                                    </option>
+                                  <% } %>
+                                <% }); %>
+                              </select>
+                              <span class="error-message" id="brand-error"></span>
+                            </div>
+                            <div class="col-12">
+                              <label for="inputStockQuantity" class="form-label">Stock Quantity</label>
+                              <input
+                                type="number"
+                                class="form-control"
+                                id="inputStockQuantity"
+                                name="stockQuantity"
+                                value="<%=product.stockQuantity%>"
+                                required
+                              />
+                              <span class="error-message" id="quantity-error"></span>
+                            </div>
+                            <div class="col-12">
+                              <button
+                                id="submit-btn"
+                                type="submit"
+                                class="btn btn-primary px-5"
+                              >
+                                Edit Product
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--end row-->
+            <!-- Widgets End -->
+
+
+            <!-- Footer Start -->
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/lib/chart/chart.min.js"></script>
+    <script src="/admin/lib/easing/easing.min.js"></script>
+    <script src="/admin/lib/waypoints/waypoints.min.js"></script>
+    <script src="/admin/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="/admin/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/admin/js/main.js"></script>
+
+    <!-- Cropper.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productForm = document.getElementById('productForm');
+  
+            productForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                validateForm();
+            });
+        });
+  
+        function validateForm() {
+            const form = document.getElementById('productForm');
+            const name = form.elements['name'].value.trim();
+            const description = form.elements['description'].value.trim();
+            const price = form.elements['price'].value.trim();
+            const quantity = form.elements['stockQuantity'].value.trim();
+            const images = form.elements['images'].files;
+            const category = form.elements['category'].value;
+            const brand = form.elements['brand'].value;
+  
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(error => error.textContent = '');
+  
+            let isValid = true;
+  
+            if (name === '') {
+                displayErrorMessage('Product Name is required', 'name-error');
+                isValid = false;
+            }
+  
+            if (description === '') {
+                displayErrorMessage('Product Description is required', 'description-error');
+                isValid = false;
+            }
+  
+            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
+                displayErrorMessage('Please enter a valid positive price', 'price-error');
+                isValid = false;
+            }
+  
+            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
+                displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
+                isValid = false;
+            }
+            if (category === '') {
+                displayErrorMessage('Product Category is required', 'category-error');
+                isValid = false;
+            }
+  
+            if (brand === '') {
+                displayErrorMessage('Product brand is required', 'brand-error');
+                isValid = false;
+            }
+  
+            if (isValid) {
+                form.submit();
+            }
+        }
+  
+        function displayErrorMessage(message, elementId) {
+            const errorSpan = document.getElementById(elementId);
+            errorSpan.textContent = message;
+            errorSpan.style.color = 'red';
+        }
+  
+        function displaySelectedImages(input) {
+            const selectedImagesContainer = document.getElementById("selectedImagesContainer");
+            selectedImagesContainer.innerHTML = "";
+  
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                const reader = new FileReader();
+                const cropContainer = document.createElement("div");
+                cropContainer.classList.add("image-crop-container");
+                cropContainer.innerHTML = `
+                    <div class="image-container">
+                        <img id="image${i}" src="" alt="Select an image to crop">
+                    </div>
+                    <button class="crop-button" id="cropButton${i}">Crop Image ${i + 1}</button>
+                `;
+                selectedImagesContainer.appendChild(cropContainer);
+  
+                const image = cropContainer.querySelector(`#image${i}`);
+                const cropButton = cropContainer.querySelector(`#cropButton${i}`);
+  
+                reader.onload = () => {
+                    image.src = reader.result;
+                    let cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
+  
+                    cropButton.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        if (cropper) {
+                            const canvas = cropper.getCroppedCanvas({
+                                width: 500,
+                                height: 500,
+                            });
+                            const croppedImageDataURL = canvas.toDataURL('image/jpeg', 1.0);
+                            image.src = croppedImageDataURL;
+                            const croppedImageFile = dataURLToFile(croppedImageDataURL, file.name);
+                            const currentFiles = Array.from(input.files);
+                            currentFiles[i] = croppedImageFile;
+  
+                            const newFileList = createFileList(currentFiles);
+                            input.files = newFileList;
+                            cropper.destroy();
+                            cropper = null;
+                        } else {
+                            cropper = new Cropper(image, {
+                                aspectRatio: 1,
+                                viewMode: 1,
+                            });
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+  
+        function dataURLToFile(dataUrl, filename) {
+            const arr = dataUrl.split(",");
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+  
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+  
+            return new File([u8arr], filename, { type: mime });
+        }
+  
+        function createFileList(currentList) {
+            const dataTransfer = new DataTransfer();
+            currentList.forEach((file) => {
+                dataTransfer.items.add(file);
+            });
+            return dataTransfer.files;
+        }
+
+        function removeExistingImage(button) {
+            const existingImageWrapper = button.closest('.existing-image-wrapper');
+            existingImageWrapper.remove();
+            const existingImagesContainer = document.getElementById('existingImagesContainer');
+            existingImagesContainer.innerHTML += '<input type="hidden" name="deleteImage" value="<%=product.image%>">';
+        }
+    </script>
+</body>
+
+</html>

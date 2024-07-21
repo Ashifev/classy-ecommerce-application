@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>OTP Verification</title>
+</head>
+<body>
+    <style>
+        .otp-field {
+            flex-direction: row;
+            column-gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .otp-field input {
+            height: 45px;
+            width: 42px;
+            border-radius: 6px;
+            outline: none;
+            font-size: 1.125rem;
+            text-align: center;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        .otp-field input:focus {
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+            border-color: #007bff;
+        }
+        .otp-field input::-webkit-inner-spin-button,
+        .otp-field input::-webkit-outer-spin-button {
+            display: none;
+        }
+
+        .resend {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .resend a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+        .resend a:hover {
+            color: #0056b3;
+        }
+        .disabled {
+            pointer-events: none;
+            color: #6c757d;
+        }
+        .cursorPointer{
+            cursor: pointer;
+        }
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: black;
+            font-size: 12px;
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .footer a {
+            color: black;
+            text-decoration: none;
+        }
+
+        @media (max-width: 576px) {
+            .otp-field input {
+                width: 35px;
+                height: 38px;
+                font-size: 1rem;
+            }
+
+            .col-md-6 {
+                max-width: 90%;
+                min-width: auto;
+            }
+        }
+    </style>
+    <section class="container-fluid bg-body-tertiary d-flex align-items-center min-vh-100">
+        <div class="row justify-content-center w-100">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card bg-white mb-5 mt-5 border-0 mx-3" style="box-shadow: 0 12px 15px rgba(0, 0, 0, 0.1);">
+                    <form action="/forgot-varify" method="post" class="card-body p-5 text-center">
+                        <h4 class="mb-4">Verify</h4>
+                        <% if (error) { %>
+                            <div class="alert alert-danger text-center">
+                                <%= error %>
+                            </div>
+                            <% } else { %>
+                            <% } %>
+                        <p class="text-muted mb-4">Your code was sent to you via email</p>
+
+                        <div class="otp-field mb-4">
+                            <input name="OTP1" type="number" />
+                            <input name="OTP2" type="number" disabled />
+                            <input name="OTP3" type="number" disabled />
+                            <input name="OTP4" type="number" disabled />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-3" disabled>
+                            Verify
+                        </button>
+
+                        <p class="resend mb-0">
+                            Didn't receive code? <a href="javascript:void(0);" id="resend-link" onclick="" class="disabled">Request again (<span id="timer">120</span>s)</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const inputs = document.querySelectorAll(".otp-field > input");
+        const button = document.querySelector(".btn");
+        const resendLink = document.getElementById("resend-link");
+        const timerElement = document.getElementById("timer");
+
+        window.addEventListener("load", () => inputs[0].focus());
+
+        inputs[0].addEventListener("paste", function (event) {
+            event.preventDefault();
+
+            const pastedValue = (event.clipboardData || window.clipboardData).getData("text");
+            const otpLength = inputs.length;
+
+            for (let i = 0; i < otpLength; i++) {
+                if (i < pastedValue.length) {
+                    inputs[i].value = pastedValue[i];
+                    inputs[i].removeAttribute("disabled");
+                    inputs[i].focus;
+                } else {
+                    inputs[i].value = ""; // Clear any remaining inputs
+                    inputs[i].focus;
+                }
+            }
+        });
+
+        inputs.forEach((input, index1) => {
+            input.addEventListener("keyup", (e) => {
+                const currentInput = input;
+                const nextInput = input.nextElementSibling;
+                const prevInput = input.previousElementSibling;
+
+                if (currentInput.value.length > 1) {
+                    currentInput.value = "";
+                    return;
+                }
+
+                if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
+                    nextInput.removeAttribute("disabled");
+                    nextInput.focus();
+                }
+
+                if (e.key === "Backspace") {
+                    inputs.forEach((input, index2) => {
+                        if (index1 <= index2 && prevInput) {
+                            input.setAttribute("disabled", true);
+                            input.value = "";
+                            prevInput.focus();
+                        }
+                    });
+                }
+
+                button.classList.remove("active");
+                button.setAttribute("disabled", "disabled");
+
+                const inputsNo = inputs.length;
+                if (!inputs[inputsNo - 1].disabled && inputs[inputsNo - 1].value !== "") {
+                    button.classList.add("active");
+                    button.removeAttribute("disabled");
+
+                    return;
+                }
+            });
+        });
+
+        let countdown = 120;
+        const interval = setInterval(() => {
+            countdown--;
+            timerElement.textContent = countdown;
+            if (countdown === 0) {
+                clearInterval(interval);
+                resendLink.classList.remove("disabled");
+                resendLink.classList.add("cursorPointer");
+                resendLink.textContent = "Request again";
+                resendLink.removeAttribute("href");
+            }
+        }, 1000);
+
+        resendLink.addEventListener("click", () => {
+            if (!resendLink.classList.contains("disabled")) {
+                window.location.href = "/otp-resend";
+            }
+        });
+    </script>
+</body>
+</html>
