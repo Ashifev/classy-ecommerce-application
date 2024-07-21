@@ -4,222 +4,297 @@
 
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="breadcrumb__text">
-                    <h4>Shopping Cart</h4>
-                    <div class="breadcrumb__links">
-                        <a href="/">Home</a>
-                        <a href="/shop">Shop</a>
-                        <span>Shopping Cart</span>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="breadcrumb__text">
+          <h4>Shopping Cart</h4>
+          <div class="breadcrumb__links">
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <span>Shopping Cart</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 <!-- Breadcrumb Section End -->
 
 <!-- Shopping Cart Section Begin -->
 <section class="shopping-cart spad">
-    <div class="container">
-        <% if(locals.empty){ %>
-            <div class="row d-flex flex-column justify-content-center align-items-center">
-                <img style="width: 50%;" src="/images/emptycart.jpg" alt="" srcset="">
-                <h6 class="m-2"><%= empty %></h6>
-            </div>
-            
-            <div class="row d-flex  justify-content-center align-items-center">
-                
-                <div class="continue__btn">
-                    <a href="/shop">Continue Shopping</a>
-                </div>
-            </div>
-        <% }else{ %>
-        <div class="row">
-            <div class="col-lg-8 d-flex flex-column justify-content-between">
-                <div class="shopping__cart__table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% cartProduct.products.forEach(function(product){ %>
-                            <tr>
-                                <td class="product__cart__item">
-                                    <div class="product__cart__item__pic">
-                                        <img src="<%=product.productId.image[0]%>" alt="">
-                                    </div>
-                                    <div class="product__cart__item__text">
-                                        <h6><%=product.productId.name%></h6>
-                                        <h5>₹<%=product.productId.price%></h5>
-                                    </div>
-                                </td>
-                                <td class="quantity__item">
-                                    <div class="quantity">
-                                        <div class="pro-qty-2" data-max-quantity="<%= product.productId.stockQuantity %>" data-product-id="<%= product.productId._id %>">
-                                            <span class="fa fa-angle-left dec decr qtybtn" onclick="dcreaseBtn('<%= product.productId._id %>','product.quantity')" aria-label="Decrease quantity"></span>
-                                            <input type="text" value="<%=product.quantity%>" readonly>
-                                            <span class="fa fa-angle-right inc qtybtn" onclick="incBtn('<%= product.productId._id %>')" aria-label="Increase quantity"></span>
-                                        </div>
-                                    </div>
-                                </td>
-                                
-                                <td class="cart__price">₹<%= (product.quantity * product.productId.price).toFixed(2) %></td>
-                                <td class="cart__close"><i class="fa fa-close"></i></td>
-                            </tr>
-                            <%})%>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="continue__btn">
-                            <a href="/shop">Continue Shopping</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="continue__btn update__btn">
-                            <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="cart__discount">
-                    <h6>Discount codes</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Coupon code">
-                        <button type="submit">Apply</button>
-                    </form>
-                </div>
-                <div class="cart__total">
-                    <h6>Cart total</h6>
-                    <ul>
-                        <li>Subtotal <span>₹<%= cartProduct ? cartProduct.products.reduce((acc, product) => acc + (product.quantity * product.productId.price), 0).toFixed(2) : '0.00' %></span></li>
-                        <li>Total <span>₹<%= cartProduct ? cartProduct.products.reduce((acc, product) => acc + (product.quantity * product.productId.price), 0).toFixed(2) : '0.00' %></span></li>
-                    </ul>
-                    <a href="#" class="primary-btn">Proceed to checkout</a>
-                </div>
-            </div>
-        </div>
-        <% } %>
+  <div class="container">
+    <% if(locals.empty){ %>
+    <div
+      class="row d-flex flex-column justify-content-center align-items-center"
+    >
+      <img style="width: 50%" src="/images/emptycart.jpg" alt="" srcset="" />
+      <h6 class="m-2"><%= empty %></h6>
     </div>
+
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="continue__btn">
+        <a href="/shop">Continue Shopping</a>
+      </div>
+    </div>
+    <% }else{ %>
+    <div class="row">
+      <div class="col-lg-8 d-flex flex-column justify-content-between">
+        <div class="shopping__cart__table">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cartProduct.products.forEach(function(product){ %>
+              <tr>
+                <td class="product__cart__item">
+                  <div class="product__cart__item__pic">
+                    <img src="<%=product.productId.image[0]%>" alt="" />
+                  </div>
+                  <div class="product__cart__item__text">
+                    <h6><%=product.productId.name%></h6>
+                    <h5>₹<%=product.productId.price%></h5>
+                  </div>
+                </td>
+                <td class="quantity__item">
+                  <div class="quantity">
+                    <div
+                      class="pro-qty-2"
+                      data-max-quantity="<%= product.productId.stockQuantity %>"
+                      data-product-id="<%= product.productId._id %>"
+                    >
+                      <span
+                        class="fa fa-angle-left dec decr qtybtn"
+                        onclick="dcreaseBtn('<%= product.productId._id %>','product.quantity')"
+                        aria-label="Decrease quantity"
+                      ></span>
+                      <input
+                        type="text"
+                        value="<%=product.quantity%>"
+                        readonly
+                      />
+                      <span
+                        class="fa fa-angle-right inc qtybtn"
+                        onclick="incBtn('<%= product.productId._id %>')"
+                        aria-label="Increase quantity"
+                      ></span>
+                    </div>
+                  </div>
+                </td>
+
+                <td id="cart__price" class="cart__price">
+                  ₹<%= (product.quantity * product.productId.price).toFixed(2)
+                  %>
+                </td>
+                <td
+                  onclick="deleteBtn('<%= product.productId._id %>')"
+                  style="cursor: pointer"
+                  class="cart__close"
+                >
+                  <i class="fa fa-close"></i>
+                </td>
+              </tr>
+              <%})%>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="continue__btn">
+              <a href="/shop">Continue Shopping</a>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="continue__btn update__btn">
+              <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="cart__discount">
+          <h6>Discount codes</h6>
+          <form action="#">
+            <input type="text" placeholder="Coupon code" />
+            <button type="submit">Apply</button>
+          </form>
+        </div>
+        <div class="cart__total">
+          <h6>Cart total</h6>
+          <ul>
+            <li>
+              Subtotal
+              <span
+                >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
+              >
+            </li>
+            <li>
+              Total
+              <span
+                >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
+              >
+            </li>
+          </ul>
+          <a href="#" class="primary-btn">Proceed to checkout</a>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
 </section>
 <!-- Shopping Cart Section End -->
 
+<script>
+  //update the quantity
 
-    <script>
-        
-    //update the quantity
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".pro-qty-2").forEach(function (element) {
+      const decrButton = element.querySelector(".decr");
+      const incrButton = element.querySelector(".inc");
+      const inputField = element.querySelector("input");
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.pro-qty-2').forEach(function(element) {
-            const decrButton = element.querySelector('.decr');
-            const incrButton = element.querySelector('.inc');
-            const inputField = element.querySelector('input');
-            
-            const maxQuantity = parseInt(element.getAttribute('data-max-quantity'));
-            const productId = element.getAttribute('data-product-id');
-            
-            decrButton.addEventListener('click', function() {
-                let currentQuantity = parseInt(inputField.value);
-                if (currentQuantity > 1) {
-                    currentQuantity -= 1;
-                    inputField.value = currentQuantity;
-                    updateCartQuantity(productId, currentQuantity);
-                }
-            });
+      const maxQuantity = parseInt(element.getAttribute("data-max-quantity"));
+      const productId = element.getAttribute("data-product-id");
 
-            incrButton.addEventListener('click', function() {
-                let currentQuantity = parseInt(inputField.value);
-                if (currentQuantity < maxQuantity) {
-                    currentQuantity += 1;
-                    inputField.value = currentQuantity;
-                    updateCartQuantity(productId, currentQuantity);
-                }
-            });
+      decrButton.addEventListener("click", function () {
+        let currentQuantity = parseInt(inputField.value);
+        if (currentQuantity > 1) {
+          currentQuantity -= 1;
+          inputField.value = currentQuantity;
+          updateCartQuantity(productId, currentQuantity);
+        }
+      });
+
+      incrButton.addEventListener("click", function () {
+        let currentQuantity = parseInt(inputField.value);
+        if (currentQuantity < maxQuantity) {
+          currentQuantity += 1;
+          inputField.value = currentQuantity;
+          updateCartQuantity(productId, currentQuantity, maxQuantity);
+        }
+      });
+    });
+  });
+
+  function updateCartQuantity(productId, quantity , maxQuantity) {
+    $.ajax({
+      url: `/update-cart/${productId}`,
+      type: "POST",
+      data: {
+        productId: productId,
+        quantity: quantity,
+      },
+      success: function (response) {
+        console.log(response);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+          timer: 800,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
         });
+
+        if (maxQuantity === quantity) {
+          Toast.fire({
+            icon: "info",
+            title: "maximum quantity exeed",
+          });
+        } else {
+          Toast.fire({
+            icon: response.icon,
+            title: response.msg,
+          });
+        }
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      },
+      error: function (xhr, status, error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update item quantity. Please try again.",
+        });
+      },
+    });
+  }
+
+  function deleteBtn(productId) {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
     });
 
-    function updateCartQuantity(productId, quantity) {
-        $.ajax({
-            url: `/update-cart/${productId}`,
-            type: 'POST',
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You want to remove this product",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: `/delete-cart/${productId}`,
+            type: "POST",
             data: {
-                productId: productId,
-                quantity: quantity
+              productId: productId,
             },
-            success: function(response) {
-                console.log(response);
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top",
-                    showConfirmButton: false,
-                    timer: 800,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
-                });
-                Toast.fire({
-                    icon: response.icon,
-                    title: response.msg
-                });
+            success: function (response) {
+              console.log(response);
+              const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 800,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                },
+              });
 
-                location.reload()
-            },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to update item quantity. Please try again.',
-                });
-            }
-        });
-    }
+              Toast.fire({
+                icon: response.icon,
+                title: response.msg,
+              });
 
-    function decreaseQuantity(productId, quantity){
-        $.ajax({
-            url: `/decQuantity/${productId}`,
-            type: 'POST',
-            data: {
-                productId: productId,
-                quantity: quantity
+              setTimeout(() => {
+                window.location.reload();
+              }, 800);
             },
-            success: function(response) {
-                console.log(response);
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top",
-                    showConfirmButton: false,
-                    timer: 800,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
-                });
-                Toast.fire({
-                    icon: response.icon,
-                    title: response.msg
-                });
+            error: function (xhr, status, error) {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to delete the item. Please try again.",
+              });
             },
-            error: function(xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to update item quantity. Please try again.',
-                });
-            }
-        });
-    }
-    </script>
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Your item is safe :)",
+            icon: "error",
+          });
+        }
+      });
+  }
+</script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>
 <!-- Footer Section End -->

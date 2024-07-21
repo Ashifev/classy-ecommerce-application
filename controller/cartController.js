@@ -86,8 +86,23 @@ module.exports = {
     }
   },
 
-  decCartQuant: async (req, res) => {
+  deleteFromCart: async (req, res) => {
     try {
+      const {productId} = req.body;
+      const userEmail = req.session.email;
+      const user = await userDB.findOne({ email: userEmail });
+
+      const userCart = await cartDB.findOne({ userId: user._id });
+      const productIndex = userCart.products.findIndex(
+        (p) => p.productId.toString() === productId
+      );
+
+      if (productIndex > -1) {
+        userCart.products.splice(productIndex, 1);
+        await userCart.save();
+
+      }
+      res.json({ icon: "success", msg: "Product removed from cart" });
     } catch (err) {
       console.log("error at decrease quantity");
     }
