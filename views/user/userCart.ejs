@@ -88,10 +88,12 @@
                   </div>
                 </td>
 
-                <td id="cart__price" class="cart__price">
+                <div class="product_price">
+                <td id="cart__price" datatd-product-id="<%= product.productId._id %>" class="cart__price">
                   ₹<%= (product.quantity * product.productId.price).toFixed(2)
                   %>
                 </td>
+              </div>
                 <td
                   onclick="deleteBtn('<%= product.productId._id %>')"
                   style="cursor: pointer"
@@ -130,18 +132,18 @@
           <ul>
             <li>
               Subtotal
-              <span
+              <span id="subTotal"
                 >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
               >
             </li>
             <li>
               Total
-              <span
+              <span id="totalPrice"
                 >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
               >
             </li>
           </ul>
-          <a href="#" class="primary-btn">Proceed to checkout</a>
+          <a href="/checkout" class="primary-btn">Proceed to checkout</a>
         </div>
       </div>
     </div>
@@ -214,6 +216,18 @@
             title: response.msg,
           });
         }
+
+        document.querySelectorAll("product_price").forEach(function (element) {
+          const productPrice = element.querySelector('cart__price');
+          productPrice.innerHTML = "₹" + response.price;
+        })
+
+        const subTotal = document.getElementById('subTotal');
+        const totalPrice = document.getElementById('totalPrice');
+        subTotal.innerHTML =  "₹" + response.subtotal;
+        totalPrice.innerHTML = "₹" + response.total;
+       
+        
         setTimeout(() => {
           window.location.reload();
         }, 800);
@@ -224,6 +238,9 @@
           title: "Error",
           text: "Failed to update item quantity. Please try again.",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
       },
     });
   }

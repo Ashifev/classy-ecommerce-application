@@ -1,4 +1,5 @@
 const cartDB = require("../models/cartModel");
+const { findById } = require("../models/categoryModel");
 const product = require("../models/productModel");
 const userDB = require("../models/userModel");
 
@@ -27,7 +28,7 @@ module.exports = {
   },
   addCart: async (req, res) => {
     try {
-      const { productId } = req.body;
+      const { productId , price } = req.body;
       const userEmail = req.session.email;
       const user = await userDB.findOne({ email: userEmail });
 
@@ -43,7 +44,7 @@ module.exports = {
             res.json({ icon: "info", msg: "Product Exist in Cart" });
             return;
           } else {
-            cart.products.push({ productId, quantity: 1 });
+            cart.products.push({ productId, quantity: 1 ,price });
           }
           cart.save();
         } else {
@@ -53,6 +54,7 @@ module.exports = {
               {
                 productId,
                 quantity: 1,
+                price
               },
             ],
           });
@@ -80,7 +82,18 @@ module.exports = {
       }
 
       await userCart.save();
-      res.json({ icon: "success", msg: "Cart Updated" });
+
+      const updateCart = await cartDB.findOne({ userId: user._id }).populate('products.productId');
+            const subtotal  = updateCart.products.reduce((acc,item) => {
+                return acc + (item.quantity * item.productId.price);
+            },0);
+
+            const total = subtotal;
+            
+            const productPrice = parseInt(userCart.products[productIndex].quantity) * parseInt(updateCart.products[productIndex].productId.price);
+            console.log("product price",productPrice); 
+
+      res.json({ icon: "success", msg: "Cart Updated"  , total : total.toFixed(2) , subtotal : subtotal.toFixed(2) , price : productPrice.toFixed(2)});
     } catch (err) {
       console.log("error at increase quantity", err);
     }

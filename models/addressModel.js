@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const addressSchema = new mongoose.Schema(
     {
         userId: { 
-            type: mongoose.Schema.Types.ObjectId 
+            type: mongoose.Schema.Types.ObjectId,
+            ref : 'User'
         },
         name: {
             type: String

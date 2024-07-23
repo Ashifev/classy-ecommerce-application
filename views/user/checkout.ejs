@@ -1,0 +1,297 @@
+<!-- Header Section Begin -->
+<%- include('../partials/userHeader') %>
+<!-- Header Section End -->
+
+<style>
+    .list-group-item.active {
+      background: #ffc107;
+    }
+    /* end common class */
+    .top-status ul {
+      list-style: none;
+      display: flex;
+      justify-content: space-around;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0;
+      margin: 0;
+    }
+    .top-status ul li {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      border: 8px solid #ddd;
+      box-shadow: 1px 1px 10px 1px #ddd inset;
+      margin: 10px 5px;
+    }
+    .top-status ul li.active {
+      border-color: #06c167;
+      box-shadow: 1px 1px 20px 1px #ffc107 inset;
+    }
+    /* end top status */
+    
+    ul.timeline {
+      list-style-type: none;
+      position: relative;
+    }
+    ul.timeline:before {
+      content: " ";
+      background: #d4d9df;
+      display: inline-block;
+      position: absolute;
+      left: 29px;
+      width: 2px;
+      height: 100%;
+      z-index: 400;
+    }
+    ul.timeline > li {
+      margin: 20px 0;
+      padding-left: 30px;
+    }
+    ul.timeline > li:before {
+      content: "\2713";
+      background: #fff;
+      display: inline-block;
+      position: absolute;
+      border-radius: 50%;
+      border: 0;
+      left: 5px;
+      width: 50px;
+      height: 50px;
+      z-index: 400;
+      text-align: center;
+      line-height: 50px;
+      color: #d4d9df;
+      font-size: 24px;
+      border: 2px solid var(--ogenix-primary);
+    }
+    ul.timeline > li.active:before {
+      content: "\2713";
+      background: #28a745;
+      display: inline-block;
+      position: absolute;
+      border-radius: 50%;
+      border: 0;
+      left: 5px;
+      width: 50px;
+      height: 50px;
+      z-index: 400;
+      text-align: center;
+      line-height: 50px;
+      color: #fff;
+      font-size: 30px;
+      border: 2px solid var(--ogenix-primary);
+    }
+    /* end timeline */
+    
+        
+        .list-group-item.active {
+          background: #06C167 !important;
+        }
+    
+        .bg-warning {
+          background: #06C167 !important;
+        }
+    
+        .modal-content {
+          background-color: #fefefe;
+          margin: 4% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 70%;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+          transition: transform 0.3s ease-in-out;
+          /*transform: translateY(-100%);*/
+        }
+    
+        .close {
+          float: right;
+          text-align: right;
+          font-size: 30px;
+        }
+    
+        .modal-content h2 {
+          text-align: center;
+          margin-top: -35px;
+        }
+    
+        .button_div {
+          justify-content: center;
+          text-align: center;
+        }
+    
+        .button_div button {
+          margin-right: 10px;
+          background: #06C167;
+          border: 1px solid #06C167;
+          padding: 5px 15px;
+          color: #FFFFFF;
+          border-radius: 2px;
+        }
+    
+        #addAddressForm input {
+          padding: 5px;
+        }
+    
+        .nice-select {
+          padding: 0px !important;
+          height: 38px !important;
+          line-height: 38px !important;
+        }
+    
+        .add_address_button {
+          background: #06C167;
+          border: 1px solid #06C167;
+          padding: 5px 15px;
+          color: #FFFFFF;
+          border-radius: 2px;
+          width: 130px;
+          margin-right: 21px;
+          
+        }
+        .add_profile_button {
+          background: #06C167;
+          border: 1px solid #06C167;
+          padding: 5px 15px;
+          color: #FFFFFF;
+          border-radius: 2px;
+        }
+    
+        @media (max-width: 768px) {
+          .main_flex_div {
+            display: flex;
+            flex-direction: column;
+          }
+    
+          .inner_flex_div {
+            min-width: 100% !important;
+          }
+    
+          .modal-content {
+            padding: 10px 0px !important;
+            min-width: 95% !important;
+            height: 700px;
+            overflow: scroll;
+          }
+    
+          .close {
+            margin-right: 10px;
+          }
+        }
+      </style>
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Check Out</h4>
+                        <div class="breadcrumb__links">
+                            <a href="./index.html">Home</a>
+                            <a href="./shop.html">Shop</a>
+                            <span>Check Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Checkout Section Begin -->
+    <section class="checkout spad">
+        <div class="container">
+            <div class="checkout__form">
+                <form action="#">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6">
+                            <div id="addressBook" class="card" >
+
+                                <div  class="card-body">
+                                  <h5 style="margin: 10px; font-size: 25px; font-weight: 700;">Shipping Address</h5>
+                                  <div class="d-flex justify-content-end">
+                                    
+                                      <button class="add_address_button" type="submit"><a style="text-decoration: none; color: #fff;" href="/add-address">Add Address</a></button>
+                                  </div>
+                                </div>
+                  
+                  
+                                <div class="card-body mt-3">
+                                  <ul class="list-group">
+                                    <% userAddress.forEach(function(add){%>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                      <div class="col-8">
+                                        <input class="form-check-input me-1" type="radio" name="listGroupRadio" value="" id="firstRadio" checked>
+                                      <label class="form-check-label" for="firstRadio"><%= add.name %></label>
+                                     
+                                      <h6> <%= add.address %></h6>
+                                      <h6> <%= add.mobile%></h6>
+                                      </div>
+                                      <div class="col-2">
+                                        <a class="btn btn-sm btn-primary" href="/address/<%= add._id %>">Edit</a>
+                                      </div>
+                               
+                                        <div class="col-2 text-center">
+                                          <a>
+                                            <button
+                                            class="btn btn-sm btn-danger"
+                                              onclick="block_unblock('<%= add._id %>')"
+                                            >
+                                              Delete
+                                            </button>
+                                          </a>
+                                        </div>
+                                   
+                                    </li>
+                                    <%})%>
+                                  </ul>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="checkout__order">
+                                <h4 class="order__title">Your order</h4>
+                                <div class="checkout__order__products">Product <span>Total</span></div>
+                                <ul class="checkout__total__products">
+                                    <% userCart.products.forEach(function(product,index){ %>
+                                    <li><%= index + 1%>. <%=product.productId.name%><em style="padding-left: 70px;font-size: 12px;"><%=product.quantity%> x ₹<%=product.productId.price%></em><span>₹<%=product.productId.price * product.quantity%></span></li>
+                                    <%})%>
+                                </ul>
+                                <ul class="checkout__total__all">
+                                    <li>Subtotal <span>₹<%=subTotal%></span></li>
+                                    <li>Total <span>₹<%=totalPrice%></span></li>
+                                </ul>
+                            
+                                <div class="checkout__input__checkbox">
+                                    <label for="payment">
+                                        Check Payment
+                                        <input type="checkbox" id="payment">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="checkout__input__checkbox">
+                                    <label for="paypal">
+                                        Paypal
+                                        <input type="checkbox" id="paypal">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="site-btn">PLACE ORDER</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Checkout Section End -->
+
+<!-- Footer Section Begin -->
+<%- include('../partials/userFooter') %>
+<!-- Footer Section End -->

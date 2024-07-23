@@ -144,7 +144,7 @@
                                 </ul>
                             <div class="product__item__text">
                                 <h6><%=product.name%></h6>
-                                <a href="#" class="add-cart">+ Add To Cart</a>
+                                <a style="cursor: pointer;" onclick="addToCart('<%=product._id%>','<%=product.price%>')" class="add-cart">+ Add To Cart</a>
                                 <div class="rating">
                                     <i class="fa fa-star-o"></i>
                                     <i class="fa fa-star-o"></i>
@@ -176,6 +176,45 @@
 </section>
 <!-- Shop Section End -->
 
+<script>
+    function addToCart(productId,price) {
+        var url = '/add-cart'
+
+        $.ajax({
+          url: url,
+          type: 'POST',
+          data:{
+            productId : productId,
+            price : price
+          },
+          success: function(response) {
+            console.log(response)
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top",
+              showConfirmButton: false,
+              timer: 800,
+             
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            });
+            Toast.fire({
+              icon: response.icon,
+              title: response.msg
+            });
+          },
+          error: function(xhr, status, error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add item to cart. Please try again.',
+            });
+          }
+        });
+      }
+</script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>
 <!-- Footer Section End -->

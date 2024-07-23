@@ -2706,6 +2706,10 @@ ol {
 	line-height: 26px;
 	overflow: hidden;
 	margin-bottom: 15px;
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
 }
 
 .checkout__total__products li:last-child {

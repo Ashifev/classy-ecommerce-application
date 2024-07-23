@@ -5,6 +5,7 @@ const userController = require('../controller/userController')
 const addressController = require('../controller/addressControl')
 const cartController = require('../controller/cartController');
 const methodOverride = require('method-override');
+const orderController = require('../controller/orderController');
 
 
 /* GET Guest page. */
@@ -70,6 +71,7 @@ router.post('/add-cart',userAuth.userAuthentication,cartController.addCart);
 router.post('/update-cart/:id',userAuth.userAuthentication,cartController.updateCart);
 router.post('/delete-cart/:id',userAuth.userAuthentication,cartController.deleteFromCart);
 
+router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
 
 //logout
 router.get("/logout",userController.logout) 

@@ -122,7 +122,7 @@
                 </div>
                 <h3>₹<%=products.price%> <span>₹3000.00</span></h3>
                 <div class="product__details__cart__option">
-                  <a href="#" id="add-to-bag-btn" class="primary-btn" onclick="addToCart('<%=products._id%>')">add to cart</a>
+                  <a href="#" id="add-to-bag-btn" class="primary-btn" onclick="addToCart('<%=products._id%>','<%=products.price%>')">add to cart</a>
                 <div class="product__details__btns__option">
                   <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
                   <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
@@ -414,14 +414,15 @@
         });
       });
 
-      function addToCart(productId) {
+      function addToCart(productId,price) {
         var url = '/add-cart'
 
         $.ajax({
           url: url,
           type: 'POST',
           data:{
-            productId : productId
+            productId : productId,
+            price : price
           },
           success: function(response) {
             console.log(response)
