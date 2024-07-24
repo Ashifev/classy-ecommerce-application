@@ -71,7 +71,9 @@ router.post('/add-cart',userAuth.userAuthentication,cartController.addCart);
 router.post('/update-cart/:id',userAuth.userAuthentication,cartController.updateCart);
 router.post('/delete-cart/:id',userAuth.userAuthentication,cartController.deleteFromCart);
 
+//user checkout
 router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
+router.post('/submit-order',userAuth.userAuthentication,orderController.orderSubmit)
 
 //logout
 router.get("/logout",userController.logout) 
