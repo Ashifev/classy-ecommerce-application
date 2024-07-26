@@ -3,9 +3,14 @@ const userDB = require("../models/userModel");
 const otpDb = require("../models/otpModel");
 const productDb = require("../models/productModel");
 const addressDb = require("../models/addressModel");
+const orderDB = require('../models/orderModel')
 const OtpGen = require("../services/otpGenerator");
 const nodeMailer = require("../services/nodeMailer");
 const bcrypt = require("bcrypt");
+const category = require("../models/categoryModel");
+const brand = require("../models/brandModel");
+const mongoose = require('mongoose');
+
 require("dotenv").config();
 module.exports = {
   //render Home page
@@ -210,14 +215,109 @@ module.exports = {
   shopRender: async (req, res) => {
     try {
       console.log("shop entered user:", req.session.user);
+  
+      const page = parseInt(req.query.page) || 1;
+      const limit = 6; 
+      const skip = (page - 1) * limit; 
+
       const product = await productDb
         .find({ isActive: true })
         .populate("brand")
-        .populate("category");
-      res.render("user/userShop", { user: req.session.user, product });
+        .populate("category")
+        .limit(limit)
+        .skip(skip);
+  
+      const allCategory = await category.find();
+      const allBrand = await brand.find();
+  
+      const totalProducts = await productDb.countDocuments({ isActive: true });
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      res.render("user/userShop", {
+        user: req.session.user,
+        product,
+        allBrand,
+        allCategory,
+        currentPage: page,
+        totalPages
+      });
     } catch (err) {
       console.log("Error at shopRender", err);
       res.render("500");
+    }
+  },
+  //product filter
+  productFilter: async(req,res)=>{
+    try{
+      const {selectedCategories,selectedBrands,maxPrice} = req.query;
+      const filter = {isActive:true}
+      // console.log("req.body................",selectedCategories);
+      if(selectedCategories){
+        const categoryName = selectedCategories.split(',');
+        const includeCategory = await category.find({name:{$in:categoryName}}).select('_id')
+        const categoryId = includeCategory.map((val)=>val._id);
+        filter.category = {$in:categoryId}
+      }
+      if(selectedBrands){
+        const brandName = selectedBrands.split(',');
+        const includeBrand = await brand.find({name:{$in:brandName}}).select('_id')
+        const brandId = includeBrand.map((val)=>val._id);
+       
+        filter.brand = {$in:brandId}
+      }
+      if(maxPrice){
+        filter.price = {$lte: parseFloat(maxPrice)}
+      }
+      const productss = await productDb.find(filter);
+      console.log("pridcysss",productss);
+
+      res.json({success:true,productss})
+    }catch(err){
+      console.log("error at product filter",err);
+    }
+  },
+  //product search
+  productSearch:async(req,res)=>{
+    try{
+      const {inputValue} = req.query;
+      console.log("queryy",inputValue);
+      if(!inputValue){
+
+      }else{
+          const [searchCat, searchBrand, searchProduct ] = await Promise.all([
+          category.findOne({ name: { $regex: inputValue, $options: "i" } }),
+          brand.findOne({ name: { $regex: inputValue, $options: "i" } }),
+          productDb.findOne({ name: { $regex: inputValue, $options: "i" } })
+      ]);
+
+    const searchOptions = {
+        isActive: true,
+        $or: [
+            { name: { $regex: inputValue, $options: "i" } },
+        ],
+    };
+
+    if (searchCat) searchOptions.$or.push({ category: searchCat._id });
+    if (searchBrand) searchOptions.$or.push({ brand: searchBrand._id });
+    if (searchProduct) searchOptions.$or.push({ _id: searchProduct._id});
+
+    console.log("Search options:", searchOptions);
+
+    // Fetch products with related data
+    const products = await productDb.find(searchOptions).populate("category").populate("brand")
+     
+
+    console.log("Products found:", products);
+
+    // Return found products
+    return res.json({
+        success: true,
+        count: products.length,
+        products: products
+    });
+      }
+    }catch(err){
+      console.log("errror at product search");
     }
   },
   //Product details
@@ -232,12 +332,12 @@ module.exports = {
           .findById(id)
           .populate("category")
           .populate("brand");
-          const category = products.category;
-        const relateProduct = await productDb.find({category:category._id,
+          const categoryId = products.category;
+        const relateProduct = await productDb.find({category:categoryId,
           _id: { $ne: id },
           isActive: true,
         });
-        console.log(relateProduct);
+        console.log("this re;lated productss",relateProduct);
         if (!products) {
           console.log("no products found");
           return res.json({ success: false, message: "products not found" });
@@ -272,6 +372,7 @@ module.exports = {
       const profile = await userDB.findOne({ email: userEmail });
       const userId = profile._id;
       const address = await addressDb.find({ userId: userId , isActive:true });
+      const orderData = await orderDB.find({userId:userId}).populate('productItems.productId').sort({dateOrdered:-1})
       console.log("profile adress");
       console.log("profile");
       res.render("user/userProfile", {
@@ -279,6 +380,7 @@ module.exports = {
         profile,
         userEmail,
         address,
+        orderData,
         err: err,
         success:success
       });

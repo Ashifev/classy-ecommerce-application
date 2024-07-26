@@ -145,16 +145,16 @@
                                     <%= user.toString().charAt(0).toUpperCase() %>
                                 </button>
                                 
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="#"><%= user.name %></a>
                                     <a class="dropdown-item" href="#">My Profile</a>
                                     <a class="dropdown-item" href="#">All Products</a>
                                     <a class="dropdown-item" href="#">My Orders</a>
                                     <a class="dropdown-item" href="/logout" id="logoutButton" style="color: red;">Logout</a>
-                                </div>
+                                </ul>
                             </div>
                         <% } else { %>
-                            <a href="/login"><i class="fa-regular fa-user"></i></a>
+                            <a style="text-decoration: none; color: black;" href="/login"><i class="fa-regular fa-user"></i></a>
                         <% } %>
                         
                     </div>

@@ -1,6 +1,6 @@
 const cartDB = require("../models/cartModel");
 const { findById } = require("../models/categoryModel");
-const product = require("../models/productModel");
+const productDB = require("../models/productModel");
 const userDB = require("../models/userModel");
 
 module.exports = {
@@ -36,6 +36,10 @@ module.exports = {
         res.redirect("/");
       } else {
         const cart = await cartDB.findOne({ userId: user._id });
+        const userProduct = await productDB.findById(productId);
+        if(userProduct.stockQuantity===0){
+          return res.json({ icon: "warning", msg: "This Product is Out of Stock" });
+        }
         if (cart) {
           const productindex = cart.products.findIndex(
             (p) => p.productId.toString() === productId

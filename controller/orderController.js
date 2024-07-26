@@ -49,18 +49,20 @@ module.exports = {
             return res.status(404).send('Address not found');
         }
 
-        const userProduct = await cartDB.findOne({ userId: User._id });
+        const userProduct = await cartDB.findOne({ userId: User._id }).populate('products.productId');
         if (!userProduct || userProduct.products.length === 0) {
             return res.status(400).send('Cart is empty');
         }
 
         const cartProducts = userProduct.products.map((item) => ({
             productId: item.productId,
+            name: item.productId.name,
             quantity: item.quantity,
             price: item.price,
             totalPrice: item.quantity * item.price
         }));
 
+        console.log("cart Product ...",cartProducts);
         let totalQuantity = cartProducts.reduce((acc, product) => acc + product.quantity, 0);
 
         const order = new orderDB({
@@ -87,29 +89,49 @@ module.exports = {
             { userId: User._id },
         );
 
-        res.render('user/orderPlaced');
+        res.render('user/orderPlaced',{order});
         // res.status(200).send('Order placed successfully');
     } catch (err) {
         console.error("error at order placed",err);
         res.status(500).send('An error occurred while placing the order');
     }
 },
-getAdminOrderList: async(req,res)=>{
+getOrderDetails: async(req,res)=>{
     try{
-        
+        const orderId = req.params.id;
+        const userOrder = await orderDB.findById(orderId).populate('productItems.productId')
+        res.render('user/orderDetails',{userOrder})
     }catch(err){
-        console.error("error at admin order list",err);
-        res.status(500).send('An error occurred while placing the order');
+        console.error("error at order details page",err);
+        res.status(500).send('An error occurred at order detail page rendering');
     }
 },
-getUserOrderList: async(req,res)=>{
+orderCancel: async(req,res)=>{
     try{
+        const orderId = req.params.id
+        const cancelOrder = await orderDB.findById(orderId);
+        console.log("prder",cancelOrder);
 
+        cancelOrder.status = "Cancelled";
+        
+        for (const item of cancelOrder.productItems) {
+            await productDB.findByIdAndUpdate(
+                item.productId,
+                { $inc: { stockQuantity: item.quantity } },
+                { new: true }
+            );
+        }
+
+        await cancelOrder.save();
+        console.log("order cancalled");
+
+        res.json({success:true,msg:"order cancelled successfully"})
     }catch(err){
-        console.error("error at admin order list",err);
-        res.status(500).send('An error occurred while placing the order');
+        console.error("error at order cancel",err);
+        res.status(500).send('An error occurred at order cancel');
     }
 }
+
 
 
 }

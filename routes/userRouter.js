@@ -74,7 +74,12 @@ router.post('/delete-cart/:id',userAuth.userAuthentication,cartController.delete
 //user checkout
 router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
 router.post('/submit-order',userAuth.userAuthentication,orderController.orderSubmit)
+router.post('/order-details/:id',userAuth.userAuthentication,orderController.getOrderDetails)
+router.post('/order-cancel/:id',userAuth.userAuthentication,orderController.orderCancel)
 
+
+router.get('/filter-product',userAuth.userAuthentication,userController.productFilter)
+router.post('/searchProduct',userAuth.userAuthentication,userController.productSearch)
 //logout
 router.get("/logout",userController.logout) 
 

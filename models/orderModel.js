@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'product'
     },
-    productName: String,
+    name: String,
     quantity: Number,
     price: Number,
     total: Number,
@@ -53,11 +53,11 @@ const orderSchema = new mongoose.Schema({
     productItems: [productSchema],
     billingAddress: [addressSchema],
    
-    // status: {
-    //     type: String,
-    //     required: true,
-    //     default: 'Pending'
-    // },
+    status: {
+        type: String,
+        required: true,
+        default: 'Pending'
+    },
     
     paymentMethod: {
         type: String,

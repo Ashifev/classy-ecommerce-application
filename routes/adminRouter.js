@@ -7,6 +7,8 @@ const upload = require('../config/multer');
 const categoryController = require('../controller/categoryController');
 const userManagement = require('../controller/userManagement');
 const brandController = require('../controller/brandController')
+const orderController = require('../controller/orderController');
+const orderManagement = require('../controller/orderManagement');
 
 ///////////////////Admin Route
 /* GET Home Page */
@@ -69,6 +71,9 @@ router.get('/users',adminAuth.adminExist,userManagement.getUsers);
 router.patch('/updateStatus/:id',adminAuth.adminExist,userManagement.updateStatus);
 
 
-
+////////////////////Order Management Admin side
+/* Order Listing */
+router.get('/order-list',adminAuth.adminExist,orderManagement.getAdminOrderList);
+router.post('/order/orderStatus',adminAuth.adminExist,orderManagement.updateOrderStatus);
 
 module.exports = router;

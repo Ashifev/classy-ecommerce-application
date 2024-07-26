@@ -1,6 +1,235 @@
     <!-- Header Section Begin -->
     <%- include('../partials/userHeader') %>
     <!-- Header Section End -->
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+       *
+       {
+           box-sizing: border-box;
+           margin: 0;
+           padding: 0;
+       }
+       
+       body {
+           font-family: 'Roboto', sans-serif;
+       }
+       
+       a {
+           text-decoration: none;
+       }
+       
+       .product-card {
+           margin-top: 13px;
+           width: 300px;
+           box-shadow: 0 2px 7px #dfdfdf;
+           background: #fafafa;
+       }
+       
+       .badge {
+           position: absolute;
+           left: 0;
+           text-transform: uppercase;
+           font-size: 13px;
+           font-weight: 700;
+           background: red;
+           color: #fff;
+           padding: 3px 10px;
+       }
+       
+       .product-tumb {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           height: 300px;
+           padding: 50px;
+           background: #f0f0f0;
+           overflow: hidden;
+       }
+       
+       .product-tumb img {
+           max-width: 100%;
+           max-height: 100%;
+           width: auto;
+           height: auto;
+           display: block;
+           margin: 0 auto;
+       }
+       
+       .product-details {
+           padding: 30px;
+       }
+       
+       .product-catagory {
+           display: block;
+           font-size: 12px;
+           font-weight: 700;
+           text-transform: uppercase;
+           color: #ccc;
+           margin-bottom: 18px;
+       }
+       
+       .product-details h4 a {
+           font-weight: 500;
+           display: block;
+           margin-bottom: 18px;
+           text-transform: uppercase;
+           color: #363636;
+           text-decoration: none;
+           transition: 0.3s;
+       }
+       
+       .product-details h4 a:hover {
+           color: #fbb72c;
+       }
+       
+       .product-details p {
+           font-size: 15px;
+           line-height: 22px;
+           margin-bottom: 18px;
+           color: #999;
+       }
+       
+       .product-bottom-details {
+           overflow: hidden;
+           border-top: 1px solid #eee;
+           padding-top: 20px;
+       }
+       
+       .product-bottom-details div {
+           float: left;
+           width: 50%;
+       }
+       
+       .product-price {
+           font-size: 18px;
+           color: #fbb72c;
+           font-weight: 600;
+       }
+       
+       .product-price small {
+           font-size: 80%;
+           font-weight: 400;
+           text-decoration: line-through;
+           display: inline-block;
+           margin-right: 5px;
+       }
+       
+       .product-links {
+           text-align: right;
+       }
+       
+       .product-links a {
+           display: inline-block;
+           margin-left: 5px;
+           color: #e1e1e1;
+           transition: 0.3s;
+           font-size: 17px;
+       }
+       
+       .product-links a:hover {
+           color: #fbb72c;
+       }
+       
+       .single-product {
+           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+           transition: box-shadow 0.3s ease;
+           margin-bottom: 15px;
+       }
+       
+       .single-product:hover {
+           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+       }
+       
+       .product-img {
+           height: 200px;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           overflow: hidden;
+       }
+       
+       .product-img img {
+           max-width: 100%;
+           max-height: 100%;
+           width: auto;
+           height: auto;
+           transition: transform 0.3s ease;
+       }
+       
+       .product-img:hover img {
+           transform: scale(1.05);
+       }
+       
+       .p_icon {
+           display: flex;
+           justify-content: center;
+           margin-top: 10px;
+       }
+       
+       .p_icon a {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           width: 40px;
+           height: 40px;
+           margin-right: 5px;
+           background-color: white;
+           border-radius: 50%;
+           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+           transition: background-color 0.3s ease, transform 0.3s ease;
+       }
+       
+       .p_icon a:hover {
+           background-color: #f8f8f8;
+           transform: scale(1.1);
+       }
+       
+       .p_icon a i {
+           color: #333;
+           font-size: 16px;
+       }
+       
+       .products-grid {
+           display: grid;
+           grid-template-columns: repeat(4, 1fr);
+           gap: 20px;
+       }
+       
+       .products-grid .single-product {
+           background: #fff;
+         
+           border-radius: 10px;
+           transition: transform 0.3s ease, box-shadow 0.3s ease;
+       }
+       
+       .products-grid .single-product:hover {
+           transform: translateY(-10px);
+           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+       }
+       .offer-price {
+         color: #ff4500; 
+         font-size: 1.2em; 
+         font-weight:100; 
+         margin-left: 10px; 
+       }
+
+       .no-products {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 24px;
+  font-weight: bold;
+  color:gray;
+  padding: 20px;
+  border-radius: 5px;
+  margin-left: 350px;
+}
+
+.no-products p {
+  margin: 0;
+  padding: 0;
+}
+
+       </style>
 
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -27,14 +256,14 @@
             <div class="col-lg-3">
                 <div class="shop__sidebar">
                     <div class="shop__sidebar__search">
-                        <form action="#">
-                            <input type="text" placeholder="Search...">
+                        <form id="searchForm" action="#">
+                            <input type="text" id="searchInput" placeholder="Search...">
                             <button type="submit"><span class="icon_search"></span></button>
                         </form>
                     </div>
                     <div class="shop__sidebar__accordion">
                         <div class="accordion" id="accordionExample">
-                            <div class="card">
+                            <!-- <div class="card">
                                 <div class="card-heading">
                                     <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
                                 </div>
@@ -109,7 +338,117 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
+
+                            <section class="" style="margin-top: 210px;">
+                                <div class="container">
+                                  <div class="row" style="margin: -80px;padding-bottom: 100px; margin-left: -60px;">
+                                    <div class="col-8">
+                                      <button class="btn btn-outline-secondary mb-3 w-100 d-lg-none" type="button" data-mdb-toggle="collapse"
+                                        data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                                        aria-label="Toggle navigation">
+                                        <span>Show filter</span>
+                                      </button>
+                              
+                                      <div class="collapse card d-lg-block mb-5" id="navbarSupportedContent">
+                                        <div class="accordion" id="accordionPanelsStayOpenExample">
+                                          <form id="filterForm">
+                                            <div class="accordion-item">
+                                              <h2 class="accordion-header" id="headingCategory">
+                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
+                                                  data-mdb-target="#panelsStayOpen-collapseCategory" aria-expanded="true"
+                                                  aria-controls="panelsStayOpen-collapseCategory">
+                                                  Category
+                                                </button>
+                                              </h2>
+                                              <div id="panelsStayOpen-collapseCategory" class="accordion-collapse collapse show"
+                                                aria-labelledby="headingCategory">
+                                                <div class="accordion-body">
+                                                  <div>
+                                                    <% allCategory.forEach(category => { %>
+                                                    <div class="form-check">
+                                                      <input class="form-check-input" type="checkbox" id="CategoryCheckbox_<%= category.name %>" name="categories" value="<%= category.name %>" />
+                                                      <label class="form-check-label" for="CategoryCheckbox_<%= category.name %>"><%= category.name %></label>
+                                                    </div>
+                                                    <% }) %>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                              
+                                            <div class="accordion-item">
+                                              <h2 class="accordion-header" id="headingBrands">
+                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
+                                                  data-mdb-target="#panelsStayOpen-collapseBrands" aria-expanded="true"
+                                                  aria-controls="panelsStayOpen-collapseBrands">
+                                                  Brands
+                                                </button>
+                                              </h2>
+                                              <div id="panelsStayOpen-collapseBrands" class="accordion-collapse collapse show"
+                                                aria-labelledby="headingBrands">
+                                                <div class="accordion-body">
+                                                  <div>
+                                                    <% allBrand.forEach(brand => { %>
+                                                    <div class="form-check">
+                                                      <input class="form-check-input" type="checkbox" id="brandCheckbox_<%= brand.name %>" name="brands" value="<%= brand.name %>" />
+                                                      <label class="form-check-label" for="brandCheckbox_<%= brand.name %>"><%= brand.name %></label>
+                                                    </div>
+                                                    <% }) %>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                              
+                                            <div class="accordion-item">
+                                              <h2 class="accordion-header" id="headingThree">
+                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
+                                                  data-mdb-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                                                  aria-controls="panelsStayOpen-collapseThree">
+                                                  Price
+                                                </button>
+                                              </h2>
+                                              <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
+                                                aria-labelledby="headingThree">
+                                                <div class="accordion-body">
+                                                  <div class="range">
+                                                    <input type="range" class="form-range" id="priceRange" 
+                                                      min="<%= Math.min(...product.map(p => p.price)) %>" 
+                                                      max="<%= Math.max(...product.map(p => p.price)) %>" 
+                                                      oninput="updateMaxPrice()" />
+                                                  </div>
+                                                  <div class="row mb-3">
+                                                    <div class="col-6">
+                                                      <p class="mb-0">Min</p>
+                                                      <div class="form-outline">
+                                                        <input type="number" id="minPrice" name="minPrice"
+                                                          class="form-control" value="<%= Math.min(...product.map(p => p.price)) %>" readonly />
+                                                        <label class="form-label" for="minPrice">₹ <%= Math.min(...product.map(p => p.price)) %></label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                      <p class="mb-0">Max</p>
+                                                      <div class="form-outline">
+                                                        <input type="number" id="maxPrice" name="maxPrice"
+                                                          class="form-control" value="<%= Math.max(...product.map(p => p.price)) %>" readonly />
+                                                        <label class="form-label" for="maxPrice">₹ <%= Math.max(...product.map(p => p.price)) %></label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <button type="submit" id="applyFilter" class="btn btn-white w-100 border border-secondary">Apply</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </section>
+                              
+                              
                         </div>
                     </div>
                 </div>
@@ -134,13 +473,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row product-grids">
                     <% product.forEach(function(product){ %>
                     <div class="col-lg-4 col-md-6 col-sm-6">
                         <div class="product__item">
                                 <ul class="product__hover">
                                     <li><a href="/product-details/<%=product._id%>"><img src="<%=product.image[0]%>" alt=""></a></li>
-                                    <li><a href="/product-details/<%=product._id%>"><img src="/images/icon/search.png" alt=""></a></li>
+                                    <li>
+                                        <% if ( product.stockQuantity==0) { %>
+                                            <span class="badge badge-primary">Out of Stock</span>
+                                        <% }else if (product.stockQuantity>5&&product.stockQuantity<10) { %>
+                                            <span class="badge badge-primary">Limited Stock</span>
+                                        <% }else { %>
+                                            <span class="badge badge-primary">InStock</span>
+                                        <% } %>
+                                        
+                                    </li>
                                 </ul>
                             <div class="product__item__text">
                                 <h6><%=product.name%></h6>
@@ -161,15 +509,26 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="product__pagination">
-                            <a class="active" href="#">1</a>
-                            <a href="#">2</a>
-                            <a href="#">3</a>
-                            <span>...</span>
-                            <a href="#">21</a>
-                        </div>
+                      <div class="product__pagination">
+                        <% if (currentPage > 1) { %>
+                          <a href="?page=<%= currentPage - 1 %>">&laquo;</a>
+                        <% } %>
+                  
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                          <% if (i === currentPage) { %>
+                            <a class="active" href="?page=<%= i %>"><%= i %></a>
+                          <% } else { %>
+                            <a href="?page=<%= i %>"><%= i %></a>
+                          <% } %>
+                        <% } %>
+                  
+                        <% if (currentPage < totalPages) { %>
+                          <a href="?page=<%= currentPage + 1 %>">&raquo;</a>
+                        <% } %>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                  
             </div>
         </div>
     </div>
@@ -214,6 +573,147 @@
           }
         });
       }
+
+      
+      
+</script>
+
+<script>
+    function updateMaxPrice() {
+      var range = document.getElementById('priceRange');
+      var maxPrice = document.getElementById('maxPrice');
+      maxPrice.value = range.value;
+    }
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const applyButton = document.getElementById('applyFilter');
+    
+    applyButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        
+        // Get selected categories
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        // Get selected brands
+        const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        // Get price range
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        
+        // Log the selected filters (you can replace this with your desired action)
+        console.log('Selected Categories:', selectedCategories);
+        console.log('Selected Brands:', selectedBrands);
+        console.log('Price Range:', minPrice, '-', maxPrice);
+        
+       
+        const data = new URLSearchParams({
+            selectedCategories,
+            selectedBrands,
+            maxPrice
+        })
+        console.log('...............',data);
+        fetch(`/filter-product?${data.toString()}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log("....filter product.......", data.productss);
+           return filtering(data.productss)
+      } else {
+        console.error("Error applying filter:", data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+    });
+
+    });
+});
+
+
+function filtering(products) {
+console.log("aa ivde etheett",products);
+    const productsGrid = document.querySelector('.product-grids'); // Assuming the class of the container div is 'row'
+    productsGrid.innerHTML = '';
+
+    if (products.length === 0) {
+        console.log(',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,');
+        productsGrid.innerHTML = `
+            <div class="no-products">
+                <p>No products found</p>
+            </div>
+        `;
+        return;
+    }
+
+    products.forEach(product => {
+        if (product.status === true) {
+            const productHTML = `
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="product__item">
+                        <ul class="product__hover">
+                            <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
+                            <li><a href="/product-details/${product._id}"><img src="/images/icon/search.png" alt=""></a></li>
+                        </ul>
+                        <div class="product__item__text">
+                            <h6>${product.name}</h6>
+                            <a style="cursor: pointer;" onclick="addToCart('${product._id}', '${product.price}')" class="add-cart">+ Add To Cart</a>
+                            <div class="rating">
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+                            <h5>₹${product.price}</h5>
+                        </div>
+                    </div>
+                </div>
+            `;
+            productsGrid.innerHTML += productHTML;
+        }
+    });
+}
+
+</script>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const inputValue = document.getElementById('searchInput').value;
+        console.log('Search input value:', inputValue);
+
+       const searchInput=new URLSearchParams({
+        inputValue
+       })
+
+       fetch(`/searchProduct?${searchInput.toString()}`,{
+
+        method:'POST',
+        headers:{'Content-type':"application/json"},
+
+
+       })
+       .then((response)=>response.json())
+       .then(response=>{
+            if(response.success){
+                console.log("search products",response.products);
+                filtering(response.products)
+            } else {
+        console.error("Error applying filter:", data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+    });
+       });
 </script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>

@@ -8,8 +8,8 @@ module.exports = {
     try{
       res.render('user/userAddress',{userEmail});
     }catch(err){
-      console.log("address",err);
-      res.status(500);
+      console.error("some error when rendering the profileAddress",err);
+      res.render('500');
     }
   },
   saveAddress: async (req, res) => {
