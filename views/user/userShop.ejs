@@ -481,11 +481,11 @@
                                     <li><a href="/product-details/<%=product._id%>"><img src="<%=product.image[0]%>" alt=""></a></li>
                                     <li>
                                         <% if ( product.stockQuantity==0) { %>
-                                            <span class="badge badge-primary">Out of Stock</span>
+                                            <span style="background-color:red;" class="badge badge-danger">Out of Stock</span>
                                         <% }else if (product.stockQuantity>5&&product.stockQuantity<10) { %>
-                                            <span class="badge badge-primary">Limited Stock</span>
+                                            <span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>
                                         <% }else { %>
-                                            <span class="badge badge-primary">InStock</span>
+                                            <span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>
                                         <% } %>
                                         
                                     </li>

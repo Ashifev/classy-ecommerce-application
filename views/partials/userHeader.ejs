@@ -145,11 +145,10 @@
                                     <%= user.toString().charAt(0).toUpperCase() %>
                                 </button>
                                 
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#"><%= user.name %></a>
-                                    <a class="dropdown-item" href="#">My Profile</a>
-                                    <a class="dropdown-item" href="#">All Products</a>
-                                    <a class="dropdown-item" href="#">My Orders</a>
+                                <ul class="dropdown-menu" style="left: -120px;z-index: 2;" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="/profile">My Profile</a>
+                                    <a class="dropdown-item" href="/shop">All Products</a>
+                                    <a class="dropdown-item" href="/profile">My Orders</a>
                                     <a class="dropdown-item" href="/logout" id="logoutButton" style="color: red;">Logout</a>
                                 </ul>
                             </div>
@@ -165,16 +164,32 @@
     </header>
     <!-- Header Section End -->
 
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <!-- Bootstrap JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/4u6Iv2tC2lvHX+LsJbrc7mlsP4X5DbYb4YCBz1" crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/4u6Iv2tC2lvHX+LsJbrc7mlsP4X5DbYb4YCBz1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-BQ6xaEAZ5CSTpyxfz4YBgl2p5u2v7u6cSf16X+IT1jz3y/jp9F8njox1zJpdV+2O" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-pPQhsU71Iozx2ys6Qm0PZy6hvVq79Qsmz9GGd8EyV8Pcf7XK5vrbZ5R7lUFnBe14" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-pPQhsU71Iozx2ys6Qm0PZy6hvVq79Qsmz9GGd8EyV8Pcf7XK5vrbZ5R7lUFnBe14" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> -->
     
     <!-- Custom JavaScript to handle the dropdown display -->
-    <script>
+    <!-- <script>
         $(document).ready(function() {
             $('.dropdown-toggle').dropdown();
         });
-    </script>
+    </script> -->
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            })
+        });
+    </script> -->
 </body>
 </html>

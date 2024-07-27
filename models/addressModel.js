@@ -33,10 +33,6 @@ const addressSchema = new mongoose.Schema(
         alternateMobile:{
             type : String
         },
-        isActive : {
-            type : Boolean,
-            default : true
-        }
     }
 )
 

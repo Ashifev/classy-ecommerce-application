@@ -16,7 +16,7 @@ module.exports = {
   //render Home page
   renderHome: async (req, res) => {
     try {
-      const product = await productDb.find({ isActive: true });
+      const product = await productDb.find({ isActive: true }).sort({createdAt:-1}).limit(8);
       res.render("user/homePage", { user: req.session.user, product });
     } catch (err) {
       console.log("error at home rendering", err);
@@ -371,7 +371,7 @@ module.exports = {
       console.log("profile render req user");
       const profile = await userDB.findOne({ email: userEmail });
       const userId = profile._id;
-      const address = await addressDb.find({ userId: userId , isActive:true });
+      const address = await addressDb.find({ userId: userId });
       const orderData = await orderDB.find({userId:userId}).populate('productItems.productId').sort({dateOrdered:-1})
       console.log("profile adress");
       console.log("profile");

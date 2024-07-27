@@ -161,7 +161,12 @@
           color: #FFFFFF;
           border-radius: 2px;
         }
-    
+  
+        .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
         @media (max-width: 768px) {
           .main_flex_div {
             display: flex;
@@ -209,7 +214,7 @@
     <section class="checkout spad">
         <div class="container">
             <div class="checkout__form">
-                <form action="/submit-order" method="POST">
+                <form action="/submit-order" method="POST" method="post" onsubmit="return validateChekout(event)">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div id="addressBook" class="card" >
@@ -275,6 +280,7 @@
                                         <input type="checkbox" id="payment" name="payment" value="COD">
                                         <span class="checkmark"></span>
                                     </label>
+                                    <div class="error-message" id="confirmCheckoutError"></div>
                                 </div>
                                 
                                 <input type="hidden" name="cart" value='<%= JSON.stringify(userCart.products) %>'>
@@ -336,6 +342,34 @@
         });
       }
     </script>
+
+<script>
+  function validateChekout(event){
+      var paymentCheckbox = document.getElementById('payment');
+      if (!paymentCheckbox.checked) {
+          confirmCheckoutError.textContent = 'Please select the payment method.';
+          confirmCheckoutError.style.display = 'block';
+          setTimeout(() => {
+          confirmCheckoutError.style.display = 'none';
+        }, 5000);
+        return false;
+      }
+      if(paymentCheckbox.checked){
+        event.preventDefault();
+        Swal.fire({
+        text: "Order Placed Successfully",
+        icon: "success",
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        }).then(() => {
+          document.querySelector('form[action="/submit-order"]').submit();
+        });
+                
+      }
+  }
+  
+</script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>
 <!-- Footer Section End -->

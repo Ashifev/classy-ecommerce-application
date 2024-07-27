@@ -13,7 +13,7 @@ module.exports = {
             const user = req.session.user
 
             const User = await userDB.findOne({ email: userEmail });
-            const userAddress = await addressDB.find({userId: User._id , isActive:true});
+            const userAddress = await addressDB.find({userId: User._id});
             const userCart = await cartDB.findOne({userId: User._id}).populate('products.productId');
 
             console.log("user address",userAddress);
@@ -125,7 +125,7 @@ orderCancel: async(req,res)=>{
         await cancelOrder.save();
         console.log("order cancalled");
 
-        res.json({success:true,msg:"order cancelled successfully"})
+        res.status(200).json({success:true,msg:"order cancelled successfully"})
     }catch(err){
         console.error("error at order cancel",err);
         res.status(500).send('An error occurred at order cancel');

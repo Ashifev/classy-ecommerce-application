@@ -127,7 +127,7 @@ module.exports = {
       }else{
         var msg;
         if(address.isActive){
-          await addressDb.findByIdAndUpdate(id,{isActive:false},{new:true});
+          await addressDb.findByIdAndDelete(id);
           msg = "Address Deleted Successfully"
         }
       }

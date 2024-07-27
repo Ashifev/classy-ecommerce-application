@@ -15,7 +15,7 @@
                                 <h2>Summer Aromas</h2>
                                 <p style="color: #ffff;">A specialist label creating luxury fragrances. Ethically crafted with an unwavering commitment
                                  to exceptional quality.</p>
-                                <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
+                                <a href="/shop" class="primary-btn">Shop now <span class="arrow_right"></span></a>
                                 <div class="hero__social">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
                                     <a href="#"><i class="fa fa-twitter"></i></a>
@@ -35,7 +35,7 @@
                                 <h6>Welcome to Our Fragrance Collection</h6>
                                 <h2 >Autumn - Winter Elixirs</h2>
                                 <p style="color:#ffff;">A specialist label creating luxury fragrances. Ethically crafted with an unwavering commitment to exceptional quality.</p>
-                                <a href="#" class="primary-btn" >Shop now <span class="arrow_right"></span></a>
+                                <a href="/shop" class="primary-btn" >Shop now <span class="arrow_right"></span></a>
                                 <div class="hero__social">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
                                     <a href="#"><i class="fa fa-twitter"></i></a>
@@ -113,6 +113,16 @@
                             <span class="label">New</span>
                             <ul class="product__hover">
                                 <li><a href="/product-details/<%=product._id%>"><img src="<%= product.image[0] %>" alt=""></a></li>
+                                <li>
+                                    <% if ( product.stockQuantity==0) { %>
+                                        <span style="background-color:red;" class="badge badge-danger">Out of Stock</span>
+                                    <% }else if (product.stockQuantity>5&&product.stockQuantity<10) { %>
+                                        <span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>
+                                    <% }else { %>
+                                        <span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>
+                                    <% } %>
+                                    
+                                </li>
                             </ul>
                         
                         <div class="product__item__text">
@@ -125,17 +135,6 @@
                                 <i class="fa fa-star-o"></i>
                             </div>
                             <h5>₹<%= product.price %></h5>
-                            <div class="product__color__select">
-                                <label for="pc-1">
-                                    <input type="radio" id="pc-1">
-                                </label>
-                                <label class="active black" for="pc-2">
-                                    <input type="radio" id="pc-2">
-                                </label>
-                                <label class="grey" for="pc-3">
-                                    <input type="radio" id="pc-3">
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -185,7 +184,7 @@
                                 <p>Seconds</p>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">Shop now</a>
+                        <a href="/shop" class="primary-btn">Shop now</a>
                     </div>
                 </div>
             </div>
