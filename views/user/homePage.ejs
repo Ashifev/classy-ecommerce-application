@@ -106,6 +106,9 @@
                 </div>
             </div>
             <div class="row product__filter">
+                <%if(user){%>
+
+                
                 <% product.forEach(function(product){ %>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
                     <div class="product__item">
@@ -127,6 +130,7 @@
                         
                         <div class="product__item__text">
                             <h6><%= product.name %></h6>
+                            <a style="cursor: pointer;" onclick="addToCart('<%=product._id%>','<%=product.price%>')" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
                                 <i class="fa fa-star-o"></i>
@@ -139,6 +143,31 @@
                     </div>
                 </div>
                 <%})%>
+                <%}else{%>
+                    <% product.forEach(function(product){ %>
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                            <div class="product__item">
+                                    <span class="label">New</span>
+                                    <ul class="product__hover">
+                                        <li><a href="/product-details/<%=product._id%>"><img src="<%= product.image[0] %>" alt=""></a></li>
+                                    </ul>
+                                
+                                <div class="product__item__text">
+                                    <h6><%= product.name %></h6>
+                                    <div class="rating">
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div>
+                                    <h5>₹<%= product.price %></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <%})%>
+
+                <%}%>
             </div>
         </div>
     </section>
@@ -219,6 +248,46 @@
     </section>
     <!-- Instagram Section End -->
 
+    <!--Add to Cart Function-->
+    <script>
+        function addToCart(productId,price) {
+            var url = '/add-cart'
+    
+            $.ajax({
+              url: url,
+              type: 'POST',
+              data:{
+                productId : productId,
+                price : price
+              },
+              success: function(response) {
+                console.log(response)
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: "top",
+                  showConfirmButton: false,
+                  timer: 800,
+                 
+                  didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                  }
+                });
+                Toast.fire({
+                  icon: response.icon,
+                  title: response.msg
+                });
+              },
+              error: function(xhr, status, error) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Failed to add item to cart. Please try again.',
+                });
+              }
+            });
+          }
+    </script>
 
     <!-- Footer Section Begin -->
     <%- include('../partials/userFooter') %>

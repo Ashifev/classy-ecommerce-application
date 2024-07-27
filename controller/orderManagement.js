@@ -14,7 +14,7 @@ getAdminOrderList: async(req,res)=>{
         res.render('admin/orderList',{orderData})
     }catch(err){
         console.error("error at admin order list",err);
-        res.status(500).send('An error occurred while order list');
+        res.render("500");
     }
 },
 updateOrderStatus: async(req,res)=>{
@@ -32,7 +32,7 @@ updateOrderStatus: async(req,res)=>{
         res.json({ success: true, msg })
     }catch(err){
         console.error("error at admin order status update",err);
-        res.status(500).send('An error occurred while order status update');
+        res.render("500");
     }
 },
 getUserOrderList: async(req,res)=>{
@@ -40,7 +40,7 @@ getUserOrderList: async(req,res)=>{
 
     }catch(err){
         console.error("error at admin order list",err);
-        res.status(500).send('An error occurred while placing the order');
+        res.render("500");
     }
 }
 }

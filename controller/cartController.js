@@ -24,6 +24,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("error at cart management", err);
+      res.render("500");
     }
   },
   addCart: async (req, res) => {
@@ -67,6 +68,7 @@ module.exports = {
       res.json({ icon: "success", msg: "Product added to Cart" });
     } catch (err) {
       console.log("error at add to cart :", err);
+      res.render("500");
     }
   },
   updateCart: async (req, res) => {
@@ -100,6 +102,7 @@ module.exports = {
       res.json({ icon: "success", msg: "Cart Updated"  , total : total.toFixed(2) , subtotal : subtotal.toFixed(2) , price : productPrice.toFixed(2)});
     } catch (err) {
       console.log("error at increase quantity", err);
+      res.render("500");
     }
   },
 
@@ -122,6 +125,7 @@ module.exports = {
       res.json({ icon: "success", msg: "Product removed from cart" });
     } catch (err) {
       console.log("error at decrease quantity");
+      res.render("500");
     }
   },
 };

@@ -12,7 +12,6 @@ const methodOverride = require('method-override');
 
 const app = express();
 
-
 //passport for google auth
 const passport = require('passport');
 require('./config/passport')
@@ -50,14 +49,38 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// app.use((error, req, res, next) => {
+
+//   const errorStatus = (error.status) ? error.status : 500; 
+//   const errorMessage = (error.message) ? error.message : "Something went wrong";
+
+//   if(errorStatus == 500){
+
+//   }
+//   return res.status(errorStatus).json({
+//     success: false,
+//     status: errorStatus,
+//     message: errorMessage,
+//     stack: error.stack,
+//   });
+
+// });
+
+
+
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/auth',authRouter);
-
 // catch 404 and forward to error handler
+
+app.get("*", (req, res) => {
+  res.render("404");
+});
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {

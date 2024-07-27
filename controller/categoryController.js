@@ -3,19 +3,29 @@ const productDb = require('../models/productModel');
 
 module.exports = {
     getCategory : async (req,res)=>{
-        const success = req.session.success;
-        const err = req.session.errMsg; 
-
-        req.session.success = null
-        req.session.errMsg = null
-
-        const category = await categoryDb.find()
-        res.render('admin/category',{category,success,err})
+        try{
+            const success = req.session.success;
+            const err = req.session.errMsg; 
+    
+            req.session.success = null
+            req.session.errMsg = null
+    
+            const category = await categoryDb.find()
+            res.render('admin/category',{category,success,err})
+        }catch(err){
+            console.log("error in getting category at admin side");
+            res.render("500");
+        }
     },
-    addCategory : (req,res)=>{
-        const err = req.session.errMsg;
-        req.session.errMsg = null
-        res.render('admin/addCategory',{err})
+    addCategory : async(req,res)=>{
+        try{
+            const err = req.session.errMsg;
+            req.session.errMsg = null
+            res.render('admin/addCategory',{err})
+        }catch(err){
+            console.log("error at add category at admin side");
+            res.render("500");
+        }
     },
     categoryAdded: async(req,res)=>{
         const {name} = req.body;

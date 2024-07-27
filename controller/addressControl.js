@@ -134,6 +134,7 @@ module.exports = {
       res.json({ success: true, msg })
     }catch(err){
       console.log("Error at address soft delete",err);
+      res.render('500')
     }
   }
 };

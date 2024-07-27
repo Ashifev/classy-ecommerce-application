@@ -10,9 +10,10 @@ const bcrypt = require("bcrypt");
 const category = require("../models/categoryModel");
 const brand = require("../models/brandModel");
 const mongoose = require('mongoose');
-
+const createError = require("../config/createError");
 require("dotenv").config();
 module.exports = {
+
   //render Home page
   renderHome: async (req, res) => {
     try {
@@ -35,7 +36,7 @@ module.exports = {
     }
   },
   //render signIn page
-  renderLogin: (req, res) => {
+  renderLogin: (req, res, next) => {
     try {
       const loginErr = req.session.err;
       const blockMsg = req.session.blockMsg;
@@ -45,6 +46,7 @@ module.exports = {
       res.render("user/userLogin", { error: loginErr, err: blockMsg });
     } catch (error) {
       console.log("error", error);
+      // return next(createError(500, ""))
       res.render("500");
     }
   },
@@ -192,7 +194,6 @@ module.exports = {
       if (!isMatch) {
         req.session.errMessage = "Invalid OTP";
         console.log(req.session.errMessage);
-        res.json({ success: false, error: "Invalid OTP. Please try again." });
         return res.redirect("/otp-redirect");
       }
       const { name, password } = req.session.tempUser;
@@ -269,7 +270,6 @@ module.exports = {
         filter.price = {$lte: parseFloat(maxPrice)}
       }
       const productss = await productDb.find(filter);
-      console.log("pridcysss",productss);
 
       res.json({success:true,productss})
     }catch(err){
@@ -324,6 +324,10 @@ module.exports = {
   productDetails: async (req, res) => {
     try {
       const {id} = req.params
+
+      if(!mongoose.Types.ObjectId.isValid(id)){
+       res.render("404");
+      }
       if (req.session.user) {
        
         console.log("params",req.params.id);
@@ -354,6 +358,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("Error at product details", err);
+      // return next(createError(500, "somthing went wron"))
       res.render("500");
     }
   },
@@ -376,7 +381,7 @@ module.exports = {
       console.log("profile adress");
       console.log("profile");
       res.render("user/userProfile", {
-        user: req.session.user,
+        user: req.session.user, 
         profile,
         userEmail,
         address,
@@ -410,7 +415,7 @@ module.exports = {
       res.redirect("/profile");
     } catch (err) {
       console.log("err in user profile edit", err);
-      res.status(404);
+      res.render("500");
     }
   },
   password:async(req,res)=>{
@@ -518,6 +523,7 @@ module.exports = {
 
     }catch(err){
       console.log("error at forget otp generate and mail send");
+      res.render("500");
     }
   },
   forgotOtpGet : async(req,res)=>{
@@ -527,6 +533,7 @@ module.exports = {
       res.render('user/forgotOtp',{error:error})
     }catch(err){
       console.log("error at forgot Otp page get");
+      res.render("500");
     }
   },
   forgotOtpVarify : async(req,res)=>{
@@ -554,6 +561,7 @@ module.exports = {
       res.redirect('/forgot-password');
     }catch(err){
       console.log("error at forget OTP varification");
+      res.render("500");
     }
   },
   forgetPasswordForm : async(req,res)=>{
@@ -590,6 +598,7 @@ module.exports = {
       res.redirect('/login');
     }catch(err){
       console.log("error at confirm forgot password",err);
+      res.render("500");
     }
   },
   //User Validation
@@ -641,7 +650,7 @@ module.exports = {
       });
     } catch (err) {
       console.log("error in logout", err);
-      res.render(500);
+      res.render("500");
     }
   },
 };

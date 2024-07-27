@@ -32,6 +32,7 @@ module.exports = {
 
         }catch(err){
             console.log("error at get checkout",err);
+            res.render("500");
         }
     },
     orderSubmit: async (req, res) => {
@@ -93,7 +94,7 @@ module.exports = {
         // res.status(200).send('Order placed successfully');
     } catch (err) {
         console.error("error at order placed",err);
-        res.status(500).send('An error occurred while placing the order');
+        res.render("500");
     }
 },
 getOrderDetails: async(req,res)=>{
@@ -103,7 +104,7 @@ getOrderDetails: async(req,res)=>{
         res.render('user/orderDetails',{userOrder})
     }catch(err){
         console.error("error at order details page",err);
-        res.status(500).send('An error occurred at order detail page rendering');
+        res.render("500");
     }
 },
 orderCancel: async(req,res)=>{
@@ -128,7 +129,7 @@ orderCancel: async(req,res)=>{
         res.status(200).json({success:true,msg:"order cancelled successfully"})
     }catch(err){
         console.error("error at order cancel",err);
-        res.status(500).send('An error occurred at order cancel');
+        res.render("500");
     }
 }
 
