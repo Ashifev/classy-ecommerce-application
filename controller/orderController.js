@@ -171,8 +171,14 @@ itemCancel: async(req,res)=>{
            })
         
         await orders.save();
-        
-        
+        let count = 0;
+        orders.productItems.forEach((value)=>{
+            if(value.status === "Cancelled"){
+                count ++;
+            }
+       })
+       console.log("count",count);
+       
         res.status(200).json({success:true,msg:"order cancelled successfully"})
     }catch(err){
         console.error("error at order cancel",err);

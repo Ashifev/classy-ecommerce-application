@@ -35,9 +35,7 @@
             <div class="row w-100 no-gutters">
               <div class="col-6 col-md">
                 <h6 class="text-charcoal mb-0 w-100">Order Number</h6>
-                <a href="" class="text-pebble mb-0 w-100 mb-2 mb-md-0">
-                  #<%= String(userOrder._id).slice(0, 7) %>
-                </a>
+                <a href="" class="text-pebble mb-0 w-100 mb-2 mb-md-0">#<%= String(userOrder._id).slice(0, 7) %></a>
               </div>
               <div class="col-6 col-md">
                 <h6 class="text-charcoal mb-0 w-100">Date</h6>
@@ -55,9 +53,9 @@
                 <p class="text-pebble mb-0 w-100 mb-2 mb-md-0"><%= userOrder.billingAddress[0].locality %></p>
               </div>
               <div class="col-12 col-md-3">
-                <% if (['Return Requested', 'return request accepted', 'return request rejected', 'Cancelled', 'product returned'].includes(userOrder.status)) { %>
+                <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
                   <p style="font-size: 20px" class="text-danger"><%= userOrder.status %></p>
-                <% } else if (userOrder.status === 'Delivered') { %>
+                <% } else if(userOrder.status === 'Delivered') { %>
                   <div style="width: 80%" class="d-flex flex-row justify-content-between align-items-center">
                     <p class="text-green" style="font-size: 20px; margin: 0">Delivered</p>
                     <a href="" data-orderId="<%= userOrder._id %>" id="orderReturn" class="btn btn-primary w-60">Return Order</a>
@@ -72,11 +70,11 @@
             <div class="row no-gutters">
               <div class="col-12 d-flex flex-direction-row justify-content-between">
                 <div class="col-12 col-md-9 pr-0 pr-md-3">
-                  <% if (['Return Requested', 'return request accepted', 'return request rejected', 'Cancelled', 'product returned'].includes(userOrder.status)) { %>
+                  <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
                     <div class="alert p-2 alert-danger w-100 mb-0">
                       <p class="text-danger hidden-sm-down mb-0"><%= userOrder.status %></p>
                     </div>
-                  <% } else if (userOrder.status === 'Delivered') { %>
+                  <% } else if(userOrder.status === 'Delivered') { %>
                     <div class="alert p-2 alert-success w-100 mb-0">
                       <p class="text-green hidden-sm-down mb-0">Delivered</p>
                     </div>
@@ -95,7 +93,8 @@
                 </div>
               </div>
               <div class="col-8 d-flex flex-column">
-                <% userOrder.productItems.forEach(function (product) { %>
+                <% userOrder.productItems.forEach(function(product) { %>
+                  
                   <div class="row orderDetails no-gutters mt-3">
                     <div class="col-3 col-md-1">
                       <img class="img-fluid pr-3" src="https://tanga2.imgix.net/https%3A%2F%2Fs3.amazonaws.com%2Ftanga-images%2Ffc79d08c12dc.jpeg?ixlib=rails-2.1.1&fit=crop&w=500&h=500&auto=format%2Ccompress&cs=srgb&s=c9a50d474788f2658d13b21aa62edd6c" alt="" />
@@ -110,7 +109,7 @@
                     </div>
                     <div class="col-12 col-md-3 hidden-sm-down">
                       <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
-                      <% if (['Return Requested', 'return request accepted', 'return request rejected', 'Cancelled', 'product returned'].includes(product.status)) { %>
+                      <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(product.status)) { %>
                         <p style="font-size: 20px; text-align: center" class="text-danger"><%= product.status %></p>
                       <% } else { %>
                         <a href="" data-product-id="<%= product.productId._id %>" class="btn cancelThis btn-danger w-100 mb-2">Cancel This</a>
@@ -192,6 +191,8 @@
           confirmButtonText: "Yes, cancel it!",
         }).then((result) => {
           if (result.isConfirmed) {
+            console.log("click cheyythuuu ");
+            
             fetch(`/cancel-item?${Data}`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
