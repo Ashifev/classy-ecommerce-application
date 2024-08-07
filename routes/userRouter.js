@@ -76,6 +76,7 @@ router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
 router.post('/submit-order',userAuth.userAuthentication,orderController.orderSubmit)
 router.post('/order-details/:id',userAuth.userAuthentication,orderController.getOrderDetails)
 router.post('/order-cancel/:id',userAuth.userAuthentication,orderController.orderCancel)
+router.post('/cancel-item',userAuth.userAuthentication,orderController.itemCancel)
 
 
 router.get('/filter-product',userAuth.userAuthentication,userController.productFilter)

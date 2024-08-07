@@ -4,7 +4,7 @@ const productDB = require("../models/productModel");
 const userDB = require("../models/userModel");
 const addressDB = require('../models/addressModel');
 const orderDB = require('../models/orderModel');
-const { trusted } = require("mongoose");
+const { mongoose } = require("mongoose");
 
 module.exports = {
     getCheckout : async (req,res)=>{
@@ -114,6 +114,9 @@ orderCancel: async(req,res)=>{
         console.log("prder",cancelOrder);
 
         cancelOrder.status = "Cancelled";
+        cancelOrder.productItems.forEach((product)=>{
+            product.status = "Cancelled"
+        })
         
         for (const item of cancelOrder.productItems) {
             await productDB.findByIdAndUpdate(
@@ -126,6 +129,50 @@ orderCancel: async(req,res)=>{
         await cancelOrder.save();
         console.log("order cancalled");
 
+        res.status(200).json({success:true,msg:"order cancelled successfully"})
+    }catch(err){
+        console.error("error at order cancel",err);
+        res.render("500");
+    }
+},
+itemCancel: async(req,res)=>{
+    try{
+        const {orderId,orderItem} = req.query;
+        // const orderItem = req.params.id
+        let itemQuantity = 0
+        const orders = await orderDB.findById(orderId);
+        console.log("this Order",orders);
+        
+        const cancelItems = orders.productItems.filter((value)=>{
+            if(value.productId.toString()===orderItem) return value
+        });
+        orders.productItems.forEach((value)=>{
+            console.log("value.id",value.productId);
+            cancelItems.forEach((cancelItem) => {
+                if (value.productId.toString() === cancelItem.productId.toString()) {
+                    value.status = "Cancelled";
+                    itemQuantity = parseInt(value.quantity) 
+                }
+            })
+        })
+        console.log("item quantity", itemQuantity);
+
+        //Qauntity Increase
+            orders.productItems.forEach((value)=>{
+                cancelItems.forEach(async (cancelItem) => {
+                    if (value.productId.toString() === cancelItem.productId.toString()) {
+                       await productDB.findByIdAndUpdate(
+                           value.productId,
+                           { $inc: { stockQuantity: value.quantity } },
+                           { new: true }
+                       );
+                   }
+               })
+           })
+        
+        await orders.save();
+        
+        
         res.status(200).json({success:true,msg:"order cancelled successfully"})
     }catch(err){
         console.error("error at order cancel",err);

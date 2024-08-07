@@ -91,7 +91,7 @@
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTable">
+                            <tbody style="font-size: 15px;" id="userTable">
                                 <% products.forEach(function(product,index){ %>
                                 <tr>
                                     <td><%=index + 1%></td>
@@ -103,8 +103,8 @@
                                         <%= product.isActive === true ? 'Active' : 'Deactive' %>
                                       </td>
                                       <% if (product.isActive) { %>
-                                        <td class="text-center">
-                                          <a>
+                                        <td style="display: flex; flex-direction: row; justify-content:space-evenly;" class="text-center">
+                                          <a style="width: 80px;">
                                             <button
                                             class="btn btn-sm btn-danger"
                                               onclick="block_unblock('<%= product._id %>')"

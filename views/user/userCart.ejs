@@ -217,20 +217,16 @@
           });
         }
 
-        document.querySelectorAll("product_price").forEach(function (element) {
-          const productPrice = element.querySelector('cart__price');
-          productPrice.innerHTML = "₹" + response.price;
-        })
+      // Update the product price dynamically
+      document.querySelectorAll(`[datatd-product-id="${productId}"]`).forEach(function (element) {
+          element.innerHTML = "₹" + response.price;
+      });
 
         const subTotal = document.getElementById('subTotal');
         const totalPrice = document.getElementById('totalPrice');
         subTotal.innerHTML =  "₹" + response.subtotal;
         totalPrice.innerHTML = "₹" + response.total;
        
-        
-        setTimeout(() => {
-          window.location.reload();
-        }, 800);
       },
       error: function (xhr, status, error) {
         Swal.fire({

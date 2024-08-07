@@ -255,7 +255,11 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
               
               <div class="card">
                 <div class="card-body p-0 table-responsive">
+                  <%if(orderData.length==0){%>
+                    <h4 class="p-3 mb-0">No orders found</h4>
+                    <%}else{%>
                   <h4 class="p-3 mb-0">Product Description</h4>
+                  
                   <table id="userTable" class="table mb-0">
                     <thead>
                       <tr>
@@ -324,6 +328,7 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
                       <%})%>
                     </tbody>
                   </table>
+                  <%}%>
                 </div>
               </div>
               

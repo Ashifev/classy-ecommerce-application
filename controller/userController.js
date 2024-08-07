@@ -123,15 +123,22 @@ module.exports = {
   //Otp page
   OtpPageRender: (req, res) => {
     try {
-      const otpErr = req.session.errMessage;
-      req.session.errMessage = null;
-      console.log("otpError", otpErr);
-      res.render("user/otpPage", { error: otpErr });
+        const otpErr = req.session.errMessage;
+        req.session.errMessage = null;
+
+        if (!req.session.timerEnd) {
+            req.session.timerEnd = Date.now() + 120000; // 2 minutes from now
+        }
+
+        const remainingTime = Math.max(req.session.timerEnd - Date.now(), 0);
+
+        res.render("user/otpPage", { error: otpErr, remainingTime });
     } catch (err) {
-      console.log("error in otp page rendering", err);
-      res.render("500");
+        console.log("error in otp page rendering", err);
+        res.render("500");
     }
-  },
+},
+
 
   //OTP Resend
   OtpResend: async (req, res) => {
@@ -158,6 +165,26 @@ module.exports = {
         console.log("OTP sent succesfully");
         req.session.OTP = OTP;
         console.log(req.session.OTP);
+
+        // Reset the timer
+        
+
+        setTimeout(async () => {
+          try {
+            const otpExist = await otpDb.find({ email });
+            if (otpExist) {
+              await otpDb.deleteOne({ email: email });
+              req.session.OTP = null;
+              console.log("OTP Document Deleted");
+            }
+          } catch (error) {
+            console.error("Error deleting OTP document:", error);
+            res.render("500");
+          }
+        }, 2 * 60 * 1000);
+
+        req.session.timerEnd = Date.now() + 120000; // 2 minutes from now
+
         res.redirect("/otp-redirect");
         console.log("OTP Resended");
       } else {

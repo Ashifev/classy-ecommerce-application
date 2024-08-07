@@ -616,7 +616,6 @@
             selectedBrands,
             maxPrice
         })
-        console.log('...............',data);
         fetch(`/filter-product?${data.toString()}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
@@ -624,7 +623,6 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        console.log("....filter product.......", data.productss);
            return filtering(data.productss)
       } else {
         console.error("Error applying filter:", data.message);
@@ -644,7 +642,7 @@ console.log("aa ivde etheett",products);
     productsGrid.innerHTML = '';
 
     if (products.length === 0) {
-        console.log(',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,');
+        
         productsGrid.innerHTML = `
             <div class="no-products">
                 <p>No products found</p>

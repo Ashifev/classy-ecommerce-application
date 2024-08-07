@@ -75,5 +75,6 @@ router.patch('/updateStatus/:id',adminAuth.adminExist,userManagement.updateStatu
 /* Order Listing */
 router.get('/order-list',adminAuth.adminExist,orderManagement.getAdminOrderList);
 router.post('/order/orderStatus',adminAuth.adminExist,orderManagement.updateOrderStatus);
+router.get('/order-view/:id',adminAuth.adminExist,orderManagement.getAdminOrderView);
 
 module.exports = router;

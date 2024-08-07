@@ -35,9 +35,12 @@ updateOrderStatus: async(req,res)=>{
         res.render("500");
     }
 },
-getUserOrderList: async(req,res)=>{
+getAdminOrderView: async(req,res)=>{
     try{
-
+        const orderId = req.params.id;
+        const userOrder = await orderDB.findById(orderId).populate('productItems.productId')
+        const thisUser = await userDB.findById(userOrder.userId);
+        res.render('admin/orderDetails',{userOrder,thisUser});
     }catch(err){
         console.error("error at admin order list",err);
         res.render("500");

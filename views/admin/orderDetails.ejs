@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,6 +12,8 @@
     <!-- Favicon -->
     <link href="/admin/img/favicon.ico" rel="icon">
 
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="/stylesheets/order.css" type="text/css">
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,203 +42,165 @@
     <!-- Template Stylesheet -->
     <link href="/admin/css/style.css" rel="stylesheet">
 </head>
-<style>
-    .order-list table {
-	border-collapse: collapse;
-  margin-bottom: 30px;
-}
-.order-list table thead tr{
-	color: #000;
-}
-.order-list table tbody tr{
-	color: #777;
-	border-top: 1px solid #eee;
-}
-.order-list table td{
-	padding: 10px 0px;
-}
-.order-list table img{
-	max-width: 40px;
-	max-height: 40px;
-}
-.order-list table input[type="checkbox"]{
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	-o-appearance: none;
-	appearance: none;
-}
-.order-list table label{
-	position: relative;
-	margin-left: 15px;
-	font-family: 'Font Awesome 5 Free';
-}
-.order-list table label::before{
-	content: '';
-	position: absolute;
-	top:-3px;
-	left: -25px;
-	width: 20px;
-	height: 20px;
-	border: 1px solid #ddd;
-}
-.order-list table input[type="checkbox"]:checked + label::after{
-	font-family: 'Font Awesome 5 Free';
-	font-weight: 900;
-  font-size: 11px;
-  text-align: center;
-  line-height: 20px;
-	content: "\f00c";
-	position: absolute;
-	top: -2px;
-	left: -24px;
-	width: 20px;
-	height: 20px;
-	color: #fff;
-	background-image: linear-gradient(90deg, #41389e, #7822a0);
-  box-shadow: 2px 2px 8px #41389e;
-}
-.order-list table input[type="checkbox"]:checked + label{
-	color: #000;
-}
-.order-list .show,
-.order-list .page{
-	width: 50%;
-	float: left;
-	color: #888;
-}
-.order-list .page{
-	text-align: right;
-}
-/* Start My Fram Work */
-.width-1{
-  width: 10%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-2{
-  width: 20%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-3{
-  width: 30%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-4{
-  width: 40%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-5{
-  width: 50%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-6{
-  width: 60%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-7{
-  width: 70%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-8{
-  width: 80%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-9{
-  width: 90%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.width-10{
-  width: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.fl-left{
-  float: left;
-}
-.fl-right{
-  float: right;
-}
-.no-padding-left{
-  padding-left: 0px;
-}
-.no-padding-right{
-  padding-right: 0px;
-}
-.radius-4{
-  border-radius: 4px;
-}
-.radius-6{
-  border-radius: 6px;
-}
-.no-border{
-  border: none;
-}
-.but{
-  font-weight: bold;
-  cursor: pointer;
-  color: #2ce5c0;
-  border: none;
-}
-.but-con{
-  padding: 5px 10px;
-  background-color: blue;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
 
-.but-pen{
-  padding: 10px 25px;
-  background-color: #ffb74d;
-}
-.stamp{
-  border: 1px solid #eee;
-  text-align: center;
-  padding: 5px 14px;
-  display: inline-block;
-  margin: auto;
-  border-radius: 6px
-}
-.but-pre{
-  background-color: transparent;
-  color: #888;
-  border: none;
-  cursor: pointer;
-}
-.but-pag{
-  background-color: #41389e;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-.status-pending {
-  color: black;
+<body>
+  <style>
+    .logo img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        background-color: #4285f4;
+        border-radius: 50%;
+      }
+      .logo span {
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .menu-item {
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: #5f6368;
+      }
+      .menu-item i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+      .menu-item:hover,
+      .menu-item.active {
+        background-color: #e8f0fe;
+        color: #4285f4;
+        border-radius: 0 25px 25px 0;
+      }
+      .main-content {
+        flex-grow: 1;
+        padding: 20px 40px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .search-bar {
+        padding: 8px 15px;
+        border: 1px solid #dfe1e5;
+        border-radius: 24px;
+        width: 300px;
+        font-size: 14px;
+      }
+      .user-profile {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      .order-details {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+          0 1px 3px 1px rgba(60, 64, 67, 0.15);
+      }
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .order-header h2 {
+        font-size: 24px;
+        font-weight: normal;
+        margin: 0;
+      }
+      .customer-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+      }
+      .info-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        width: 30%;
+      }
+      .info-box h3 {
+        margin-top: 0;
+        font-size: 16px;
+        color: #5f6368;
+      }
+      .info-box p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
+      .info-box a {
+        color: #4285f4;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 14px;
+      }
+      th {
+        color: #5f6368;
+        font-weight: normal;
+      }
+      .payment-info {
+        margin-top: 30px;
+      }
+      .button {
+        padding: 8px 16px;
+        background-color: #fff;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px;
+      }
+      .button.primary {
+        background-color: #4285f4;
+        color: #fff;
+      }
+      .status-badge {
+        background-color: #e8f0fe;
+        color: #4285f4;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .status-pending {
+    color: #909000;
 }
 
 .status-delivered {
-  color: green;
+    color: green;
 }
 
 .status-processing {
-  color: #ffb700;
+    color: orange;
 }
 
 .status-shipped {
-  color: blue;
+    color: blue;
 }
-/* End My Fram Work */
-</style>
-<body>
+
+.status-cancelled {
+    color: red;
+}
+
+    </style>
+  </style>
     <div class="container-xxl position-relative bg-white d-flex p-0">
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -256,201 +221,156 @@
             <%- include('../partials/adminNav') %>
             <!-- Navbar End -->
 
+            <!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-12">
+              <div class="breadcrumb__text">
+                  <div class="breadcrumb__links">
+                      <a href="/admin">Home</a>
+                      <a href="/admin/order-list"> | order</a>
+                      <span> | order details</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
             <!-- Widgets Start -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">Order details #<%= order.orderId %></h4>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-8">
-                            <!-- Order Items -->
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Total</th>
-                                            <% if(returnData){ %>
-                                            <th></th>
-                                            <% } %>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% order.productItems.forEach(product => { %>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="<%= product.productId.images[0] %>" alt="<%= product.productId.productName %>" class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                                    <div>
-                                                        <h6 class="mb-0"><%= product.productId.productName %></h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>₹<%= product.price.toFixed(2) %></td>
-                                            <td><%= product.quantity %></td>
-                                            <td>₹<%= (product.price * product.quantity).toFixed(2) %></td>
-                                            <td>
-                                                <% const returnRequest = returnData.find(r => r.productId.toString() === product._id.toString()) %>
-    
-                                                <% if (returnRequest && returnRequest.status === "Return Approved" ) { %>
-    
-    
-                                                    <span class="badge rounded-pill bg-success" style="font-weight: 400;margin-left: 38px">
-                                                      <%= returnRequest.status %>
-                                                    </span>
-                                                <% } else if (returnRequest && returnRequest.status === "Return Rejected") { %>
-                                                     
-                                                  <span class="badge rounded-pill bg-danger" style="font-weight: 400;margin-left: 38px">
-                                                    <%= returnRequest.status %>
-                    
-                                                <% } %>
-    
-                                                <% if (returnRequest && returnRequest.status === 'Return Requested') { %>
-                                                    <button type="button" class="btn btn-outline-warning" onclick="openCustomModal('<%= returnRequest._id %>')">Return Request</button>
-                                                <% } else if (product.status === 'canceled') { %>
-                                                     
-                                                    <span class="badge rounded-pill bg-danger" style="font-weight: 400;margin-left: 38px">
-                                                      <%= product.status %>
-                      
-                                                  <% } else { %>
-                                                    <span></span>
-                                                <% } %>
-                                            </td>
-                                        </tr>
-                                        <% }); %>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Order Summary -->
-                            <div class="mt-4">
-                                <div class="d-flex justify-content-between font-weight-bold mt-2">
-                                    <span>Total</span>
-                                    <span>₹<%= order.totalAmount.toFixed(2) %></span>
-                                </div>
-                                <div class="d-flex justify-content-between text-success">
-                                    <span>Payment Method:</span>
-                                    <span><%= order.paymentMethod %></span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Order Status:</span>
-                                    <span><%= order.products[0].status %></span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Order Date:</span>
-                                    <span><%= new Date(order.createdAt).toLocaleDateString() %></span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Expected Delivery Date:</span>
-                                    <span><%= new Date(order.deliveryDate).toLocaleDateString() %></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <!-- Shipping Address -->
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title d-flex justify-content-between">
-                                        Shipping Address
-                                    </h5>
-                                    <p class="mb-0"><strong><%= order.address.name %></strong></p>
-                                    <p class="mb-0"><%= order.address.address %></p>
-                                    <p class="mb-0"><%= order.address.locality %></p>
-                                    <p class="mb-0"><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
-                                    <p class="mb-0">Phone: <%= order.address.phoneNumber %></p>
-                                    <p class="mb-0">Address Type: <%= order.address.addressType %></p>
-                                </div>
-                            </div>
-    
-                            <!-- Billing Address (Dummy) -->
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Billing Address</h5>
-                                    <p class="mb-0"><strong><%= order.address.name %></strong></p>
-                                    <p class="mb-0"><%= order.address.address %></p>
-                                    <p class="mb-0"><%= order.address.locality %></p>
-                                    <p class="mb-0"><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
-                                    <p class="mb-0">Phone: <%= order.address.phoneNumber %></p>
-                                    <p class="mb-0">Address Type: <%= order.address.addressType %></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Shipping Activity Timeline -->
-                    <div class="mt-5">
-                        <h5 class="mb-3">Shipping activity</h5>
-                        <div class="shipping-timeline">
-                            <div class="timeline-header d-flex align-items-center mb-3">
-                                <div class="me-2" style="width: 12px; height: 12px; background-color: #4CAF50; border-radius: 50%;"></div>
-                                <span>Marked as fulfilled</span>
-                            </div>
-                            
-                            <div class="timeline-day mb-4">
-                                <h6 class="text-muted mb-3">WEDNESDAY, 19 AUGUST</h6>
-                                
-                                <div class="timeline-item d-flex mb-3">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Delivered</p>
-                                        <p class="text-muted mb-0">4:17 AM</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="timeline-item d-flex mb-3">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Out for delivery</p>
-                                        <p class="text-muted mb-0">2:38 AM</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="timeline-item d-flex mb-3">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Package arrived at the final delivery station</p>
-                                        <p class="text-muted mb-0">2:00 AM</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-day">
-                                <h6 class="text-muted mb-3">TUESDAY, 18 AUGUST</h6>
-                                
-                                <div class="timeline-item d-flex mb-3">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Tracking number</p>
-                                        <p class="text-primary mb-0">3981241023109293</p>
-                                        <p class="text-muted mb-0">6:29 AM</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="timeline-item d-flex mb-3">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Package has dispatched</p>
-                                        <p class="text-muted mb-0">6:29 AM</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="timeline-item d-flex">
-                                    <div class="me-3" style="width: 10px; height: 10px; background-color: #e0e0e0; border-radius: 50%; margin-top: 6px;"></div>
-                                    <div>
-                                        <p class="mb-0 fw-bold">Order was placed</p>
-                                        <p class="text-muted mb-0">Order #32543</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Shopping Cart Section Begin -->
+            <div class="main-content">
+              
+              <div class="order-details">
+                <div class="order-header">
+                  <h2>Order details</h2>
+                  <div>
+                    <span>
+                      <%
+                         var date = new Date(userOrder.dateOrdered)
+                          var options = { 
+                              weekday: 'short', 
+                              year: 'numeric', 
+                              month: 'short', 
+                              day: 'numeric' 
+                          }; 
+                          var formattedDate = date.toLocaleDateString('en-US', options)
+                          var timeOptions = {
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              hour12: true
+                          };
+                          var formattedTime = date.toLocaleTimeString('en-US', timeOptions)
+                          var finalFormattedDate = formattedDate + ', ' + formattedTime
+                      %>
+                      <%= finalFormattedDate %>
+                  </span>
+                  &emsp;
+                  Status
+                  <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
+                    <a href="" class="text-danger">
+                        <%= userOrder.status %>
+                    </a>
+                    <% }else if(userOrder.status === 'Delivered'){ %>
+                        <p>Delivered</p>
+                    <% }else{ %>
+                <select name="status" data-order-id="<%= userOrder._id %>"
+                     onchange="updateStatus(this)">
+                    <% const statuses=['Pending', 'Processing' , 'Shipped' , 'Delivered' ]; %>
+                        <% statuses.forEach(status=> { %>
+                            <option value="<%= status %>" <%=userOrder.status===status
+                                ? 'selected' : '' %>><%= status %>
+                            </option>
+                            <% }) %>
+                            <% } %>
+                </select>
+                  </div>
                 </div>
+                <div class="customer-info">
+                  <div class="info-box">
+                    <h3>Customer</h3>
+                    <p><%=userOrder.userName%></p>
+                    <p><%=thisUser.email%></p>
+                    <p>+91 <%=userOrder.billingAddress[0].mobile%></p>
+                    <a href="#">View profile</a>
+                  </div>
+                  <div class="info-box">
+                    <h3>Other details</h3>
+                    <p>Shipping: <%=userOrder.billingAddress[0].locality%></p>
+                    <p>Payment method: <%=userOrder.paymentMethod%></p>
+                    <p>Status: 
+                      <span class="radius-4 
+                          <%= userOrder.status === 'Pending' ? 'status-pending' : '' %>
+                          <%= userOrder.status === 'Delivered' ? 'status-delivered' : '' %>
+                          <%= userOrder.status === 'Processing' ? 'status-processing' : '' %>
+                          <%= userOrder.status === 'Shipped' ? 'status-shipped' : '' %>
+                          <%= userOrder.status === 'Cancelled' ? 'status-cancelled' : '' %>">
+                          <%= userOrder.status %>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="info-box">
+                    <h3>Deliver to</h3>
+                    <p>City: <%=userOrder.billingAddress[0].city%></p>
+                    <p>Street: <%=userOrder.billingAddress[0].locality%></p>
+                    <p>Address: <%=userOrder.billingAddress[0].address%></p>
+                  </div>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Status</th>
+                      <th>Quantity</th>
+                      <th>Unit Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%userOrder.productItems.forEach(function(order){%>
+                    <tr>
+                      <td><%=order.name%></td>
+                      <td class="<%= order.status === 'Pending' ? 'status-pending' : '' %>
+                        <%= order.status === 'Delivered' ? 'status-delivered' : '' %>
+                        <%= order.status === 'Processing' ? 'status-processing' : '' %>
+                        <%= order.status === 'Shipped' ? 'status-shipped' : '' %>
+                        <%= order.status === 'Cancelled' ? 'status-cancelled' : '' %>">
+                          
+                        <%=order.status%>
+                      </td>
+                      <td><%=order.quantity%></td>
+                      <td>₹<%=order.price%></td>
+                      <td>₹<%=order.quantity * order.price%></td>
+                    </tr>
+                    <%})%>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="3">Subtotal</td>
+                      <td>₹<%=userOrder.totalPrice%></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">Shipping cost</td>
+                      <td>₹40.00</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">Grandtotal</td>
+                      <td>₹<%=userOrder.totalPrice + 40%></td>
+                    </tr>
+                  </tfoot>
+                </table>
+                <!-- <div class="payment-info">
+                  <h3>Payment info</h3>
+                  <p>Master Card **** **** 4768</p>
+                  <p>Business name: Master Card, Inc.</p>
+                  <p>Phone: +1 (800) 555-154-52</p>
+                </div> -->
+              </div>
             </div>
-            <!-- Widgets End -->
+<!-- Shopping Cart Section End -->
+
+<!-- Widgets End -->
 
 
             <!-- Footer Start -->
@@ -485,62 +405,58 @@
     <!-- Template Javascript -->
     <script src="/admin/js/main.js"></script>
     
-    <script>
-        // Product bolck and unblock
-        function updateStatus(selectElement) {
-          const orderId = selectElement.getAttribute('data-order-id');
-          const status = selectElement.value;
-          console.log("orderid",orderId);
-          console.log("stus",status);
-        // Show SweetAlert confirmation dialog
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You want to change the status!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, change it!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            console.log("ajax working");
-            $.ajax({
-              url: "/admin/order/orderStatus",
-              method: "post",
-              contentType: "application/json",
-              dataType: "json",
-              data: JSON.stringify({ orderId, status }),
-              success: function (res) {
-                Swal.fire({
-                  text: res.msg,
-                  icon: "success",
-                  timer: 1000,
-                  showConfirmButton: false,
-                });
-                console.log("loggggggg");
-                setTimeout(() => {
-                window.location.reload();
-                }, 800);
-              },
-              error: function (err) {
-                Swal.fire({
-                  text: "Something went wrong",
-                  icon: "error",
-                  timer: 3000,
-                  showConfirmButton: false,
-                });
-                console.log(err);
-              },
-            });
-          }
-        });
-      }
-
-        $(document).ready(function () {
-        $("#userTable").DataTable();
+<script>
+  // Product status updation
+  function updateStatus(selectElement) {
+    const orderId = selectElement.getAttribute('data-order-id');
+    const status = selectElement.value;
+    console.log("orderid",orderId);
+    console.log("stus",status);
+  // Show SweetAlert confirmation dialog
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You want to change the status!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, change it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log("ajax working");
+      $.ajax({
+        url: "/admin/order/orderStatus",
+        method: "post",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({ orderId, status }),
+        success: function (res) {
+          Swal.fire({
+            text: res.msg,
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          console.log("loggggggg");
+          setTimeout(() => {
+          window.location.reload();
+          }, 800);
+        },
+        error: function (err) {
+          Swal.fire({
+            text: "Something went wrong",
+            icon: "error",
+            timer: 3000,
+            showConfirmButton: false,
+          });
+          console.log(err);
+        },
       });
-    </script>
+    }
+  });
+}
 
+</script>
 
 </body>
 
