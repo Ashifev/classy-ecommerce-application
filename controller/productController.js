@@ -10,7 +10,6 @@ module.exports = {
             const err = null
             req.session.success = null
             const products = await productDb.find({isActive : true}).populate('brand').populate('category').sort({createdAt:-1});
-            console.log("products",products);
             res.render('admin/products',{products,success,err})
         }catch(err){
             console.log("Error in product listing",err);
@@ -63,7 +62,9 @@ module.exports = {
         }
     },
     editedProduct : async(req,res)=>{
-        const {name,price,description,category,brand,stockQuantity} = req.body;
+        const {name,price,description,category,brand,stockQuantity,index} = req.body;
+        console.log("indexxx",index);
+        
         const files = req.files
         const {id} = req.params;
         const Name = name
@@ -74,7 +75,14 @@ module.exports = {
                 res.redirect('/admin/edit-product')
             }else{
                const image = Object.values(files).flat().map((file)=> `/uploads/products/${file.filename}`)
-               const product =  await productDb.findByIdAndUpdate({_id:id},{name:Name,price:price,description:description,brand:brand,category:category,stockQuantity:stockQuantity,image:image},{new : true})
+               console.log("imagesss",image);
+               
+               const product =  await productDb.findByIdAndUpdate({_id:id},{name:Name,price:price,description:description,brand:brand,category:category,stockQuantity:stockQuantity},{new : true})
+               if(image.length !==0){
+                // product.image[index] = image;
+                // await product.save();
+                await productDb.findByIdAndUpdate({_id:id},{image:image},{new : true})
+               }
                if(!product){
                 req.session.errMsg = "Product not found";
                 res.redirect('/admin/products')
@@ -86,6 +94,13 @@ module.exports = {
             console.log("edited product error",err);
             res.render('500');
         }
+    },
+    cropImage: async (req, res) => {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No image file provided' });
+        }
+        const croppedImagePath = `/uploads/products/${req.file.filename}`;
+        res.json({ success: true, croppedImagePath });
     },
     deleteProduct : async(req,res)=>{
         try{

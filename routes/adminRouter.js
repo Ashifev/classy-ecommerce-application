@@ -32,6 +32,8 @@ router.post('/product-added',adminAuth.adminExist,upload.array('images', 10),pro
 router.get('/edit-product/:id',adminAuth.adminExist,productController.getEditProduct);
 /* Edited Product */
 router.post('/product-edited/:id',adminAuth.adminExist,upload.array('images', 10),productController.editedProduct);
+
+router.post('/crop-image', upload.single('croppedImage'), productController.cropImage);
 /* Soft Delete Product */
 router.patch('/deleteProduct/:id',adminAuth.adminExist,productController.deleteProduct);
 
@@ -76,5 +78,8 @@ router.patch('/updateStatus/:id',adminAuth.adminExist,userManagement.updateStatu
 router.get('/order-list',adminAuth.adminExist,orderManagement.getAdminOrderList);
 router.post('/order/orderStatus',adminAuth.adminExist,orderManagement.updateOrderStatus);
 router.get('/order-view/:id',adminAuth.adminExist,orderManagement.getAdminOrderView);
+
+//accept return request
+router.post('/accept-request',adminAuth.adminExist,orderManagement.acceptReturn)
 
 module.exports = router;

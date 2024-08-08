@@ -257,15 +257,18 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  <img id="imageToCrop" src="" alt="Image to crop" style="max-width: 100%;">
+                  <div class="img-container">
+                      <img id="cropperImage" src="" alt="Image for cropping">
+                  </div>
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary" id="cropImage">Crop</button>
+                  <button type="button" class="btn btn-primary" id="cropButton">Crop</button>
               </div>
           </div>
       </div>
   </div>
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -280,145 +283,72 @@
     <!-- Template Javascript -->
     <script src="/admin/js/main.js"></script>
 
-    <!-- Cropper.js JavaScript -->
+    <!-- Cropper.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
-    
+    <!-- Custom Javascript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const productForm = document.getElementById('productForm');
-  
-            productForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                validateForm();
-            });
-        });
-  
-        function validateForm() {
-            const form = document.getElementById('productForm');
-            const name = form.elements['name'].value.trim();
-            const description = form.elements['description'].value.trim();
-            const price = form.elements['price'].value.trim();
-            const quantity = form.elements['stockQuantity'].value.trim();
-            const images = form.elements['images'].files;
-            const category = form.elements['category'].value;
-            const brand = form.elements['brand'].value;
-  
-            const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(error => error.textContent = '');
-  
-            let isValid = true;
-  
-            if (name === '') {
-                displayErrorMessage('Product Name is required', 'name-error');
-                isValid = false;
-            }
-  
-            if (description === '') {
-                displayErrorMessage('Product Description is required', 'description-error');
-                isValid = false;
-            }
-  
-            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
-                displayErrorMessage('Please enter a valid positive price', 'price-error');
-                isValid = false;
-            }
-  
-            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
-                displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
-                isValid = false;
-            }
-            if (category === '') {
-                displayErrorMessage('Product Category is required', 'category-error');
-                isValid = false;
-            }
-  
-            if (brand === '') {
-                displayErrorMessage('Product brand is required', 'brand-error');
-                isValid = false;
-            }
-  
-            if (isValid) {
-                form.submit();
-            }
-        }
-  
-    </script>
-
-<script>
-        let deletedImages = [];
+      let deletedImages = [];
         let editedImages = [];
         let cropper;
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            const productForm = document.getElementById('productForm');
-    
-            productForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                if (validateForm()) {
-                    updateDeletedImagesInput();
-                    updateEditedImagesInput();
-                    this.submit();
-                }
-            });
-        });
 
-        function validateForm() {
-            const form = document.getElementById('productForm');
-            const name = form.elements['name'].value.trim();
-            const description = form.elements['description'].value.trim();
-            const price = form.elements['price'].value.trim();
-            const quantity = form.elements['stockQuantity'].value.trim();
-            const category = form.elements['category'].value;
-            const brand = form.elements['brand'].value;
-            const discountAmount = form.elements['discountAmount'].value.trim();
-    
-            const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(error => error.textContent = '');
-    
-            let isValid = true;
-    
-            if (name === '') {
-                displayErrorMessage('Product Name is required', 'name-error');
-                isValid = false;
-            }
-    
-            if (description === '') {
-                displayErrorMessage('Product Description is required', 'description-error');
-                isValid = false;
-            }
-    
-            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
-                displayErrorMessage('Please enter a valid positive price', 'price-error');
-                isValid = false;
-            }
-    
-            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
-                displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
-                isValid = false;
-            }
-    
-            if (category === '') {
-                displayErrorMessage('Product Category is required', 'category-error');
-                isValid = false;
-            }
-
-            // Optional fields validation
-            if (discountAmount !== '' && (isNaN(discountAmount) || parseFloat(discountAmount) < 0)) {
-                displayErrorMessage('Please enter a valid positive discount amount', 'discount-error');
-                isValid = false;
-            }
-    
-            return isValid;
+      document.getElementById('productForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        if (validateForm()) {
+            updateDeletedImagesInput();
+            updateEditedImagesInput();
+            this.submit();  
         }
-    
-        function displayErrorMessage(message, elementId) {
-            const errorSpan = document.getElementById(elementId);
-            errorSpan.textContent = message;
-            errorSpan.style.color = 'red';
+      });
+
+      function validateForm() {
+        const form = document.getElementById('productForm');
+        const name = form.elements['name'].value.trim();
+        const description = form.elements['description'].value.trim();
+        const price = form.elements['price'].value.trim();
+        const quantity = form.elements['stockQuantity'].value.trim();
+        const category = form.elements['category'].value;
+        const brand = form.elements['brand'].value;
+
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(error => error.textContent = '');
+
+        let isValid = true;
+
+        if (name === '') {
+            displayErrorMessage('Product Name is required', 'name-error');
+            isValid = false;
         }
 
-        function editImage(imageSrc, index) {
+        if (description === '') {
+            displayErrorMessage('Product Description is required', 'description-error');
+            isValid = false;
+        }
+
+        if (price === '' || isNaN(price) || parseFloat(price) < 0) {
+            displayErrorMessage('Please enter a valid positive price', 'price-error');
+            isValid = false;
+        }
+
+        if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
+            displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
+            isValid = false;
+        }
+
+        if (category === '') {
+            displayErrorMessage('Product Category is required', 'category-error');
+            isValid = false;
+        }
+
+        if (brand === '') {
+            displayErrorMessage('Product Brand is required', 'brand-error');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function editImage(imageSrc, index) {
             const modal = new bootstrap.Modal(document.getElementById('cropperModal'));
             const image = document.getElementById('imageToCrop');
             image.src = imageSrc;
@@ -459,7 +389,6 @@
         }
 
         function handleNewImages(input) {
-
             const files = Array.from(input.files);
             files.forEach(file => {
                 const reader = new FileReader();
@@ -494,7 +423,6 @@
         function updateEditedImagesInput() {
             document.getElementById('editedImagesInput').value = JSON.stringify(editedImages);
         }
-</script>
+    </script>
 </body>
-
 </html>

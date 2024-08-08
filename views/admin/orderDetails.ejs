@@ -271,7 +271,7 @@
                   </span>
                   &emsp;
                   Status
-                  <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
+                  <% if (['Return Requested', 'return request accepted','Return Request Accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
                     <a href="" class="text-danger">
                         <%= userOrder.status %>
                     </a>
@@ -338,14 +338,24 @@
                         <%= order.status === 'Delivered' ? 'status-delivered' : '' %>
                         <%= order.status === 'Processing' ? 'status-processing' : '' %>
                         <%= order.status === 'Shipped' ? 'status-shipped' : '' %>
-                        <%= order.status === 'Return Request' ? 'status-request' : '' %>
+                        <%= order.status === 'Return Requested' ? 'status-request' : '' %>
                         <%= order.status === 'Cancelled' ? 'status-cancelled' : '' %>">
                           
                         <%=order.status%>
                       </td>
-                      <td><%=order.quantity%></td>
+                      <% if (['return request accepted','Cancelled','Return Request Accepted','product returned'].includes(order.status)) { %>
+                      <td style="color: red;"><s><%=order.quantity%></s></td>
+                      <td style="color: red;"><s>₹<%=order.price%></s></td>
+                      <%} else {%>
+                        <td ><%=order.quantity%></td>
                       <td>₹<%=order.price%></td>
-                      <td>₹<%=order.quantity * order.price%></td>
+                      <% } %>
+                      <% if (['return request accepted','Cancelled','Return Request Accepted','product returned'].includes(order.status)) { %>
+                        <td style="color: red;"><s>₹<%=order.quantity * order.price%></s></td>
+                        <%} else {%>
+                          <td>₹<%=order.quantity * order.price%></td>
+                        <% } %>
+                      
                     </tr>
                     <%})%>
                   </tbody>
@@ -377,15 +387,14 @@
                     </thead>
                     <tbody>
                       <%userOrder.productItems.forEach(function(order){%>
-                        <%if(order.status === "Return Request"){%>
-                      <tr>
+                        <%if(order.status === "Return Requested"){%>
+                      <tr class="returnRequests">
                         <td><%=order.name%></td>
                         <td><%=order.quantity%></td>
-                        <td>₹<%=order.price%></td>
-                        <td>₹<%=order.quantity * order.price%></td>
+                        <td class="returnReason" data-reason="<%= order.returnReason %>"><%=order.returnReason%></td>
+                        <td><a href="#" data-product-id="<%= order.productId._id %>" style="font-size: 12px;" class="btn acceptThis btn-success w-100 mb-2">Accept Request</a></td>
                       </tr>
-                      <%}else{%>
-                        <p style="text-align: center;">No Return Request Yet</p>
+                     
                       <%}%>
                       <%})%>
                     </tbody>
@@ -483,6 +492,59 @@
 
 </script>
 
+<!-- Order Return request Button-->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const orderId = "<%=userOrder._id%>"
+    document.querySelectorAll(".returnRequests").forEach(function (element) {
+      const acceptRequest = element.querySelector(".acceptThis");
+      const returnReason = element.querySelector(".returnReason").getAttribute('data-reason');
+      const acceptItem = element.querySelector(".acceptThis").getAttribute("data-product-id");
+      acceptRequest.addEventListener("click", function (event) {
+        event.preventDefault();
+        const Data = new URLSearchParams({
+          orderId,
+          acceptItem,
+          returnReason
+        });
+
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You want to accept this request",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Accept it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log("click cheyythuuu ");
+            
+            fetch(`/admin/accept-request?${Data}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            })
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.success) {
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: response.msg,
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              }
+            });
+          }
+        });
+      });
+    });
+  });
+</script>
 </body>
 
 </html>

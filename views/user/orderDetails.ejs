@@ -96,7 +96,7 @@
                 <% } else if(userOrder.status === 'Delivered') { %>
                   <div style="width: 80%" class="d-flex flex-row justify-content-between align-items-center">
                     <p class="text-green" style="font-size: 20px; margin: 0">Delivered</p>
-                    <a href="" data-orderId="<%= userOrder._id %>" id="orderReturn" class="btn btn-primary w-60">Return Order</a>
+               
                   </div>
                 <% } else { %>
                   <a href="" data-orderId="<%= userOrder._id %>" id="orderCancell" class="btn btn-danger w-100">Cancel Order</a>
@@ -132,10 +132,9 @@
               </div>
               <div class="col-8 d-flex flex-column">
                 <% userOrder.productItems.forEach(function(product) { %>
-                  
                   <div class="row orderDetails no-gutters mt-3">
                     <div class="col-3 col-md-1">
-                      <img class="img-fluid pr-3" src="https://tanga2.imgix.net/https%3A%2F%2Fs3.amazonaws.com%2Ftanga-images%2Ffc79d08c12dc.jpeg?ixlib=rails-2.1.1&fit=crop&w=500&h=500&auto=format%2Ccompress&cs=srgb&s=c9a50d474788f2658d13b21aa62edd6c" alt="" />
+                      <img class="img-fluid pr-3" src="<%= product.imageURL %>" alt="" />
                     </div>
                     <div class="col-9 col-md-8 pr-0 pr-md-3">
                       <h6 class="text-charcoal mb-2 mb-md-1">
@@ -146,38 +145,37 @@
                       </h6>
                     </div>
                     <div class="col-12 col-md-3 hidden-sm-down">
-                      
-                      <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(product.status)) { %>
+                      <% if (['Return Requested', 'return request accepted','return requested','Return Request Accepted', 'return request rejected','Cancelled','product returned'].includes(product.status)) { %>
                         <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
                         <p style="font-size: 20px; text-align: center" class="text-danger"><%= product.status %></p>
-                        <% } else if(userOrder.status === 'Delivered') { %>
-                          <div class="alert w-100 mb-0">
-                            <p class="text-green hidden-sm-down mb-0">Delivered</p>
-                          </div>
-                          <a href="#" data-product-id="<%= product.productId._id %>" class="btn returnThis btn-primary w-100 mb-2">Return</a>
+                      <% } else if(userOrder.status === 'Delivered') { %>
+                        <div class="alert w-100 mb-0">
+                          <p class="text-green hidden-sm-down mb-0">Delivered</p>
+                        </div>
+                        <a href="#" data-product-id="<%= product.productId._id %>" class="btn returnThis btn-primary w-100 mb-2">Return</a>
                       <% } else { %>
                         <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
-                        <a href="" data-product-id="<%= product.productId._id %>" class="btn cancelThis btn-danger w-100 mb-2">Cancel This</a>
+                        <a href="#" data-product-id="<%= product.productId._id %>" class="btn cancelThis btn-danger w-100 mb-2">Cancel This</a>
                       <% } %>
-                    </div>
-
-                    <div id="returnModal" class="order-details-modal">
-                      <div class="order-details-modal-content">
-                          <span class="order-details-close-btn">&times;</span>
-                          <h2>Return Product</h2>
-                          <form style="display: flex; flex-direction: column;" id="returnForm">
-                              <label for="returnReason">Reason for Return:</label>
-                              <textarea id="returnReason" name="returnReason"
-                                  class="order-details-textarea" required></textarea>
-                              <button type="submit"
-                                  class="order-details-return-submit">Submit
-                                  Return</button>
-                          </form>
-                      </div>
                     </div>
                   </div>
                 <% }) %>
               </div>
+              
+              <!-- Return Reason Modal -->
+              <div id="returnModal" class="order-details-modal">
+                <div class="order-details-modal-content">
+                  <span class="order-details-close-btn">&times;</span>
+                  <h2>Return Product</h2>
+                  <form style="display: flex; flex-direction: column;" id="returnForm">
+                    <label for="returnReason">Reason for Return:</label>
+                    <textarea id="returnReason" name="returnReason" class="order-details-textarea" required></textarea>
+                    <input type="hidden" id="returnProductId" name="productId">
+                    <button type="submit" class="order-details-return-submit">Submit Return</button>
+                  </form>
+                </div>
+              </div>
+              
 
 
               
@@ -234,7 +232,7 @@
 </script>
 
 <!-- Order Cancel Individually-->
-<script>
+<!-- <script>
   document.addEventListener("DOMContentLoaded", function () {
     const orderId = document.getElementById("orderCancell").getAttribute("data-orderId");
     document.querySelectorAll(".orderDetails").forEach(function (element) {
@@ -284,8 +282,57 @@
       });
     });
   });
-</script>
+</script> -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  // Handle cancel functionality
+  const orderId = document.getElementById("orderCancell").getAttribute("data-orderId");
+  document.querySelectorAll(".cancelThis").forEach(function (cancelBtn) {
+    cancelBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      // const orderId = cancelBtn.closest(".orderDetails").getAttribute("data-order-id");
+      const orderItem = cancelBtn.getAttribute("data-product-id");
 
+      const Data = new URLSearchParams({
+        orderId,
+        orderItem,
+      });
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You want to cancel this order",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, cancel it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/cancel-item?${Data}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.success) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: response.msg,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }
+          });
+        }
+      });
+    });
+  });
+  })
+</script>
 <!-- All Order Return individually-->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -315,7 +362,7 @@
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
-    const orderId = document.querySelector(".orderDetails").getAttribute("data-order-id"); // Adjust according to your HTML structure
+    const orderId = "<%=userOrder._id%>"
     const productId = returnProductId.value;
     const reason = returnReason.value;
 

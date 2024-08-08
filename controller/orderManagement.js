@@ -45,5 +45,61 @@ getAdminOrderView: async(req,res)=>{
         console.error("error at admin order list",err);
         res.render("500");
     }
+},
+acceptReturn : async(req,res)=>{
+    try{
+        console.log("reaacheddd");
+        
+        const { orderId, acceptItem, returnReason } = req.query;
+        let itemQuantity = 0;
+        const orders = await orderDB.findById(orderId);
+        console.log("this Order",orders);
+        
+        const returnItem = orders.productItems.filter((value)=>{
+            if(value.productId.toString()===acceptItem) return value
+        });
+        console.log("return Item",returnItem);
+        
+        orders.productItems.forEach((value)=>{
+            console.log("value.id",value.productId);
+            returnItem.forEach((item) => {
+                if (value.productId.toString() === item.productId.toString()) {
+                    value.status = "Return Request Accepted";
+                    // orders.totalPrice = parseInt(orders.totalPrice) - parseInt(value.price); 
+                    itemQuantity = parseInt(value.quantity) 
+                }
+            })
+        })
+
+
+        // console.log("item quantity", itemQuantity);
+
+        // Qauntity Increase
+            orders.productItems.forEach((value)=>{
+                returnItem.forEach(async (item) => {
+                    if (value.productId.toString() === item.productId.toString()) {
+                       await productDB.findByIdAndUpdate(
+                           value.productId,
+                           { $inc: { stockQuantity: value.quantity } },
+                           { new: true }
+                       );
+                   }
+               })
+           })
+        
+        await orders.save();
+    //     let count = 0;
+    //     orders.productItems.forEach((value)=>{
+    //         if(value.status === "Cancelled"){
+    //             count ++;
+    //         }
+    //    })
+    //    console.log("count",count);
+       
+        res.status(200).json({success:true,msg:"order Return Requested successfully"})
+    }catch(err){
+        console.error("error at order cancel",err);
+        res.render("500");
+    }
 }
 }

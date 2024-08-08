@@ -337,7 +337,7 @@
                                     <%= order.status === 'Shipped' ? 'status-shipped' : '' %>"><%= order.status %>
 
                                     <%order.productItems.forEach(function(product){%>
-                                      <%if(product.status === "Return Request"){%>
+                                      <%if(product.status === "Return Requested"){%>
                                          <span style="font-size: 0.5em;" class="badge badge-secondary bg-danger">Request found</span>
                                        <%}%>
                                        <%})%>  </span>
@@ -345,7 +345,7 @@
                                 </td>
                                 
                                 <td>
-                                  <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(order.status)) { %>
+                                  <% if (['Return Requested', 'return request accepted','return requested','Return Request Accepted', 'return request rejected','Cancelled','product returned'].includes(order.status)) { %>
                                       <a href="" class="text-danger">
                                           <%= order.status %>
                                       </a>

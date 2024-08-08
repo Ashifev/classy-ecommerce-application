@@ -115,6 +115,7 @@ orderCancel: async(req,res)=>{
 
         cancelOrder.status = "Cancelled";
         cancelOrder.productItems.forEach((product)=>{
+            // cancelOrder.totalPrice = parseInt(cancelOrder.totalPrice) - parseInt(product.price); 
             product.status = "Cancelled"
         })
         
@@ -151,6 +152,7 @@ itemCancel: async(req,res)=>{
             cancelItems.forEach((cancelItem) => {
                 if (value.productId.toString() === cancelItem.productId.toString()) {
                     value.status = "Cancelled";
+                    // orders.totalPrice = parseInt(orders.totalPrice) - parseInt(value.price); 
                     itemQuantity = parseInt(value.quantity) 
                 }
             })
@@ -177,9 +179,44 @@ itemCancel: async(req,res)=>{
                 count ++;
             }
        })
+
+       if(count === orders.productItems.length){
+        orders.status = "Cancelled"
+       }
+
+       await orders.save();
        console.log("count",count);
        
         res.status(200).json({success:true,msg:"order cancelled successfully"})
+    }catch(err){
+        console.error("error at order cancel",err);
+        res.render("500");
+    }
+},
+itemReturn : async(req,res)=>{
+    try{
+        const { orderId, productId, reason } = req.query;
+        // const orderItem = req.params.id
+        // let itemQuantity = 0
+        const orders = await orderDB.findById(orderId);
+        console.log("this Order",orders);
+        
+        const returnItem = orders.productItems.filter((value)=>{
+            if(value.productId.toString()===productId) return value
+        });
+
+        orders.productItems.forEach((value)=>{
+            console.log("value.id",value.productId);
+            returnItem.forEach((item) => {
+                if (value.productId.toString() === item.productId.toString()) {
+                    value.status = "Return Requested";
+                    value.returnReason = reason;
+                }
+            })
+        })
+        await orders.save();
+       
+        res.status(200).json({success:true,msg:"order Return Requested successfully"})
     }catch(err){
         console.error("error at order cancel",err);
         res.render("500");
