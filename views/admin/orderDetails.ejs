@@ -198,6 +198,9 @@
 .status-cancelled {
     color: red;
 }
+.status-request{
+  color: red;
+}
 
     </style>
   </style>
@@ -335,6 +338,7 @@
                         <%= order.status === 'Delivered' ? 'status-delivered' : '' %>
                         <%= order.status === 'Processing' ? 'status-processing' : '' %>
                         <%= order.status === 'Shipped' ? 'status-shipped' : '' %>
+                        <%= order.status === 'Return Request' ? 'status-request' : '' %>
                         <%= order.status === 'Cancelled' ? 'status-cancelled' : '' %>">
                           
                         <%=order.status%>
@@ -360,12 +364,33 @@
                     </tr>
                   </tfoot>
                 </table>
-                <!-- <div class="payment-info">
-                  <h3>Payment info</h3>
-                  <p>Master Card **** **** 4768</p>
-                  <p>Business name: Master Card, Inc.</p>
-                  <p>Phone: +1 (800) 555-154-52</p>
-                </div> -->
+                <div class="payment-info">
+                  <h3 class="text-danger">Return Request</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Return Reason</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%userOrder.productItems.forEach(function(order){%>
+                        <%if(order.status === "Return Request"){%>
+                      <tr>
+                        <td><%=order.name%></td>
+                        <td><%=order.quantity%></td>
+                        <td>₹<%=order.price%></td>
+                        <td>₹<%=order.quantity * order.price%></td>
+                      </tr>
+                      <%}else{%>
+                        <p style="text-align: center;">No Return Request Yet</p>
+                      <%}%>
+                      <%})%>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 <!-- Shopping Cart Section End -->

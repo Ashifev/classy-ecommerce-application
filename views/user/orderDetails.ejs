@@ -4,6 +4,44 @@
 <%- include('../partials/userHeader') %>
 <!-- Header Section End -->
 
+<style>
+  /* Style for the modal */
+  .order-details-modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  .order-details-modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 30%;
+  }
+
+  .order-details-close-btn {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+  }
+
+  .order-details-close-btn:hover,
+  .order-details-close-btn:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+  }
+</style>
+
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
   <div class="container">
@@ -108,16 +146,42 @@
                       </h6>
                     </div>
                     <div class="col-12 col-md-3 hidden-sm-down">
-                      <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
+                      
                       <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(product.status)) { %>
+                        <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
                         <p style="font-size: 20px; text-align: center" class="text-danger"><%= product.status %></p>
+                        <% } else if(userOrder.status === 'Delivered') { %>
+                          <div class="alert w-100 mb-0">
+                            <p class="text-green hidden-sm-down mb-0">Delivered</p>
+                          </div>
+                          <a href="#" data-product-id="<%= product.productId._id %>" class="btn returnThis btn-primary w-100 mb-2">Return</a>
                       <% } else { %>
+                        <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
                         <a href="" data-product-id="<%= product.productId._id %>" class="btn cancelThis btn-danger w-100 mb-2">Cancel This</a>
                       <% } %>
+                    </div>
+
+                    <div id="returnModal" class="order-details-modal">
+                      <div class="order-details-modal-content">
+                          <span class="order-details-close-btn">&times;</span>
+                          <h2>Return Product</h2>
+                          <form style="display: flex; flex-direction: column;" id="returnForm">
+                              <label for="returnReason">Reason for Return:</label>
+                              <textarea id="returnReason" name="returnReason"
+                                  class="order-details-textarea" required></textarea>
+                              <button type="submit"
+                                  class="order-details-return-submit">Submit
+                                  Return</button>
+                          </form>
+                      </div>
                     </div>
                   </div>
                 <% }) %>
               </div>
+
+
+              
+
             </div>
           </div>
         </div>
@@ -127,6 +191,7 @@
 </section>
 <!-- Shopping Cart Section End -->
 
+<!-- All Order Cancel-->
 <script>
   const orderId = document.getElementById("orderCancell").getAttribute("data-orderId");
   document.getElementById("orderCancell").addEventListener("click", function (event) {
@@ -168,6 +233,7 @@
   });
 </script>
 
+<!-- Order Cancel Individually-->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const orderId = document.getElementById("orderCancell").getAttribute("data-orderId");
@@ -220,6 +286,76 @@
   });
 </script>
 
+<!-- All Order Return individually-->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("returnModal");
+  const span = document.getElementsByClassName("order-details-close-btn")[0];
+  const form = document.getElementById("returnForm");
+  const returnReason = document.getElementById('returnReason');
+  const returnProductId = document.getElementById('returnProductId');
+
+  document.querySelectorAll(".returnThis").forEach(function (btn) {
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();
+      returnProductId.value = btn.getAttribute("data-product-id");
+      modal.style.display = "block";
+    });
+  });
+
+  span.onclick = function () {
+    modal.style.display = "none";
+  }
+
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const orderId = document.querySelector(".orderDetails").getAttribute("data-order-id"); // Adjust according to your HTML structure
+    const productId = returnProductId.value;
+    const reason = returnReason.value;
+
+    const data = new URLSearchParams({ orderId, productId, reason });
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to return this product",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, return it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/Return-item?${data}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        })
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.success) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: response.msg,
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          }
+        });
+      }
+    });
+  });
+});
+
+</script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>
 <!-- Footer Section End -->

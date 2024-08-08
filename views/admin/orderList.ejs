@@ -334,7 +334,14 @@
                                   <span class="radius-4 <%= order.status === 'Pending' ? 'status-pending' : '' %>
                                     <%= order.status === 'Delivered' ? 'status-delivered' : '' %>
                                     <%= order.status === 'Processing' ? 'status-processing' : '' %>
-                                    <%= order.status === 'Shipped' ? 'status-shipped' : '' %>"><%= order.status %></span>
+                                    <%= order.status === 'Shipped' ? 'status-shipped' : '' %>"><%= order.status %>
+
+                                    <%order.productItems.forEach(function(product){%>
+                                      <%if(product.status === "Return Request"){%>
+                                         <span style="font-size: 0.5em;" class="badge badge-secondary bg-danger">Request found</span>
+                                       <%}%>
+                                       <%})%>  </span>
+                                    
                                 </td>
                                 
                                 <td>
