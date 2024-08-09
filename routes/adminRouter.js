@@ -31,7 +31,7 @@ router.post('/product-added',adminAuth.adminExist,upload.array('images', 10),pro
 /* Edit Product */
 router.get('/edit-product/:id',adminAuth.adminExist,productController.getEditProduct);
 /* Edited Product */
-router.post('/product-edited/:id',adminAuth.adminExist,upload.array('images', 10),productController.editedProduct);
+router.post('/product-edited/:id',adminAuth.adminExist,upload.fields([{ name: 'newImages', maxCount: 10 }]),productController.editedProduct);
 
 router.post('/crop-image', upload.single('croppedImage'), productController.cropImage);
 /* Soft Delete Product */

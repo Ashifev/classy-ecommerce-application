@@ -70,9 +70,10 @@
         overflow: auto;
     }
     .error-message {
-        color: red;
-        font-size: 0.875em;
-    }
+    color: red;
+    display: block; 
+    margin-top: 5px; 
+}
 </style>
     <div class="container-xxl position-relative bg-white d-flex p-0">
         <!-- Spinner Start -->
@@ -168,44 +169,25 @@
                           <div style="display: flex; justify-content: space-evenly;" class="selected-images-container" id="selectedImagesContainer"></div>
 
 
-                            <div class="col-12">
-                              <label for="inputCategory" class="form-label">Category</label>
-                              <select
-                                class="form-select"
-                                id="inputCategory"
-                                name="category"
-                                required
-                              >
-                                <option selected disabled><%=product.category.name%></option>
-                                <% category.forEach(function(category) { %>
-                                  <% if (category.isActive) { %>
-                                    <option value="<%= category._id %>">
-                                      <%= category.name %>
-                                    </option>
-                                  <% } %>
+                          <div class="col-12">
+                            <label for="inputCategory" class="form-label">Category</label>
+                            <select class="form-select" id="inputCategory" name="category" required>
+                                <% category.forEach(function(cat) { %>
+                                    <option value="<%= cat._id %>" <%= product.category._id.equals(cat._id) ? 'selected' : '' %>><%= cat.name %></option>
                                 <% }); %>
-                              </select>
-                              <span class="error-message" id="category-error"></span>
-                            </div>
-                            <div class="col-12">
-                              <label for="inputBrand" class="form-label">Brand</label>
-                              <select
-                                class="form-select"
-                                id="inputBrand"
-                                name="brand"
-                                required
-                              >
-                                <option selected disabled><%=product.brand.name%></option>
-                                <% brand.forEach(function(brand) { %>
-                                  <% if (brand.isActive) { %>
-                                    <option value="<%= brand._id %>">
-                                      <%= brand.name %>
-                                    </option>
-                                  <% } %>
-                                <% }); %>
-                              </select>
-                              <span class="error-message" id="brand-error"></span>
-                            </div>
+                            </select>
+                            <span class="error-message" id="category-error"></span>
+                        </div>
+
+                        <div class="col-12">    
+                          <label for="inputBrand" class="form-label">Brand</label>
+                          <select class="form-select" id="inputBrand" name="brand" required>
+                              <% brand.forEach(function(bran) { %>
+                                  <option value="<%= bran._id %>" <%= product.brand._id.equals(bran._id) ? 'selected' : '' %>><%= bran.name %></option>
+                              <% }); %>
+                          </select>
+                          <span class="error-message" id="brand-error"></span>
+                      </div>
                             <div class="col-12">
                               <label for="inputStockQuantity" class="form-label">Stock Quantity</label>
                               <input
@@ -285,80 +267,19 @@
 
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+      let deletedImages = [];
+      let editedImages = [];
+      let cropper;
+  
+              document.addEventListener('DOMContentLoaded', function() {
             const productForm = document.getElementById('productForm');
-  
-            productForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                validateForm();
-            });
-        });
-  
-        function validateForm() {
-            const form = document.getElementById('productForm');
-            const name = form.elements['name'].value.trim();
-            const description = form.elements['description'].value.trim();
-            const price = form.elements['price'].value.trim();
-            const quantity = form.elements['stockQuantity'].value.trim();
-            const images = form.elements['images'].files;
-            const category = form.elements['category'].value;
-            const brand = form.elements['brand'].value;
-  
-            const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(error => error.textContent = '');
-  
-            let isValid = true;
-  
-            if (name === '') {
-                displayErrorMessage('Product Name is required', 'name-error');
-                isValid = false;
-            }
-  
-            if (description === '') {
-                displayErrorMessage('Product Description is required', 'description-error');
-                isValid = false;
-            }
-  
-            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
-                displayErrorMessage('Please enter a valid positive price', 'price-error');
-                isValid = false;
-            }
-  
-            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
-                displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
-                isValid = false;
-            }
-            if (category === '') {
-                displayErrorMessage('Product Category is required', 'category-error');
-                isValid = false;
-            }
-  
-            if (brand === '') {
-                displayErrorMessage('Product brand is required', 'brand-error');
-                isValid = false;
-            }
-  
-            if (isValid) {
-                form.submit();
-            }
-        }
-  
-    </script>
 
-<script>
-        let deletedImages = [];
-        let editedImages = [];
-        let cropper;
-    
-        document.addEventListener('DOMContentLoaded', function() {
-            const productForm = document.getElementById('productForm');
-    
             productForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 if (validateForm()) {
                     updateDeletedImagesInput();
                     updateEditedImagesInput();
-                    this.submit();
+                    productForm.submit();
                 }
             });
         });
@@ -371,130 +292,135 @@
             const quantity = form.elements['stockQuantity'].value.trim();
             const category = form.elements['category'].value;
             const brand = form.elements['brand'].value;
-            const discountAmount = form.elements['discountAmount'].value.trim();
-    
+
             const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(error => error.textContent = '');
-    
+            errorMessages.forEach(error => {
+                error.textContent = '';
+                error.style.display = 'none';
+            });
+
             let isValid = true;
-    
+
             if (name === '') {
                 displayErrorMessage('Product Name is required', 'name-error');
                 isValid = false;
             }
-    
+
             if (description === '') {
                 displayErrorMessage('Product Description is required', 'description-error');
                 isValid = false;
             }
-    
+
             if (price === '' || isNaN(price) || parseFloat(price) < 0) {
                 displayErrorMessage('Please enter a valid positive price', 'price-error');
                 isValid = false;
             }
-    
+
             if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
                 displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
                 isValid = false;
             }
-    
+
             if (category === '') {
                 displayErrorMessage('Product Category is required', 'category-error');
                 isValid = false;
             }
 
-            // Optional fields validation
-            if (discountAmount !== '' && (isNaN(discountAmount) || parseFloat(discountAmount) < 0)) {
-                displayErrorMessage('Please enter a valid positive discount amount', 'discount-error');
+            if (brand === '') {
+                displayErrorMessage('Product Brand is required', 'brand-error');
                 isValid = false;
             }
-    
+
             return isValid;
         }
-    
+
         function displayErrorMessage(message, elementId) {
-            const errorSpan = document.getElementById(elementId);
-            errorSpan.textContent = message;
-            errorSpan.style.color = 'red';
-        }
-
-        function editImage(imageSrc, index) {
-            const modal = new bootstrap.Modal(document.getElementById('cropperModal'));
-            const image = document.getElementById('imageToCrop');
-            image.src = imageSrc;
-            modal.show();
-    
-            if (cropper) {
-                cropper.destroy();
-            }
-    
-            cropper = new Cropper(image, {
-                aspectRatio: 1,
-                viewMode: 1,
-            });
-    
-            document.getElementById('cropImage').onclick = function() {
-                const croppedCanvas = cropper.getCroppedCanvas();
-                croppedCanvas.toBlob(function(blob) {
-                    const formData = new FormData();
-                    formData.append('croppedImage', blob, 'cropped.jpg');
-                    formData.append('index', index);
-    
-                    fetch('/admin/crop-image', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const img = document.querySelector(`#image-${index} img`);
-                            img.src = data.croppedImagePath;
-                            editedImages.push({ index: index, path: data.croppedImagePath });
-                            modal.hide();
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                });
-            };
-        }
-
-        function handleNewImages(input) {
-
-            const files = Array.from(input.files);
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const index = document.querySelectorAll('.image-item').length;
-                    const imageHtml = `
-                        <div class="image-item" id="image-${index}">
-                            <img src="${e.target.result}" alt="New Product Image">
-                            <div class="image-actions">
-                                <button type="button" class="btn btn-danger btn-image-action" onclick="deleteImage(${index})">Delete</button>
-                                <button type="button" class="btn btn-primary btn-image-action" onclick="editImage('${e.target.result}', ${index})">Edit</button>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('imageContainer').insertAdjacentHTML('beforeend', imageHtml);
-                }
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function deleteImage(index) {
-            const imageElement = document.getElementById(`image-${index}`);
-            if (imageElement) {
-                imageElement.remove();
-                deletedImages.push(index);
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
             }
         }
 
-        function updateDeletedImagesInput() {
-            document.getElementById('deletedImagesInput').value = JSON.stringify(deletedImages);
-        }
-        function updateEditedImagesInput() {
-            document.getElementById('editedImagesInput').value = JSON.stringify(editedImages);
-        }
-</script>
+  
+      function deleteImage(index) {
+          const imageElement = document.getElementById(`image-${index}`);
+          if (imageElement) {
+              imageElement.remove();
+              deletedImages.push(index);
+          }
+          
+      }
+  
+      function editImage(imageSrc, index) {
+          const modal = new bootstrap.Modal(document.getElementById('cropperModal'));
+          const image = document.getElementById('imageToCrop');
+          image.src = imageSrc;
+          modal.show();
+  
+          if (cropper) {
+              cropper.destroy();
+          }
+  
+          cropper = new Cropper(image, {
+              aspectRatio: 1,
+              viewMode: 1,
+          });
+  
+          document.getElementById('cropImage').onclick = function() {
+              const croppedCanvas = cropper.getCroppedCanvas();
+              croppedCanvas.toBlob(function(blob) {
+                  const formData = new FormData();
+                  formData.append('croppedImage', blob, 'cropped.jpg');
+                  formData.append('index', index);
+  
+                  fetch('/admin/crop-image', {
+                      method: 'POST',
+                      body: formData
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          const img = document.querySelector(`#image-${index} img`);
+                          img.src = data.croppedImagePath;
+                          editedImages.push({ index: index, path: data.croppedImagePath });
+                          modal.hide();
+                      }
+                  })
+                  .catch(error => console.error('Error:', error));
+              });
+          };
+      }
+  
+      function handleNewImages(input) {
+          const files = Array.from(input.files);
+          files.forEach(file => {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const index = document.querySelectorAll('.image-item').length;
+                  const imageHtml = `
+                      <div class="image-item" id="image-${index}">
+                          <img src="${e.target.result}" alt="New Product Image">
+                          <div class="image-actions">
+                              <button type="button" class="btn btn-danger btn-image-action" onclick="deleteImage(${index})">Delete</button>
+                              <button type="button" class="btn btn-primary btn-image-action" onclick="editImage('${e.target.result}', ${index})">Edit</button>
+                          </div>
+                      </div>
+                  `;
+                  document.getElementById('imageContainer').insertAdjacentHTML('beforeend', imageHtml);
+              }
+              reader.readAsDataURL(file);
+          });
+      }
+  
+      function updateDeletedImagesInput() {
+          document.getElementById('deletedImagesInput').value = JSON.stringify(deletedImages);
+      }
+  
+      function updateEditedImagesInput() {
+          document.getElementById('editedImagesInput').value = JSON.stringify(editedImages);
+      }
+  </script>
 </body>
 
 </html>

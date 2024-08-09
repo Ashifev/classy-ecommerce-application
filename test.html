@@ -1,266 +1,68 @@
-<!DOCTYPE html>
-<html lang="zxx">
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Male_Fashion Template">
-    <meta name="keywords" content="Male_Fashion, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+try {
+    const productId = req.params.id;
+    const product = await productDb.findById(productId);
+    if (!product) {
+        return res.status(404).render('404');
+    }
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    const { name, price, description, category, brand, discountAmount, stockQuantity, deletedImages, editedImages } = req.body;
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.category = category;
+    product.brand = brand;
+    product.discountAmount = discountAmount;
+    product.stockQuantity = stockQuantity;
 
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
-</head>
-<body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
+    // Create a new array to store updated images
+    let updatedImages = [...product.image];
 
-    <!-- <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
+    // Handle deleted images
+    if (deletedImages) {
+        const deletedIndices = JSON.parse(deletedImages);
+        const imagesToDelete = product.image.filter((_, index) => deletedIndices.includes(index));
 
-        .dropdown-toggle {
-            background-color: #cbc400;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 20px;
-        }
-
-        .dropdown-toggle:focus {
-            outline: none;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px rgba(255, 255, 255, 0.2);
-            z-index: 1;
-            border-radius: 4px;
-        }
-
-        .dropdown-toggle::after {
-            content: none !important;
-        }
-
-        .dropdown-menu a {
-            color: rgb(0, 0, 0);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-menu a:hover {
-            background-color: #aa00c1;
-        }
-        .show {
-        display: block;
-        }
-    </style> -->
-
-    <style>
-        .dropdown2 {
-            position: relative;
-            display: inline-block;
-        }
-    
-        .dropdown-toggle2 {
-            background-color: #ffc47b;
-            color: white;
-            border: none;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 16px;
-            line-height: 30px;
-            text-align: center;
-            padding: 0;
-        }
-    
-        .dropdown-menu2 {
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 120px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            right: 0;
-            top: 100%;
-            border-radius: 4px;
-            padding: 8px 0;
-        }
-    
-        .dropdown-menu2 li {
-            list-style-type: none;
-        }
-    
-        .dropdown-menu2 a {
-            color: black;
-            padding: 8px 16px;
-            text-decoration: none;
-            display: block;
-            font-size: 14px;
-        }
-    
-        .dropdown-menu2 a:hover {
-            background-color: #f1f1f1;
-        }
-    
-        .show {
-            display: block;
-        }
-    </style>
-
-    <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__option">
-            <div class="offcanvas__links">
-                <a href="#">Sign in</a>
-                <a href="#">FAQs</a>
-            </div>
-            <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
-                <ul>
-                    <li>USD</li>
-                    <li>EUR</li>
-                    <li>USD</li>
-                </ul>
-            </div>
-        </div>
-        <div class="offcanvas__nav__option">
-            <a href="#" class="search-switch"><img src="/images/icon/search.png" alt=""></a>
-            <a href="#"><img src="/images/icon/heart.png" alt=""></a>
-            <a href="#"><img src="/images/icon/cart.png" alt=""> <span>0</span></a>
-            <div class="price">$0.00</div>
-        </div>
-        <div id="mobile-menu-wrap"></div>
-        <div class="offcanvas__text">
-            <p>Free shipping, 30-day return or refund guarantee.</p>
-        </div>
-    </div>
-    <!-- Offcanvas Menu End -->
-
-    <!-- Header Section Begin -->
-    <header class="header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-3">
-                    <div class="header__logo">
-                        <a href="/"><img style="height: 25px; width: 115px;" src="/images/logo3.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <nav class="header__menu mobile-menu">
-                        <ul>
-                            <li class="active"><a href="/">Home</a></li>
-                            <li><a href="/shop">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about.html">About Us</a></li>
-                                    <li><a href="./shop-details.html">Shop Details</a></li>
-                                    <li><a href="./shopping-cart.html">Shopping Cart</a></li>
-                                    <li><a href="./checkout.html">Check Out</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contacts</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3 col-md-3">
-                    <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="/images/icon/search.png" alt=""></a>
-                        <a href="/profile"><img src="/images/icon/heart.png" alt=""></a>
-                        <a href="/shopping-cart"><img src="/images/icon/cart.png" alt=""> <span>0</span></a>
-                        <% if(locals.user) { %>
-                            <div class="dropdown2">
-                                <button class="dropdown-toggle2" id="dropdownMenuButton">
-                                    J
-                                </button>
-                                <ul style="z-index: 2;left: -74px;" class="dropdown-menu2" id="dropdownMenu">
-                                    <li><a href="/profile">My Profile</a></li>
-                                    <li><a href="/shop">All Products</a></li>
-                                    <li><a href="/profile">My Orders</a></li>
-                                    <li><a href="/logout" id="logoutButton">Logout</a></li>
-                                </ul>
-                            </div>
-                        <% } else { %>
-                            <a style="text-decoration: none; color: black;" href="/login"><i class="fa-regular fa-user"></i></a>
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-            <div class="canvas__open"><i class="fa fa-bars"></i></div>
-        </div>
-    </header>
-    <!-- Header Section End -->
-
-    <!-- Bootstrap JavaScript --> 
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/4u6Iv2tC2lvHX+LsJbrc7mlsP4X5DbYb4YCBz1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-BQ6xaEAZ5CSTpyxfz4YBgl2p5u2v7u6cSf16X+IT1jz3y/jp9F8njox1zJpdV+2O" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-pPQhsU71Iozx2ys6Qm0PZy6hvVq79Qsmz9GGd8EyV8Pcf7XK5vrbZ5R7lUFnBe14" crossorigin="anonymous"></script> 
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    
-    <!-- Custom JavaScript to handle the dropdown display -->
-    <!-- <script>
-        $(document).ready(function() {
-            $('.dropdown-toggle').dropdown();
-        });
-    </script> -->
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-                return new bootstrap.Dropdown(dropdownToggleEl)
-            })
-        });
-    </script> -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdownToggle = document.getElementById('dropdownMenuButton');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-    
-            dropdownToggle.addEventListener('click', function(event) {
-                event.stopPropagation();
-                dropdownMenu.classList.toggle('show');
+        // Delete files from the server
+        imagesToDelete.forEach(imagePath => {
+            const fullPath = path.join(__dirname, '..', 'public', imagePath);
+            fs.unlink(fullPath, (err) => {
+                if (err) console.error("Error deleting image file:", err);
             });
-    
-            // Close the dropdown if clicked outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.matches('.dropdown-toggle2')) {
-                    if (dropdownMenu.classList.contains('show')) {
-                        dropdownMenu.classList.remove('show');
-                    }
+        });
+
+        // Remove deleted images from the array
+        updatedImages = updatedImages.filter((_, index) => !deletedIndices.includes(index));
+    }
+
+    // Handle edited images
+    if (editedImages) {
+        const editedImageData = JSON.parse(editedImages);
+        editedImageData.forEach(item => {
+            if (item.index < updatedImages.length) {
+                if (updatedImages[item.index] !== item.path) {
+                    const oldImagePath = updatedImages[item.index];
+                    const fullPath = path.join(__dirname, '..', 'public', oldImagePath);
+                    fs.unlink(fullPath, (err) => {
+                        if (err) console.error("Error deleting old edited image file:", err);
+                    });
+
+                    updatedImages[item.index] = item.path;
                 }
-            });
+            }
         });
-    </script>
-</body>
-</html>
+    }
+
+    if (req.files && req.files.newImages) {
+        const newImagePaths = req.files.newImages.map(file => `/uploads/products/${file.filename}`);
+        updatedImages = updatedImages.concat(newImagePaths);
+    }
+
+    product.image = updatedImages;
+
+    await product.save();
+    res.redirect('/admin/products');
+} catch (error) {
+    console.error("Error updating product", error);
+    return res.status(500).render('500');
+}

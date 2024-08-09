@@ -2,6 +2,8 @@ const categoryDb = require("../models/categoryModel")
 const brandDb = require("../models/brandModel")
 const productDb = require('../models/productModel');
 const brand = require("../models/brandModel");
+const path = require('path');
+const fs = require('fs');
 
 module.exports = {
     productsGet: async(req,res)=>{
@@ -62,37 +64,94 @@ module.exports = {
         }
     },
     editedProduct : async(req,res)=>{
-        const {name,price,description,category,brand,stockQuantity,index} = req.body;
-        console.log("indexxx",index);
-        
-        const files = req.files
-        const {id} = req.params;
-        const Name = name
-        try{
-            const existProduct = await productDb.findOne({name : Name});
-            if(existProduct && existProduct._id.toString() !== id){
-                req.session.exist = "This Product is already existed"
-                res.redirect('/admin/edit-product')
-            }else{
-               const image = Object.values(files).flat().map((file)=> `/uploads/products/${file.filename}`)
-               console.log("imagesss",image);
-               
-               const product =  await productDb.findByIdAndUpdate({_id:id},{name:Name,price:price,description:description,brand:brand,category:category,stockQuantity:stockQuantity},{new : true})
-               if(image.length !==0){
-                // product.image[index] = image;
-                // await product.save();
-                await productDb.findByIdAndUpdate({_id:id},{image:image},{new : true})
-               }
-               if(!product){
-                req.session.errMsg = "Product not found";
-                res.redirect('/admin/products')
-               }
-               req.session.success = "Product Edited Successfully"
-               res.redirect('/admin/products');
+        try {
+            const productId = req.params.id;
+            const product = await productDb.findById(productId);
+            if (!product) {
+                return res.status(404).render('404');
             }
-        }catch(err){
-            console.log("edited product error",err);
-            res.render('500');
+    
+            const { name, price, description, category, brand, discountAmount, stockQuantity, deletedImages, editedImages } = req.body;
+    
+            console.log("edited image",editedImages);
+            console.log("deleted image",deletedImages);
+            
+            product.name = name;
+            product.price = price;
+            product.description = description;
+            product.category = category;
+            product.brand = brand;
+            product.discountAmount = discountAmount;
+            product.stockQuantity = stockQuantity;
+    
+            console.log("product editeddd", product);
+            
+            // Create a new array to store updated images
+            let updatedImages = [...product.image];
+    
+            // Handle deleted images
+            if (deletedImages) {
+                let deletedIndixes = JSON.parse(deletedImages).map(index => Number(index));
+            
+                console.log("Indexes to delete:", deletedIndixes);
+            
+                // Filter out the images that need to be deleted
+                const imagesToDelete = product.image.filter((_, index) => deletedIndixes.includes(index));
+            
+                // Ensure that images are being filtered out correctly
+                if (imagesToDelete.length > 0) {
+                    // Asynchronous deletion of files
+                    imagesToDelete.forEach(imagePath => {
+                        const fullPath = path.join(__dirname, '..', 'public', imagePath);
+                        fs.unlink(fullPath, (err) => {
+                            if (err) {
+                                console.error("Error deleting image file:", err);
+                            } else {
+                                console.log("Deleted file:", fullPath);
+                            }
+                        });
+                    });
+            
+                    // Update the images array after deletions
+                    updatedImages = updatedImages.filter((_, index) => !deletedIndixes.includes(index));
+                } else {
+                    console.log("No images found to delete.");
+                }
+            } else {
+                console.log("No images to delete.");
+            }
+            
+    
+            // Handle edited images
+            if (editedImages) {
+                const editedImageData = JSON.parse(editedImages);
+                editedImageData.forEach(item => {
+                    if (item.index < updatedImages.length) {
+                        if (updatedImages[item.index] !== item.path) {
+                            const oldImagePath = updatedImages[item.index];
+                            const fullPath = path.join(__dirname, '..', 'public', oldImagePath);
+                            fs.unlink(fullPath, (err) => {
+                                if (err) console.error("Error deleting old edited image file:", err);
+                            });
+    
+                            updatedImages[item.index] = item.path;
+                        }
+                    }
+                });
+            }
+    
+            if (req.files && req.files.newImages) {
+                const newImagePaths = req.files.newImages.map(file => `/uploads/products/${file.filename}`);
+                updatedImages = updatedImages.concat(newImagePaths);
+            }
+    
+            product.image = updatedImages;
+    
+            await product.save();
+            res.redirect('/admin/products');
+        } catch (error) {
+            console.error("Error updating product", error);
+            return res.status(500).render('500');
         }
     },
     cropImage: async (req, res) => {

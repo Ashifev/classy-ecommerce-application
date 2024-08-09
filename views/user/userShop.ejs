@@ -1,7 +1,7 @@
     <!-- Header Section Begin -->
     <%- include('../partials/userHeader') %>
     <!-- Header Section End -->
-    <style>
+    <!-- <style>
         @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
        *
        {
@@ -10,9 +10,7 @@
            padding: 0;
        }
        
-       body {
-           font-family: 'Roboto', sans-serif;
-       }
+      
        
        a {
            text-decoration: none;
@@ -229,7 +227,7 @@
   padding: 0;
 }
 
-       </style>
+       </style> -->
 
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -263,192 +261,94 @@
                     </div>
                     <div class="shop__sidebar__accordion">
                         <div class="accordion" id="accordionExample">
-                            <!-- <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
-                                </div>
-                                <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__categories">
-                                            <ul class="nice-scroll">
-                                                <li><a href="#">Men (20)</a></li>
-                                                <li><a href="#">Women (20)</a></li>
-                                                <li><a href="#">Bags (20)</a></li>
-                                                <li><a href="#">Clothing (20)</a></li>
-                                                <li><a href="#">Shoes (20)</a></li>
-                                                <li><a href="#">Accessories (20)</a></li>
-                                                <li><a href="#">Kids (20)</a></li>
-                                                <li><a href="#">Kids (20)</a></li>
-                                                <li><a href="#">Kids (20)</a></li>
-                                            </ul>
+                          <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+                            </div>
+                            <form id="filterForm">
+                            <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                <div class="card-body">
+                                  <div id="panelsStayOpen-collapseCategory" class="accordion-collapse collapse show"
+                                  aria-labelledby="headingCategory">
+                                  <div class="accordion-body">
+                                    <div>
+                                      <% allCategory.forEach(category => { %>
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" id="CategoryCheckbox_<%= category.name %>" name="categories" value="<%= category.name %>" />
+                                          <label class="form-check-label" for="CategoryCheckbox_<%= category.name %>"><%= category.name %></label>
                                         </div>
+                                        <% }) %>
+                                      </div>
                                     </div>
+                                  </div>
                                 </div>
                             </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
-                                </div>
-                                <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__brand">
-                                            <ul>
-                                                <li><a href="#">Louis Vuitton</a></li>
-                                                <li><a href="#">Chanel</a></li>
-                                                <li><a href="#">Hermes</a></li>
-                                                <li><a href="#">Gucci</a></li>
-                                            </ul>
-                                        </div>
+                          </div>
+                          <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseTwo">Branding</a>
+                            </div>
+                            <div id="collapseTwo" class="collapse show" data-parent="#accordionExample">
+                                <div class="card-body">
+                                  <div id="panelsStayOpen-collapseBrands" class="accordion-collapse collapse show"
+                                  aria-labelledby="headingBrands">
+                                  <div class="accordion-body">
+                                    <div>
+                                      <% allBrand.forEach(brand => { %>
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="brandCheckbox_<%= brand.name %>" name="brands" value="<%= brand.name %>" />
+                                        <label class="form-check-label" for="brandCheckbox_<%= brand.name %>"><%= brand.name %></label>
+                                      </div>
+                                      <% }) %>
                                     </div>
+                                  </div>
+                                </div>
                                 </div>
                             </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
-                                </div>
-                                <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__price">
-                                            <ul>
-                                                <li><a href="#">$0.00 - $50.00</a></li>
-                                                <li><a href="#">$50.00 - $100.00</a></li>
-                                                <li><a href="#">$100.00 - $150.00</a></li>
-                                                <li><a href="#">$150.00 - $200.00</a></li>
-                                                <li><a href="#">$200.00 - $250.00</a></li>
-                                                <li><a href="#">250.00+</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                          </div>
+                          <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
                             </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseSix">Tags</a>
-                                </div>
-                                <div id="collapseSix" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__tags">
-                                            <a href="#">Product</a>
-                                            <a href="#">Bags</a>
-                                            <a href="#">Shoes</a>
-                                            <a href="#">Fashio</a>
-                                            <a href="#">Clothing</a>
-                                            <a href="#">Hats</a>
-                                            <a href="#">Accessories</a>
-                                        </div>
+                            <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
+                                <div class="card-body">
+                                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
+                                  aria-labelledby="headingThree">
+                                  <div class="accordion-body">
+                                    <div class="range">
+                                      <input type="range" class="form-range" id="priceRange" 
+                                        min="<%= Math.min(...product.map(p => p.price)) %>" 
+                                        max="<%= Math.max(...product.map(p => p.price)) %>" 
+                                        oninput="updateMaxPrice()" />
                                     </div>
-                                </div>
-                            </div> -->
-
-                            <section class="" style="margin-top: 210px;">
-                                <div class="container">
-                                  <div class="row" style="margin: -80px;padding-bottom: 100px; margin-left: -60px;">
-                                    <div class="col-8">
-                                      <button class="btn btn-outline-secondary mb-3 w-100 d-lg-none" type="button" data-mdb-toggle="collapse"
-                                        data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                                        aria-label="Toggle navigation">
-                                        <span>Show filter</span>
-                                      </button>
-                              
-                                      <div class="collapse card d-lg-block mb-5" id="navbarSupportedContent">
-                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                          <form id="filterForm">
-                                            <div class="accordion-item">
-                                              <h2 class="accordion-header" id="headingCategory">
-                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
-                                                  data-mdb-target="#panelsStayOpen-collapseCategory" aria-expanded="true"
-                                                  aria-controls="panelsStayOpen-collapseCategory">
-                                                  Category
-                                                </button>
-                                              </h2>
-                                              <div id="panelsStayOpen-collapseCategory" class="accordion-collapse collapse show"
-                                                aria-labelledby="headingCategory">
-                                                <div class="accordion-body">
-                                                  <div>
-                                                    <% allCategory.forEach(category => { %>
-                                                    <div class="form-check">
-                                                      <input class="form-check-input" type="checkbox" id="CategoryCheckbox_<%= category.name %>" name="categories" value="<%= category.name %>" />
-                                                      <label class="form-check-label" for="CategoryCheckbox_<%= category.name %>"><%= category.name %></label>
-                                                    </div>
-                                                    <% }) %>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                              
-                                            <div class="accordion-item">
-                                              <h2 class="accordion-header" id="headingBrands">
-                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
-                                                  data-mdb-target="#panelsStayOpen-collapseBrands" aria-expanded="true"
-                                                  aria-controls="panelsStayOpen-collapseBrands">
-                                                  Brands
-                                                </button>
-                                              </h2>
-                                              <div id="panelsStayOpen-collapseBrands" class="accordion-collapse collapse show"
-                                                aria-labelledby="headingBrands">
-                                                <div class="accordion-body">
-                                                  <div>
-                                                    <% allBrand.forEach(brand => { %>
-                                                    <div class="form-check">
-                                                      <input class="form-check-input" type="checkbox" id="brandCheckbox_<%= brand.name %>" name="brands" value="<%= brand.name %>" />
-                                                      <label class="form-check-label" for="brandCheckbox_<%= brand.name %>"><%= brand.name %></label>
-                                                    </div>
-                                                    <% }) %>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                              
-                                            <div class="accordion-item">
-                                              <h2 class="accordion-header" id="headingThree">
-                                                <button class="accordion-button text-dark bg-light" type="button" data-mdb-toggle="collapse"
-                                                  data-mdb-target="#panelsStayOpen-collapseThree" aria-expanded="false"
-                                                  aria-controls="panelsStayOpen-collapseThree">
-                                                  Price
-                                                </button>
-                                              </h2>
-                                              <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show"
-                                                aria-labelledby="headingThree">
-                                                <div class="accordion-body">
-                                                  <div class="range">
-                                                    <input type="range" class="form-range" id="priceRange" 
-                                                      min="<%= Math.min(...product.map(p => p.price)) %>" 
-                                                      max="<%= Math.max(...product.map(p => p.price)) %>" 
-                                                      oninput="updateMaxPrice()" />
-                                                  </div>
-                                                  <div class="row mb-3">
-                                                    <div class="col-6">
-                                                      <p class="mb-0">Min</p>
-                                                      <div class="form-outline">
-                                                        <input type="number" id="minPrice" name="minPrice"
-                                                          class="form-control" value="<%= Math.min(...product.map(p => p.price)) %>" readonly />
-                                                        <label class="form-label" for="minPrice">₹ <%= Math.min(...product.map(p => p.price)) %></label>
-                                                      </div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                      <p class="mb-0">Max</p>
-                                                      <div class="form-outline">
-                                                        <input type="number" id="maxPrice" name="maxPrice"
-                                                          class="form-control" value="<%= Math.max(...product.map(p => p.price)) %>" readonly />
-                                                        <label class="form-label" for="maxPrice">₹ <%= Math.max(...product.map(p => p.price)) %></label>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                  <button type="submit" id="applyFilter" class="btn btn-white w-100 border border-secondary">Apply</button>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </form>
+                                    <div class="row mb-3">
+                                      <div class="col-6">
+                                        <p class="mb-0">Min</p>
+                                        <div class="form-outline">
+                                          <input type="number" id="minPrice" name="minPrice"
+                                            class="form-control" value="<%= Math.min(...product.map(p => p.price)) %>" readonly />
+                                          <label class="form-label" for="minPrice">₹ <%= Math.min(...product.map(p => p.price)) %></label>
+                                        </div>
+                                      </div>
+                                      <div class="col-6">
+                                        <p class="mb-0">Max</p>
+                                        <div class="form-outline">
+                                          <input type="number" id="maxPrice" name="maxPrice"
+                                            class="form-control" value="<%= Math.max(...product.map(p => p.price)) %>" readonly />
+                                          <label class="form-label" for="maxPrice">₹ <%= Math.max(...product.map(p => p.price)) %></label>
                                         </div>
                                       </div>
                                     </div>
                                     
-                                    
                                   </div>
                                 </div>
-                              </section>
-                              
-                              
+                                </div>
+                            </div>
+                            
+                          </div>
+
+                          <button type="submit" id="applyFilter" class="btn btn-white w-100 border border-secondary">Apply</button>
+                        </form>           
                         </div>
                     </div>
                 </div>
@@ -572,10 +472,7 @@
             });
           }
         });
-      }
-
-      
-      
+      }      
 </script>
 
 <script>
@@ -638,7 +535,7 @@
 
 function filtering(products) {
 console.log("aa ivde etheett",products);
-    const productsGrid = document.querySelector('.product-grids'); // Assuming the class of the container div is 'row'
+    const productsGrid = document.querySelector('.product-grids');
     productsGrid.innerHTML = '';
 
     if (products.length === 0) {
