@@ -216,6 +216,20 @@ itemReturn : async(req,res)=>{
         })
         await orders.save();
        
+        // Automatically reject return request after 24 hours if not approved
+        setTimeout(async () => {
+            const updatedOrder = await orderDB.findById(orderId);
+            updatedOrder.productItems.forEach((value) => {
+                returnItem.forEach((item) => {
+                    if (value.productId.toString() === item.productId.toString() && value.status === "Return Requested") {
+                        value.status = "Return Request Rejected";
+                    }
+                });
+            });
+            await updatedOrder.save();
+        }, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+
+
         res.status(200).json({success:true,msg:"order Return Requested successfully"})
     }catch(err){
         console.error("error at order cancel",err);
