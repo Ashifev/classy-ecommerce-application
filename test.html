@@ -66,3 +66,141 @@ try {
     console.error("Error updating product", error);
     return res.status(500).render('500');
 }
+
+
+Old Filtering and search
+<!-- <script>
+    function updateMaxPrice() {
+      var range = document.getElementById('priceRange');
+      var maxPrice = document.getElementById('maxPrice');
+      maxPrice.value = range.value;
+    }
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const applyButton = document.getElementById('applyFilter');
+    
+    applyButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+        
+        // Get selected categories
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        // Get selected brands
+        const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked'))
+            .map(checkbox => checkbox.value);
+        
+        // Get price range
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        
+        // Log the selected filters (you can replace this with your desired action)
+        console.log('Selected Categories:', selectedCategories);
+        console.log('Selected Brands:', selectedBrands);
+        console.log('Price Range:', minPrice, '-', maxPrice);
+        
+       
+        const data = new URLSearchParams({
+            selectedCategories,
+            selectedBrands,
+            maxPrice
+        })
+        fetch(`/filter-product?${data.toString()}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+           return filtering(data.productss)
+      } else {
+        console.error("Error applying filter:", data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+    });
+
+    });
+});
+
+
+function filtering(products) {
+console.log("aa ivde etheett",products);
+    const productsGrid = document.querySelector('.product-grids');
+    productsGrid.innerHTML = '';
+
+    if (products.length === 0) {
+        
+        productsGrid.innerHTML = `
+            <div class="no-products">
+                <p>No products found</p>
+            </div>
+        `;
+        return;
+    }
+
+    products.forEach(product => {
+        if (product.status === true) {
+            const productHTML = `
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="product__item">
+                        <ul class="product__hover">
+                            <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
+                            <li><a href="/product-details/${product._id}"><img src="/images/icon/search.png" alt=""></a></li>
+                        </ul>
+                        <div class="product__item__text">
+                            <h6>${product.name}</h6>
+                            <a style="cursor: pointer;" onclick="addToCart('${product._id}', '${product.price}')" class="add-cart">+ Add To Cart</a>
+                            <div class="rating">
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+                            <h5>₹${product.price}</h5>
+                        </div>
+                    </div>
+                </div>
+            `;
+            productsGrid.innerHTML += productHTML;
+        }
+    });
+}
+
+</script>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const inputValue = document.getElementById('searchInput').value;
+        console.log('Search input value:', inputValue);
+
+       const searchInput=new URLSearchParams({
+        inputValue
+       })
+
+       fetch(`/searchProduct?${searchInput.toString()}`,{
+
+        method:'POST',
+        headers:{'Content-type':"application/json"},
+
+
+       })
+       .then((response)=>response.json())
+       .then(response=>{
+            if(response.success){
+                console.log("search products",response.products);
+                filtering(response.products)
+            } else {
+        console.error("Error applying filter:", data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+    });
+       });
+</script> -->

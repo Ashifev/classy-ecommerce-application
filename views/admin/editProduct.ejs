@@ -122,7 +122,7 @@
                                 id="inputProductName"
                                 name="name"
                                 value="<%=product.name%>"
-                                required
+                              
                               />
                               <span class="error-message" id="name-error"></span>
                             </div>
@@ -135,7 +135,7 @@
                                 id="inputPrice"
                                 name="price"
                                 value="<%=product.price%>"
-                                required
+                              
                               />
                               <span class="error-message" id="price-error"></span>
                             </div>
@@ -146,7 +146,7 @@
                                 id="inputDescription"
                                 name="description"
                                 rows="4"
-                                required
+                                
                               ><%=product.description%></textarea>
                               <span class="error-message" id="description-error"></span>
                             </div>
@@ -163,8 +163,8 @@
                                       </div>
                                   <% }); %>
                               </div>
-                              <input type="file" class="form-control" id="newImages" name="newImages" accept="image/*" multiple onchange="handleNewImages(this)">
-                              <span class="error-message" id="images-error"></span>
+                                <input type="file" class="form-control" id="newImages" name="newImages" accept="image/*" multiple onchange="handleNewImages(this)">
+                                <span class="error-message" id="file-error"></span>
                           </div>
                           <div style="display: flex; justify-content: space-evenly;" class="selected-images-container" id="selectedImagesContainer"></div>
 
@@ -196,7 +196,8 @@
                                 id="inputStockQuantity"
                                 name="stockQuantity"
                                 value="<%=product.stockQuantity%>"
-                                required
+                               min="0"
+                               step="1"
                               />
                               <span class="error-message" id="quantity-error"></span>
                             </div>
@@ -271,65 +272,83 @@
       let editedImages = [];
       let cropper;
   
-              document.addEventListener('DOMContentLoaded', function() {
-            const productForm = document.getElementById('productForm');
+        document.addEventListener('DOMContentLoaded', function() {
+        const productForm = document.getElementById('productForm');
 
-            productForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                if (validateForm()) {
-                    updateDeletedImagesInput();
-                    updateEditedImagesInput();
-                    productForm.submit();
-                }
-            });
+        productForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (validateForm()) {
+                updateDeletedImagesInput();
+                updateEditedImagesInput();
+                productForm.submit();
+            }
+        });
         });
 
         function validateForm() {
-            const form = document.getElementById('productForm');
-            const name = form.elements['name'].value.trim();
-            const description = form.elements['description'].value.trim();
-            const price = form.elements['price'].value.trim();
-            const quantity = form.elements['stockQuantity'].value.trim();
-            const category = form.elements['category'].value;
-            const brand = form.elements['brand'].value;
+        const form = document.getElementById('productForm');
+        const name = form.elements['name'].value.trim();
+        const description = form.elements['description'].value.trim();
+        const price = form.elements['price'].value.trim();
+        const quantity = form.elements['stockQuantity'].value.trim();
+        const category = form.elements['category'].value;
+        const brand = form.elements['brand'].value;
+        const fileInput = document.getElementById('newImages');
 
-            const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(error => {
-                error.textContent = '';
-                error.style.display = 'none';
-            });
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(error => {
+            error.textContent = '';
+            error.style.display = 'none';
+        });
 
-            let isValid = true;
+        let isValid = true;
 
-            if (name === '') {
-                displayErrorMessage('Product Name is required', 'name-error');
-                isValid = false;
+        if (name === '') {
+            displayErrorMessage('Product Name is required', 'name-error');
+            isValid = false;
+        }
+
+        if (description === '') {
+            displayErrorMessage('Product Description is required', 'description-error');
+            isValid = false;
+        }
+
+        if (price === '' || isNaN(price) || parseFloat(price) < 0) {
+            displayErrorMessage('Please enter a valid positive price', 'price-error');
+            isValid = false;
+        }
+
+        if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
+            displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
+            isValid = false;
+        }
+
+        if (category === '') {
+            displayErrorMessage('Product Category is required', 'category-error');
+            isValid = false;
+        }
+
+        if (brand === '') {
+            displayErrorMessage('Product Brand is required', 'brand-error');
+            isValid = false;
+        }
+
+        if (fileInput.files.length > 0) {
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                if (!file.type.startsWith('image/')) {
+                    displayErrorMessage('Please upload only image files.', 'file-error');
+                    isValid = false;
+                    break;
+                }
+                if (file.size > maxFileSize) {
+                    displayErrorMessage('File size should not exceed 5MB.', 'file-error');
+                    isValid = false;
+                    break;
+                }
             }
-
-            if (description === '') {
-                displayErrorMessage('Product Description is required', 'description-error');
-                isValid = false;
-            }
-
-            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
-                displayErrorMessage('Please enter a valid positive price', 'price-error');
-                isValid = false;
-            }
-
-            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
-                displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
-                isValid = false;
-            }
-
-            if (category === '') {
-                displayErrorMessage('Product Category is required', 'category-error');
-                isValid = false;
-            }
-
-            if (brand === '') {
-                displayErrorMessage('Product Brand is required', 'brand-error');
-                isValid = false;
-            }
+        }
 
             return isValid;
         }
@@ -341,6 +360,7 @@
                 errorElement.style.display = 'block';
             }
         }
+
 
   
       function deleteImage(index) {
@@ -392,26 +412,49 @@
           };
       }
   
-      function handleNewImages(input) {
-          const files = Array.from(input.files);
-          files.forEach(file => {
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                  const index = document.querySelectorAll('.image-item').length;
-                  const imageHtml = `
-                      <div class="image-item" id="image-${index}">
-                          <img src="${e.target.result}" alt="New Product Image">
-                          <div class="image-actions">
-                              <button type="button" class="btn btn-danger btn-image-action" onclick="deleteImage(${index})">Delete</button>
-                              <button type="button" class="btn btn-primary btn-image-action" onclick="editImage('${e.target.result}', ${index})">Edit</button>
-                          </div>
-                      </div>
-                  `;
-                  document.getElementById('imageContainer').insertAdjacentHTML('beforeend', imageHtml);
-              }
-              reader.readAsDataURL(file);
-          });
-      }
+    function handleNewImages(input) {
+    const files = Array.from(input.files);
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    let errorMessage = '';
+
+    files.forEach(file => {
+        if (!file.type.startsWith('image/')) {
+            errorMessage = 'Please upload only image files.';
+            return;
+        }
+        if (file.size > maxFileSize) {
+            errorMessage = 'File size should not exceed 5MB.';
+            return;
+        }
+    });
+
+    if (errorMessage) {
+        displayErrorMessage(errorMessage, 'file-error');
+        input.value = ''; 
+        return;
+    }
+
+    
+    displayErrorMessage('', 'file-error');
+
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const index = document.querySelectorAll('.image-item').length;
+            const imageHtml = `
+                <div class="image-item" id="image-${index}">
+                    <img src="${e.target.result}" alt="New Product Image">
+                    <div class="image-actions">
+                        <button type="button" class="btn btn-danger btn-image-action" onclick="deleteImage(${index})">Delete</button>
+                        <button type="button" class="btn btn-primary btn-image-action" onclick="editImage('${e.target.result}', ${index})">Edit</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('imageContainer').insertAdjacentHTML('beforeend', imageHtml);
+        }
+        reader.readAsDataURL(file);
+    });
+    }
   
       function updateDeletedImagesInput() {
           document.getElementById('deletedImagesInput').value = JSON.stringify(deletedImages);

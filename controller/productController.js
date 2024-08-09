@@ -148,6 +148,7 @@ module.exports = {
             product.image = updatedImages;
     
             await product.save();
+            req.session.success = "Product edited successfully"
             res.redirect('/admin/products');
         } catch (error) {
             console.error("Error updating product", error);

@@ -243,24 +243,24 @@ module.exports = {
   shopRender: async (req, res) => {
     try {
       console.log("shop entered user:", req.session.user);
-  
+      
       const page = parseInt(req.query.page) || 1;
-      const limit = 6; 
-      const skip = (page - 1) * limit; 
-
+      const limit = 6;
+      const skip = (page - 1) * limit;
+      
       const product = await productDb
         .find({ isActive: true })
         .populate("brand")
         .populate("category")
         .limit(limit)
         .skip(skip);
-  
+      
       const allCategory = await category.find();
       const allBrand = await brand.find();
-  
+      
       const totalProducts = await productDb.countDocuments({ isActive: true });
       const totalPages = Math.ceil(totalProducts / limit);
-  
+      
       res.render("user/userShop", {
         user: req.session.user,
         product,
@@ -274,79 +274,105 @@ module.exports = {
       res.render("500");
     }
   },
-  //product filter
-  productFilter: async(req,res)=>{
-    try{
-      const {selectedCategories,selectedBrands,maxPrice} = req.query;
-      const filter = {isActive:true}
-      // console.log("req.body................",selectedCategories);
-      if(selectedCategories){
-        const categoryName = selectedCategories.split(',');
-        const includeCategory = await category.find({name:{$in:categoryName}}).select('_id')
-        const categoryId = includeCategory.map((val)=>val._id);
-        filter.category = {$in:categoryId}
-      }
-      if(selectedBrands){
-        const brandName = selectedBrands.split(',');
-        const includeBrand = await brand.find({name:{$in:brandName}}).select('_id')
-        const brandId = includeBrand.map((val)=>val._id);
-       
-        filter.brand = {$in:brandId}
-      }
-      if(maxPrice){
-        filter.price = {$lte: parseFloat(maxPrice)}
-      }
-      const productss = await productDb.find(filter);
 
-      res.json({success:true,productss})
-    }catch(err){
-      console.log("error at product filter",err);
+  productFilter: async (req, res) => {
+    try {
+      const { selectedCategories, selectedBrands, maxPrice, page = 1, limit = 6 } = req.query;
+      const filter = { isActive: true };
+
+      if (selectedCategories) {
+        const categoryName = selectedCategories.split(',');
+        const includeCategory = await category.find({ name: { $in: categoryName } }).select('_id');
+        const categoryId = includeCategory.map((val) => val._id);
+        filter.category = { $in: categoryId };
+      }
+
+      if (selectedBrands) {
+        const brandName = selectedBrands.split(',');
+        const includeBrand = await brand.find({ name: { $in: brandName } }).select('_id');
+        const brandId = includeBrand.map((val) => val._id);
+        filter.brand = { $in: brandId };
+      }
+
+      if (maxPrice) {
+        filter.price = { $lte: parseFloat(maxPrice) };
+      }
+
+      const totalProducts = await productDb.countDocuments(filter);
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      const products = await productDb.find(filter)
+        .skip((parseInt(page) - 1) * limit)
+        .limit(parseInt(limit))
+        .populate("brand")
+        .populate("category");
+
+      res.json({
+        success: true,
+        products,
+        currentPage: parseInt(page),
+        totalPages,
+        totalProducts
+      });
+    } catch (err) {
+      console.log("error at product filter", err);
+      res.status(500).json({ success: false, message: "Internal server error" });
     }
   },
-  //product search
-  productSearch:async(req,res)=>{
-    try{
-      const {inputValue} = req.query;
-      console.log("queryy",inputValue);
-      if(!inputValue){
 
-      }else{
-          const [searchCat, searchBrand, searchProduct ] = await Promise.all([
-          category.findOne({ name: { $regex: inputValue, $options: "i" } }),
-          brand.findOne({ name: { $regex: inputValue, $options: "i" } }),
-          productDb.findOne({ name: { $regex: inputValue, $options: "i" } })
+  productSearch: async (req, res) => {
+    try {
+      const { inputValue, page = 1, limit = 6 } = req.query;
+      console.log("query", inputValue);
+
+      if (!inputValue) {
+        return res.json({ success: false, message: "No search term provided" });
+      }
+
+      const [searchCat, searchBrand, searchProduct] = await Promise.all([
+        category.findOne({ name: { $regex: inputValue, $options: "i" } }),
+        brand.findOne({ name: { $regex: inputValue, $options: "i" } }),
+        productDb.findOne({ name: { $regex: inputValue, $options: "i" } })
       ]);
 
-    const searchOptions = {
+      const searchOptions = {
         isActive: true,
         $or: [
-            { name: { $regex: inputValue, $options: "i" } },
+          { name: { $regex: inputValue, $options: "i" } },
         ],
-    };
+      };
 
-    if (searchCat) searchOptions.$or.push({ category: searchCat._id });
-    if (searchBrand) searchOptions.$or.push({ brand: searchBrand._id });
-    if (searchProduct) searchOptions.$or.push({ _id: searchProduct._id});
+      if (searchCat) searchOptions.$or.push({ category: searchCat._id });
+      if (searchBrand) searchOptions.$or.push({ brand: searchBrand._id });
+      if (searchProduct) searchOptions.$or.push({ _id: searchProduct._id });
 
-    console.log("Search options:", searchOptions);
+      console.log("Search options:", searchOptions);
 
-    // Fetch products with related data
-    const products = await productDb.find(searchOptions).populate("category").populate("brand")
-     
+      const totalProducts = await productDb.countDocuments(searchOptions);
+      const totalPages = Math.ceil(totalProducts / parseInt(limit));
 
-    console.log("Products found:", products);
+      const products = await productDb.find(searchOptions)
+        .populate("category")
+        .populate("brand")
+        .skip((parseInt(page) - 1) * parseInt(limit))
+        .limit(parseInt(limit));
 
-    // Return found products
-    return res.json({
+      console.log("Products found:", products);
+
+      return res.json({
         success: true,
         count: products.length,
-        products: products
-    });
-      }
-    }catch(err){
-      console.log("errror at product search");
+        products: products,
+        currentPage: parseInt(page),
+        totalPages,
+        totalProducts
+      });
+    } catch (err) {
+      console.log("error at product search", err);
+      res.status(500).json({ success: false, message: "Internal server error" });
     }
   },
+
   //Product details
   productDetails: async (req, res) => {
     try {

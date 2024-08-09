@@ -349,9 +349,7 @@
       if (!paymentCheckbox.checked) {
           confirmCheckoutError.textContent = 'Please select the payment method.';
           confirmCheckoutError.style.display = 'block';
-          setTimeout(() => {
-          confirmCheckoutError.style.display = 'none';
-        }, 5000);
+          
         return false;
       }
       if(paymentCheckbox.checked){
