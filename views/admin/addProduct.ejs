@@ -134,7 +134,7 @@
                               />
                               <span class="error-message" id="images-error"></span>
                             </div>
-                            <div class="col-md-12" id="selectedImagesContainer"></div>
+                            <div class="col-md-12 d-flex flex-row" style="gap: 20px;"  id="selectedImagesContainer"></div>
                             <div class="col-12">
                               <label for="inputCategory" class="form-label"
                                 >Category</label
@@ -321,60 +321,76 @@
         }
 
         function displaySelectedImages(input) {
-            const selectedImagesContainer = document.getElementById("selectedImagesContainer");
-            selectedImagesContainer.innerHTML = "";
+    const selectedImagesContainer = document.getElementById("selectedImagesContainer");
+    selectedImagesContainer.innerHTML = "";
+    const maxFileSize = 2 * 1024 * 1024; // 2MB limit
 
-            for (let i = 0; i < input.files.length; i++) {
-                const file = input.files[i];
-                const reader = new FileReader();
-                const cropContainer = document.createElement("div");
-                cropContainer.classList.add("image-crop-container");
-                cropContainer.innerHTML = `
-                    <div class="image-container">
-                        <img id="image${i}" src="" alt="Select an image to crop">
-                    </div>
-                    <button class="crop-button" id="cropButton${i}">Crop Image ${i + 1}</button>
-                `;
-                selectedImagesContainer.appendChild(cropContainer);
+    for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        
+        // Validate file type and size
+        if (!file.type.startsWith('image/')) {
+            displayErrorMessage('Only image files are allowed', 'images-error');
+            input.value = ''; // Clear the file input
+            return;
+        }
+        if (file.size > maxFileSize) {
+            displayErrorMessage('File size should not exceed 2MB', 'images-error');
+            input.value = ''; // Clear the file input
+            return;
+        }
 
-                const image = cropContainer.querySelector(`#image${i}`);
-                const cropButton = cropContainer.querySelector(`#cropButton${i}`);
+        const reader = new FileReader();
+        const cropContainer = document.createElement("div");
+        cropContainer.classList.add("image-crop-container");
+        cropContainer.innerHTML = `
+            <div class="image-container">
+                <img id="image${i}" style="width: 110px" src="" alt="Select an image to crop">
+            </div>
+            <button class="crop-button" id="cropButton${i}">Crop Image ${i + 1}</button>
+        `;
+        selectedImagesContainer.appendChild(cropContainer);
 
-                reader.onload = () => {
-                    image.src = reader.result;
-                    let cropper = new Cropper(image, {
+        const image = cropContainer.querySelector(`#image${i}`);
+        const cropButton = cropContainer.querySelector(`#cropButton${i}`);
+
+        reader.onload = () => {
+            image.src = reader.result;
+            let cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1,
+            });
+
+            cropButton.addEventListener("click", (event) => {
+                event.preventDefault();
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 500,
+                        height: 500,
+                    });
+                    const croppedImageDataURL = canvas.toDataURL('image/jpeg', 1.0);
+                    image.src = croppedImageDataURL;
+                    const croppedImageFile = dataURLToFile(croppedImageDataURL, file.name);
+                    const currentFiles = Array.from(input.files);
+                    currentFiles[i] = croppedImageFile;
+
+                    const newFileList = createFileList(currentFiles);
+                    input.files = newFileList;
+                    cropper.destroy();
+                    cropper = null;
+
+                    cropButton.style.display = 'none';
+                } else {
+                    cropper = new Cropper(image, {
                         aspectRatio: 1,
                         viewMode: 1,
                     });
-
-                    cropButton.addEventListener("click", (event) => {
-                        event.preventDefault();
-                        if (cropper) {
-                            const canvas = cropper.getCroppedCanvas({
-                                width: 500,
-                                height: 500,
-                            });
-                            const croppedImageDataURL = canvas.toDataURL('image/jpeg', 1.0);
-                            image.src = croppedImageDataURL;
-                            const croppedImageFile = dataURLToFile(croppedImageDataURL, file.name);
-                            const currentFiles = Array.from(input.files);
-                            currentFiles[i] = croppedImageFile;
-
-                            const newFileList = createFileList(currentFiles);
-                            input.files = newFileList;
-                            cropper.destroy();
-                            cropper = null;
-                        } else {
-                            cropper = new Cropper(image, {
-                                aspectRatio: 1,
-                                viewMode: 1,
-                            });
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+}
 
         function dataURLToFile(dataUrl, filename) {
             const arr = dataUrl.split(",");
