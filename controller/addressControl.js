@@ -6,13 +6,16 @@ module.exports = {
   getAddressPage:async(req,res)=>{
     const userEmail = req.session.email;
     try{
-      res.render('user/userAddress',{userEmail});
+      res.render('user/userAddress',{userEmail,user:req.session.email});
     }catch(err){
       console.error("some error when rendering the profileAddress",err);
       res.render('500');
     }
   },
   saveAddress: async (req, res) => {
+    const url = req.url
+    console.log("url ",url);
+    
     console.log("address save");
     const {
       name,
@@ -57,6 +60,7 @@ module.exports = {
         await newAddress.save();
         req.session.success = "address added successfully";
         res.redirect('/profile')
+        
       }
     } catch (err) {
       console.log("address save error", err);
@@ -71,7 +75,7 @@ module.exports = {
       if (!address) {
           return res.status(404).send();
       }
-      res.render('user/editAddress',{address})
+      res.render('user/editAddress',{user:req.session.email,address})
   } catch (error) {
       res.status(500).send(error);
   }
@@ -126,10 +130,9 @@ module.exports = {
         return res.json({ success: false, message: "user not found" });
       }else{
         var msg;
-        if(address.isActive){
           await addressDb.findByIdAndDelete(id);
           msg = "Address Deleted Successfully"
-        }
+        
       }
       res.json({ success: true, msg })
     }catch(err){
