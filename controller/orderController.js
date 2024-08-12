@@ -14,17 +14,34 @@ module.exports = {
 
             const User = await userDB.findOne({ email: userEmail });
             const userAddress = await addressDB.find({userId: User._id});
-            const userCart = await cartDB.findOne({userId: User._id}).populate('products.productId');
+            let userCart = await cartDB.findOne({userId: User._id}).populate({
+                path: "products.productId",
+                model: "product",
+                match: { isActive: true },
+              });
+
+
+              if (userCart?.products.length === 0) {
+                await cartDB.findOneAndDelete({ userId:User.id });
+                userCart = null;
+              } else if (userCart) {
+               const activeCartItems = userCart.products.filter((item) =>{
+                 if(item.productId && item.productId.isActive){
+                  return item
+                 } 
+                });
+                userCart = activeCartItems;
+              }
 
             console.log("user address",userAddress);
-            const totalPrice = userCart.products.reduce((price,curr) => {
+            const totalPrice = userCart.reduce((price,curr) => {
                 return price + curr.price * curr.quantity
             },0);
 
             const subTotal = totalPrice;
 
-            if(!userCart || userCart.products.length == 0){
-                res.render('user/userCart');
+            if(!userCart || userCart.length == 0){
+                res.render('user/userCart',{empty:"Product is blocked by admin"});
             }else{
 
                 res.render('user/checkout',{userAddress,userCart,totalPrice,subTotal,user})
@@ -50,12 +67,29 @@ module.exports = {
             return res.status(404).send('Address not found');
         }
 
-        const userProduct = await cartDB.findOne({ userId: User._id }).populate('products.productId');
-        if (!userProduct || userProduct.products.length === 0) {
+        let userProduct = await cartDB.findOne({ userId: User._id }).populate({
+            path: "products.productId",
+            model: "product",
+            match: { isActive: true },
+          });
+
+          if (userProduct?.products.length === 0) {
+            await cartDB.findOneAndDelete({ userId:User.id });
+            userProduct = null;
+          } else if (userProduct) {
+           const activeCartItems = userProduct.products.filter((item) =>{
+             if(item.productId && item.productId.isActive){
+              return item
+             } 
+            });
+            userProduct = activeCartItems;
+          }
+
+        if (!userProduct || userProduct.length === 0) {
             return res.status(400).send('Cart is empty');
         }
 
-        const cartProducts = userProduct.products.map((item) => ({
+        const cartProducts = userProduct.map((item) => ({
             productId: item.productId,
             name: item.productId.name,
             quantity: item.quantity,
@@ -78,7 +112,7 @@ module.exports = {
 
         await order.save();
 
-        for (const item of userProduct.products) {
+        for (const item of userProduct) {
             await productDB.findByIdAndUpdate(
                 item.productId,
                 { $inc: { stockQuantity: -item.quantity } },

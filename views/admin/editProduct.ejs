@@ -134,6 +134,7 @@
                                 class="form-control"
                                 id="inputPrice"
                                 name="price"
+                               
                                 value="<%=product.price%>"
                               
                               />
@@ -196,7 +197,6 @@
                                 id="inputStockQuantity"
                                 name="stockQuantity"
                                 value="<%=product.stockQuantity%>"
-                               min="0"
                                step="1"
                               />
                               <span class="error-message" id="quantity-error"></span>
@@ -313,12 +313,12 @@
             isValid = false;
         }
 
-        if (price === '' || isNaN(price) || parseFloat(price) < 0) {
+        if (price === '' || isNaN(price) || parseFloat(price) < 1) {
             displayErrorMessage('Please enter a valid positive price', 'price-error');
             isValid = false;
         }
 
-        if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
+        if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 1) {
             displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
             isValid = false;
         }
@@ -331,6 +331,16 @@
         if (brand === '') {
             displayErrorMessage('Product Brand is required', 'brand-error');
             isValid = false;
+        }
+        
+
+        // Check if there are any images left after deletions or new ones added
+        const remainingImages = document.querySelectorAll('#imageContainer .image-item').length;
+        const newImages = fileInput.files.length;
+
+        if (remainingImages === 0 && newImages === 0) {
+        displayErrorMessage('At least one product image is required.', 'file-error');
+        isValid = false;
         }
 
         if (fileInput.files.length > 0) {

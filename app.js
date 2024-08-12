@@ -26,7 +26,24 @@ const authRouter = require('./routes/googleAuth')
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
-//session
+// //admin session
+// app.use('/admin', session({
+//   name: 'admin-session',
+//   secret: 'admin-secret',
+//   resave: false,
+//   saveUninitialized: true,
+ 
+// }));
+// //user session
+// app.use('/user', session({
+//   name: 'user-session',
+//   secret: 'user-secret',
+//   resave: false,
+//   saveUninitialized: true,
+// }));
+
+
+session
 app.use(session({
   secret: 'your_secret_key',
   resave: false,

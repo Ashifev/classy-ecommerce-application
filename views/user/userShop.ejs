@@ -136,10 +136,11 @@
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="shop__product__option__right">
                                 <p>Sort by Price:</p>
-                                <select>
-                                    <option value="">Low To High</option>
-                                    <option value="">$0 - $55</option>
-                                    <option value="">$55 - $100</option>
+                                <select id="sortSelect" onchange="applySort()">
+                                  <option value="recommended">Recommended</option>
+                                  <option value="new">What's New</option>
+                                  <option value="low_to_high">Price: Low To High</option>
+                                  <option value="high_to_low">Price: High to Low</option>
                                 </select>
                             </div>
                         </div>
@@ -247,10 +248,65 @@
       }      
 </script>
 
+<!--update price-->
+<script>
+  function updateMaxPrice() {
+    const priceRange = document.getElementById('priceRange');
+    const maxPriceInput = document.getElementById('maxPrice');
+    maxPriceInput.value = priceRange.value;
+    updateLabel(maxPriceInput);
+  }
+  function updateLabel(input) {
+    const label = document.querySelector(`[for="${input.id}"]`);
+    label.textContent = `₹ ${input.value}`;
+  }
+  </script>
 
 <!--Filtering , Search and Pagination-->
+
+
+
+<!--new script-->
 <script>
-  let currentFilterParams = {};
+  // Use event delegation to handle pagination clicks
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelector('.product__pagination').addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      e.preventDefault();
+      const page = parseInt(e.target.textContent, 10) || (e.target.innerHTML.includes('&raquo;') ? currentFilterParams.page + 1 : currentFilterParams.page - 1);
+      applyFilter(page);
+    }
+  });
+
+  // Initial load of products
+  fetchProducts();
+});
+
+function displayPagination(currentPage, totalPages) {
+  const paginationContainer = document.querySelector('.product__pagination');
+  let paginationHTML = '';
+
+  if (currentPage > 1) {
+    paginationHTML += `<a href="#" data-page="${currentPage - 1}">&laquo;</a>`;
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === currentPage) {
+      paginationHTML += `<a href="#" class="active" data-page="${i}">${i}</a>`;
+    } else {
+      paginationHTML += `<a href="#" data-page="${i}">${i}</a>`;
+    }
+  }
+
+  if (currentPage < totalPages) {
+    paginationHTML += `<a href="#" data-page="${currentPage + 1}">&raquo;</a>`;
+  }
+
+  paginationContainer.innerHTML = paginationHTML;
+}
+
+let currentFilterParams = {};
+let currentSort = 'recommended';
 
 function applyFilter(page = 1) {
   const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
@@ -267,9 +323,16 @@ function applyFilter(page = 1) {
     limit: 6
   };
 
-  const data = new URLSearchParams(currentFilterParams);
+  fetchProducts();
+}
 
-  fetch(`/filter-product?${data.toString()}`, {
+// Other functions remain the same
+function applySort() {
+  const sortValue = document.getElementById('sortSelect').value;
+  const params = new URLSearchParams(currentFilterParams);
+  params.append('sort', sortValue);
+
+  fetch(`/filter-product?${params.toString()}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   })
@@ -277,15 +340,58 @@ function applyFilter(page = 1) {
   .then(data => {
     if (data.success) {
       displayProducts(data.products);
-      displayPagination(data.currentPage, data.totalPages, applyFilter);
+      displayPagination(data.currentPage, data.totalPages, fetchProducts);
     } else {
-      console.error("Error applying filter:", data.message);
+      console.error("Error applying sort:", data.message);
     }
   })
   .catch(error => {
     console.error("Fetch error:", error);
   });
 }
+
+function fetchProducts() {
+  const params = new URLSearchParams(currentFilterParams);
+  const sortValue = document.getElementById('sortSelect').value;
+  params.append('sort', sortValue);
+
+  fetch(`/filter-product?${params.toString()}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      displayProducts(data.products);
+      displayPagination(data.currentPage, data.totalPages, fetchProducts);
+    } else {
+      console.error("Error fetching products:", data.message);
+    }
+  })
+  .catch(error => {
+    console.error("Fetch error:", error);
+  });
+}
+
+// Add event listeners when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Add event listener to the sort select element
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', applySort);
+  }
+
+  // Add event listeners to filter inputs (assuming you have a filter button)
+  const filterButton = document.getElementById('filterButton');
+  if (filterButton) {
+    filterButton.addEventListener('click', function() {
+      applyFilter(1); // Reset to first page when filter is applied
+    });
+  }
+
+  // Initial load of products
+  fetchProducts();
+});
 
 function searchProducts(page = 1) {
   const inputValue = document.getElementById('searchInput').value;
@@ -311,29 +417,6 @@ function searchProducts(page = 1) {
   .catch(error => {
     console.error("Fetch error:", error);
   });
-}
-
-function displayPagination(currentPage, totalPages, pageChangeFunction) {
-  const paginationContainer = document.querySelector('.product__pagination');
-  let paginationHTML = '';
-
-  if (currentPage > 1) {
-    paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${currentPage - 1})">&laquo;</a>`;
-  }
-
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === currentPage) {
-      paginationHTML += `<a class="active" href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${i})">${i}</a>`;
-    } else {
-      paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${i})">${i}</a>`;
-    }
-  }
-
-  if (currentPage < totalPages) {
-    paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${currentPage + 1})">&raquo;</a>`;
-  }
-
-  paginationContainer.innerHTML = paginationHTML;
 }
 
 function displayProducts(products) {

@@ -51,7 +51,7 @@
               </tr>
             </thead>
             <tbody>
-              <% cartProduct.products.forEach(function(product){ %>
+              <% cartProduct.forEach(function(product){ %>
               <tr>
                 <td class="product__cart__item">
                   <div class="product__cart__item__pic">
@@ -133,13 +133,13 @@
             <li>
               Subtotal
               <span id="subTotal"
-                >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
+                >₹<%= cartProduct ? cartProduct.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
               >
             </li>
             <li>
               Total
               <span id="totalPrice"
-                >₹<%= cartProduct ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
+                >₹<%= cartProduct ? cartProduct.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
               >
             </li>
           </ul>

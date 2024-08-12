@@ -9,12 +9,36 @@ module.exports = {
       const userEmail = req.session.email;
       const user = await userDB.findOne({ email: userEmail });
 
-      const cartProduct = await cartDB
+      let cartProduct = await cartDB
         .findOne({ userId: user.id })
-        .populate("products.productId");
-      console.log("cartProduct", cartProduct);
+        .populate({
+          path: "products.productId",
+          model: "product",
+          match: { isActive: true },
+        })
+        // .populate("products.productId");
 
-      if (cartProduct !== null && cartProduct.products.length > 0) {
+      // cartProduct.products.forEach(async (item)=>{
+      //   if(!item.isActive){
+      //     const newCart = await cartDB.findOne({userId:user._id})
+      //   }
+      // });
+
+      if (cartProduct?.products.length === 0) {
+        await cartDB.findOneAndDelete({ userId:user.id });
+        cartProduct = null;
+      } else if (cartProduct) {
+       const activeCartItems = cartProduct.products.filter((item) =>{
+         if(item.productId && item.productId.isActive){
+          return item
+         } 
+        });
+        cartProduct =activeCartItems;
+      }
+ 
+      console.log("After cartProduct", cartProduct);
+
+      if (cartProduct !== null && cartProduct.length > 0) {
         res.render("user/userCart", { user: req.session.user, cartProduct });
       } else {
         res.render("user/userCart", {
@@ -37,7 +61,7 @@ module.exports = {
         res.redirect("/");
       } else {
         const cart = await cartDB.findOne({ userId: user._id });
-        const userProduct = await productDB.findById(productId);
+        const userProduct = await productDB.findById(productId,{isActive:true});
         if(userProduct.stockQuantity===0){
           return res.json({ icon: "warning", msg: "This Product is Out of Stock" });
         }

@@ -277,7 +277,7 @@ module.exports = {
 
   productFilter: async (req, res) => {
     try {
-      const { selectedCategories, selectedBrands, maxPrice, page = 1, limit = 6 } = req.query;
+      const { selectedCategories, selectedBrands, maxPrice, page = 1, limit = 6 , sort} = req.query;
       const filter = { isActive: true };
 
       if (selectedCategories) {
@@ -298,10 +298,27 @@ module.exports = {
         filter.price = { $lte: parseFloat(maxPrice) };
       }
 
+    let sortOption = {};
+    switch(sort) {
+      case 'new':
+        sortOption = { createdAt: -1 };
+        break;
+      case 'low_to_high':
+        sortOption = { price: 1 };
+        break;
+      case 'high_to_low':
+        sortOption = { price: -1 };
+        break;
+      default:
+        
+        sortOption = {createdAt: 1 }; 
+    }
+
       const totalProducts = await productDb.countDocuments(filter);
       const totalPages = Math.ceil(totalProducts / limit);
 
       const products = await productDb.find(filter)
+        .sort(sortOption)
         .skip((parseInt(page) - 1) * limit)
         .limit(parseInt(limit))
         .populate("brand")
@@ -693,14 +710,21 @@ module.exports = {
   //logout
   logout: (req, res) => {
     try {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("error :", err);
-        } else {
-          res.redirect("/");
-          console.log("User Logout");
-        }
-      });
+      // req.session.destroy((err) => {
+      //   if (err) {
+      //     console.log("error :", err);
+      //   } else {
+      //     res.clearCookie('user-session');
+      //     res.redirect("/");
+      //     console.log("User Logout");
+      //   }
+      // });
+      if(req.session.logged){
+        delete req.session.user 
+        delete  req.session.email
+        req.session.logged = false;
+        res.redirect("/");
+      }
     } catch (err) {
       console.log("error in logout", err);
       res.render("500");

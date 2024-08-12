@@ -108,36 +108,36 @@ button[type="button"]:hover {
         <form id="addAddressForm" action="/edit-address/<%=address._id%>" method="post">
           <div class="form-row">
             <div class="form-group">
-              <label for="name">Name:</label>
-              <input name="name" value="<%=address.name%>" type="text" id="name" required />
+              <label for="name">Name:<span style="color: red;">*</span></label>
+              <input name="name" value="<%=address.name%>" type="text" id="name" />
               <span class="error-message" id="nameError"></span>
             </div>
             <div class="form-group">
-              <label for="mobile">Mobile No.:</label>
-              <input name="mobile" value="<%=address.mobile%>" type="tel" id="mobile" required pattern="[0-9]{10}" />
+              <label for="mobile">Mobile No.:<span style="color: red;">*</span></label>
+              <input name="mobile" value="<%=address.mobile%>" type="tel" id="mobile" pattern="[0-9]{10}" />
               <span class="error-message" id="mobileError"></span>
             </div>
             <div class="form-group">
-              <label for="pincode">Pin code:</label>
-              <input name="pincode" value="<%=address.pincode%>" type="text" id="pincode" required />
+              <label for="pincode">Pin code:<span style="color: red;">*</span></label>
+              <input name="pincode" value="<%=address.pincode%>" type="text" id="pincode"/>
               <span class="error-message" id="pincodeError"></span>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="locality">Locality:</label>
-              <input name="locality" value="<%=address.locality%>" type="text" id="locality" required />
+              <label for="locality">Locality:<span style="color: red;">*</span></label>
+              <input name="locality" value="<%=address.locality%>" type="text" id="locality" />
               <span class="error-message" id="localityError"></span>
             </div>
             <div class="form-group">
-              <label for="city">City/District/Town:</label>
-              <input name="city" value="<%=address.city%>" type="text" id="city" required />
+              <label for="city">City/District/Town:<span style="color: red;">*</span></label>
+              <input name="city" value="<%=address.city%>" type="text" id="city"/>
               <span class="error-message" id="cityError"></span>
             </div>
             <div class="form-group">
-              <label for="state">State:</label>
-              <select name="state" id="state" required>
+              <label for="state">State: <span style="color: red;">*</span></label>
+              <select name="state" id="state" >
                 <option value="<%=address.state%>">Select a state</option>
                 <option value="State 1">State 1</option>
                 <option value="State 2">State 2</option>
@@ -149,8 +149,8 @@ button[type="button"]:hover {
 
           <div class="form-row">
             <div class="form-group full-width">
-              <label for="address">Address:</label>
-              <textarea name="address"  id="address" required><%=address.address%></textarea>
+              <label for="address">Address: <span style="color: red;">*</span></label>
+              <textarea name="address"  id="address"><%=address.address%></textarea>
               <span class="error-message" id="addressError"></span>
             </div>
           </div>
@@ -177,86 +177,64 @@ button[type="button"]:hover {
     </div>
   </section>
 
- <script>
-  function validateForm(event) {
-  event.preventDefault();
-
-  let isValid = true;
-
-  // Clear previous error messages
-  const errorMessages = document.querySelectorAll('.error-message');
-  errorMessages.forEach(msg => msg.textContent = '');
-
-  // Get form values
-  const name = document.getElementById('name').value.trim();
-  const mobile = document.getElementById('mobile').value.trim();
-  const pincode = document.getElementById('pincode').value.trim();
-  const locality = document.getElementById('locality').value.trim();
-  const city = document.getElementById('city').value.trim();
-  const state = document.getElementById('state').value.trim();
-  const address = document.getElementById('address').value.trim();
-  const alternatePhone = document.getElementById('alternatePhone').value.trim();
-
-  // Validate Name
-  if (!name) {
-    isValid = false;
-    document.getElementById('nameError').textContent = 'Name is required.';
-  }
-
-  // Validate Mobile
-  if (!mobile) {
-    isValid = false;
-    document.getElementById('mobileError').textContent = 'Mobile number is required.';
-  } else if (!/^[0-9]{10}$/.test(mobile)) {
-    isValid = false;
-    document.getElementById('mobileError').textContent = 'Mobile number must be 10 digits.';
-  }
-
-  // Validate Pin code
-  if (!pincode) {
-    isValid = false;
-    document.getElementById('pincodeError').textContent = 'Pin code is required.';
-  }
-
-  // Validate Locality
-  if (!locality) {
-    isValid = false;
-    document.getElementById('localityError').textContent = 'Locality is required.';
-  }
-
-  // Validate City/District/Town
-  if (!city) {
-    isValid = false;
-    document.getElementById('cityError').textContent = 'City/District/Town is required.';
-  }
-
-  // Validate State
-  if (!state) {
-    isValid = false;
-    document.getElementById('stateError').textContent = 'State is required.';
-  }
-
-  // Validate Address
-  if (!address) {
-    isValid = false;
-    document.getElementById('addressError').textContent = 'Address is required.';
-  }
-
-  // Validate Alternate Phone (Optional)
-  if (alternatePhone && !/^[0-9]{10}$/.test(alternatePhone)) {
-    isValid = false;
-    document.getElementById('alternatePhoneError').textContent = 'Alternate phone number must be 10 digits.';
-  }
-
-  if (isValid) {
-    // Form is valid, proceed with form submission or further processing
-    alert('Address saved successfully!');
-    // You can submit the form or send the data to the server here
-    // document.getElementById('addAddressForm').submit();
-  }
-}
-
- </script>
+  <script>
+    document.getElementById('addAddressForm').addEventListener('submit', validateForm);
+  
+    function validateForm(event) {
+      event.preventDefault();
+  
+      let isValid = true;
+  
+      // Clear previous error messages
+      const errorMessages = document.querySelectorAll('.error-message');
+      errorMessages.forEach(msg => msg.textContent = '');
+  
+      // Get form values and validate each field
+      isValid = validateField('name', 'Name is required.') && isValid;
+      isValid = validateField('mobile', 'Mobile number is required.', '[0-9]{10}', 'Mobile number must be 10 digits.') && isValid;
+      isValid = validateField('pincode', 'Pin code is required.') && isValid;
+      isValid = validateField('locality', 'Locality is required.') && isValid;
+      isValid = validateField('city', 'City/District/Town is required.') && isValid;
+      isValid = validateField('state', 'State is required.') && isValid;
+      isValid = validateField('address', 'Address is required.') && isValid;
+  
+      // Validate Alternate Phone (Optional)
+      const alternatePhone = document.getElementById('alternatePhone').value.trim();
+      if (alternatePhone && !/^[0-9]{10}$/.test(alternatePhone)) {
+        isValid = false;
+        showError('alternatePhone', 'Alternate phone number must be 10 digits.');
+      }
+  
+      if (isValid) {
+        // Form is valid, proceed with form submission
+        document.getElementById('addAddressForm').submit();
+      }
+    }
+  
+    function validateField(fieldId, requiredMessage, pattern = null, patternMessage = null) {
+      const field = document.getElementById(fieldId);
+      const value = field.value.trim();
+  
+      if (!value) {
+        showError(fieldId, requiredMessage);
+        return false;
+      }
+  
+      if (pattern && !new RegExp(pattern).test(value)) {
+        showError(fieldId, patternMessage);
+        return false;
+      }
+  
+      return true;
+    }
+  
+    function showError(fieldId, message) {
+      const errorElement = document.getElementById(fieldId + 'Error');
+      errorElement.textContent = message;
+      errorElement.style.color = 'red';
+      errorElement.style.display = 'block';
+    }
+  </script>
  <!-- Footer Section Begin -->
  <%- include('../partials/userFooter') %>
  <!-- Footer Section End -->

@@ -265,7 +265,7 @@
                                 <h4 class="order__title">Your order</h4>
                                 <div class="checkout__order__products">Product <span>Total</span></div>
                                 <ul class="checkout__total__products">
-                                    <% userCart.products.forEach(function(product,index){ %>
+                                    <% userCart.forEach(function(product,index){ %>
                                     <li><%= index + 1%>. <%=product.productId.name%><em style="padding-left: 70px;font-size: 12px;"><%=product.quantity%> x ₹<%=product.productId.price%></em><span>₹<%=product.productId.price * product.quantity%></span></li>
                                     <%})%>
                                 </ul>

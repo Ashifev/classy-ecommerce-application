@@ -21,13 +21,20 @@ module.exports = {
         }
     },
     logout: (req,res)=>{
-        req.session.destroy((err)=>{
-            if(err){
-                console.log("logout Error :",err);
-                res.redirect('/admin/dashboard')
-            }else{
-                res.redirect('/admin/login')
-            }
-        })
+        // req.session.destroy((err)=>{
+        //     if(err){
+        //         console.log("logout Error :",err);
+        //         res.redirect('/admin/dashboard')
+        //     }else{
+        //         res.clearCookie('admin-session');
+        //         res.redirect('/admin/login')
+        //     }
+        // })
+        if(req.session.admin){
+            req.session.admin = false
+            res.redirect('/admin/login')
+        }else{
+            res.redirect('/admin/login')
+        }
     }
 }

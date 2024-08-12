@@ -101,6 +101,7 @@
                                 step="0.01"
                                 class="form-control"
                                 id="inputPrice"
+                                min="1"
                                 name="price"
                                 placeholder="Enter price"
                               />
@@ -179,7 +180,7 @@
                               <input
                                 type="number"
                                 class="form-control"
-                                id="inputStockQuantity"
+                                id="inputStockQuantity" min="1"
                                 name="stockQuantity"
                                 placeholder="Enter stock quantity"
                               />
@@ -267,12 +268,12 @@
                 isValid = false;
             }
 
-            if (price === '' || isNaN(price) || parseFloat(price) < 0) {
+            if (price === '' || isNaN(price) || parseFloat(price) < 1) {
                 displayErrorMessage('Please enter a valid positive price', 'price-error');
                 isValid = false;
             }
 
-            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 0) {
+            if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 1) {
                 displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
                 isValid = false;
             }
