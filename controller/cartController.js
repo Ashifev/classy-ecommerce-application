@@ -11,41 +11,25 @@ module.exports = {
 
       let cartProduct = await cartDB
         .findOne({ userId: user.id })
-        .populate({
-          path: "products.productId",
-          model: "product",
-          match: { isActive: true },
-        })
-        // .populate("products.productId");
-
-      // cartProduct.products.forEach(async (item)=>{
-      //   if(!item.isActive){
-      //     const newCart = await cartDB.findOne({userId:user._id})
-      //   }
-      // });
-
-      if (cartProduct?.products.length === 0) {
-        await cartDB.findOneAndDelete({ userId:user.id });
-        cartProduct = null;
-      } else if (cartProduct) {
-       const activeCartItems = cartProduct.products.filter((item) =>{
-         if(item.productId && item.productId.isActive){
-          return item
-         } 
-        });
-        cartProduct =activeCartItems;
-      }
+        .populate("products.productId");
  
-      console.log("After cartProduct", cartProduct);
 
-      if (cartProduct !== null && cartProduct.length > 0) {
+      if(cartProduct){
+      cartProduct.products = cartProduct.products.filter(item => item.productId.isActive);
+      console.log("newCArt",cartProduct);
+      await cartProduct.save()
+   
+      if (cartProduct.products !== null && cartProduct.products.length > 0) {
         res.render("user/userCart", { user: req.session.user, cartProduct });
-      } else {
+      } 
+    }
+      else {
         res.render("user/userCart", {
           user: req.session.user,
           empty: "Your cart is empty",
         });
       }
+    
     } catch (err) {
       console.log("error at cart management", err);
       res.render("500");

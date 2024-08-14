@@ -21,29 +21,26 @@ module.exports = {
               });
 
 
+            if(!userCart || userCart.length == 0){
               if (userCart?.products.length === 0) {
                 await cartDB.findOneAndDelete({ userId:User.id });
                 userCart = null;
-              } else if (userCart) {
-               const activeCartItems = userCart.products.filter((item) =>{
-                 if(item.productId && item.productId.isActive){
-                  return item
-                 } 
-                });
-                userCart = activeCartItems;
-              }
-
-            console.log("user address",userAddress);
-            const totalPrice = userCart.reduce((price,curr) => {
-                return price + curr.price * curr.quantity
-            },0);
-
-            const subTotal = totalPrice;
-
-            if(!userCart || userCart.length == 0){
-                res.render('user/userCart',{empty:"Product is blocked by admin"});
+              } 
+                res.render('user/userCart',{empty:"No Products Found"});
             }else{
-
+                const activeCartItems = userCart.products.filter((item) =>{
+                    if(item.productId && item.productId.isActive){
+                    return item
+                    } 
+                    });
+                userCart = activeCartItems;
+                   
+                 console.log("user address",userAddress);
+                 const totalPrice = userCart.reduce((price,curr) => {
+                     return price + curr.price * curr.quantity
+                 },0);
+     
+                 const subTotal = totalPrice;
                 res.render('user/checkout',{userAddress,userCart,totalPrice,subTotal,user})
             }
 
@@ -86,7 +83,7 @@ module.exports = {
           }
 
         if (!userProduct || userProduct.length === 0) {
-            return res.status(400).send('Cart is empty');
+            return res.status(400).redirect('/');
         }
 
         const cartProducts = userProduct.map((item) => ({
@@ -123,10 +120,22 @@ module.exports = {
         await cartDB.findOneAndDelete(
             { userId: User._id },
         );
-
-        res.render('user/orderPlaced',{order});
+        req.session.orderId = order;
+        res.redirect('order-placed')
+        
         // res.status(200).send('Order placed successfully');
     } catch (err) {
+        console.error("error at order submit",err);
+        res.render("500");
+    }
+},
+orderplaced:async(req,res)=>{
+    try{
+        const orderId = req.session.orderId;
+        req.session.orderId = null
+        const order = await orderDB.findById(orderId)
+        res.render('user/orderPlaced',{order});
+    }catch(err){
         console.error("error at order placed",err);
         res.render("500");
     }
