@@ -1,441 +1,85 @@
-try {
-    const productId = req.params.id;
-    const product = await productDb.findById(productId);
-    if (!product) {
-        return res.status(404).render('404');
-    }
-
-    const { name, price, description, category, brand, discountAmount, stockQuantity, deletedImages, editedImages } = req.body;
-
-    product.name = name;
-    product.price = price;
-    product.description = description;
-    product.category = category;
-    product.brand = brand;
-    product.discountAmount = discountAmount;
-    product.stockQuantity = stockQuantity;
-
-    // Create a new array to store updated images
-    let updatedImages = [...product.image];
-
-    // Handle deleted images
-    if (deletedImages) {
-        const deletedIndices = JSON.parse(deletedImages);
-        const imagesToDelete = product.image.filter((_, index) => deletedIndices.includes(index));
-
-        // Delete files from the server
-        imagesToDelete.forEach(imagePath => {
-            const fullPath = path.join(__dirname, '..', 'public', imagePath);
-            fs.unlink(fullPath, (err) => {
-                if (err) console.error("Error deleting image file:", err);
-            });
-        });
-
-        // Remove deleted images from the array
-        updatedImages = updatedImages.filter((_, index) => !deletedIndices.includes(index));
-    }
-
-    // Handle edited images
-    if (editedImages) {
-        const editedImageData = JSON.parse(editedImages);
-        editedImageData.forEach(item => {
-            if (item.index < updatedImages.length) {
-                if (updatedImages[item.index] !== item.path) {
-                    const oldImagePath = updatedImages[item.index];
-                    const fullPath = path.join(__dirname, '..', 'public', oldImagePath);
-                    fs.unlink(fullPath, (err) => {
-                        if (err) console.error("Error deleting old edited image file:", err);
-                    });
-
-                    updatedImages[item.index] = item.path;
-                }
-            }
-        });
-    }
-
-    if (req.files && req.files.newImages) {
-        const newImagePaths = req.files.newImages.map(file => `/uploads/products/${file.filename}`);
-        updatedImages = updatedImages.concat(newImagePaths);
-    }
-
-    product.image = updatedImages;
-
-    await product.save();
-    res.redirect('/admin/products');
-} catch (error) {
-    console.error("Error updating product", error);
-    return res.status(500).render('500');
-}
-
-
-Old Filtering and search
-<!-- <script>
-    function updateMaxPrice() {
-      var range = document.getElementById('priceRange');
-      var maxPrice = document.getElementById('maxPrice');
-      maxPrice.value = range.value;
-    }
-    </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const applyButton = document.getElementById('applyFilter');
-    
-    applyButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent form submission
-        
-        // Get selected categories
-        const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
-            .map(checkbox => checkbox.value);
-        
-        // Get selected brands
-        const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked'))
-            .map(checkbox => checkbox.value);
-        
-        // Get price range
-        const minPrice = document.getElementById('minPrice').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        
-        // Log the selected filters (you can replace this with your desired action)
-        console.log('Selected Categories:', selectedCategories);
-        console.log('Selected Brands:', selectedBrands);
-        console.log('Price Range:', minPrice, '-', maxPrice);
-        
-       
-        const data = new URLSearchParams({
-            selectedCategories,
-            selectedBrands,
-            maxPrice
-        })
-        fetch(`/filter-product?${data.toString()}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-           return filtering(data.productss)
-      } else {
-        console.error("Error applying filter:", data.message);
-      }
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-    });
-
-    });
-});
-
-
-function filtering(products) {
-console.log("aa ivde etheett",products);
-    const productsGrid = document.querySelector('.product-grids');
-    productsGrid.innerHTML = '';
-
-    if (products.length === 0) {
-        
-        productsGrid.innerHTML = `
-            <div class="no-products">
-                <p>No products found</p>
-            </div>
-        `;
-        return;
-    }
-
-    products.forEach(product => {
-        if (product.status === true) {
-            const productHTML = `
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="product__item">
-                        <ul class="product__hover">
-                            <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
-                            <li><a href="/product-details/${product._id}"><img src="/images/icon/search.png" alt=""></a></li>
-                        </ul>
-                        <div class="product__item__text">
-                            <h6>${product.name}</h6>
-                            <a style="cursor: pointer;" onclick="addToCart('${product._id}', '${product.price}')" class="add-cart">+ Add To Cart</a>
-                            <div class="rating">
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            </div>
-                            <h5>₹${product.price}</h5>
-                        </div>
-                    </div>
-                </div>
-            `;
-            productsGrid.innerHTML += productHTML;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-    });
-}
-
-</script>
-
-<script>
-    document.getElementById('searchForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const inputValue = document.getElementById('searchInput').value;
-        console.log('Search input value:', inputValue);
-
-       const searchInput=new URLSearchParams({
-        inputValue
-       })
-
-       fetch(`/searchProduct?${searchInput.toString()}`,{
-
-        method:'POST',
-        headers:{'Content-type':"application/json"},
-
-
-       })
-       .then((response)=>response.json())
-       .then(response=>{
-            if(response.success){
-                console.log("search products",response.products);
-                filtering(response.products)
-            } else {
-        console.error("Error applying filter:", data.message);
-      }
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-    });
-       });
-</script> -->
-
-
-////latest script in shop ejs 
-<script>
-    // let currentFilterParams = {};
-    // let currentSort = 'recommended';
-  // function applyFilter(page = 1) {
-  //   const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
-  //     .map(checkbox => checkbox.value);
-  //   const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked'))
-  //     .map(checkbox => checkbox.value);
-  //   const maxPrice = document.getElementById('maxPrice').value;
-  
-  //   currentFilterParams = {
-  //     selectedCategories: selectedCategories.join(','),
-  //     selectedBrands: selectedBrands.join(','),
-  //     maxPrice,
-  //     page,
-  //     limit: 6
-  //   };
-  
-  //   const data = new URLSearchParams(currentFilterParams);
-  
-  //   // fetch(`/filter-product?${data.toString()}`, {
-  //   //   method: 'GET',
-  //   //   headers: { 'Content-Type': 'application/json' }
-  //   // })
-  //   // .then(response => response.json())
-  //   // .then(data => {
-  //   //   if (data.success) {
-  //   //     displayProducts(data.products);
-  //   //     displayPagination(data.currentPage, data.totalPages, applyFilter);
-  //   //   } else {
-  //   //     console.error("Error applying filter:", data.message);
-  //   //   }
-  //   // })
-  //   // .catch(error => {
-  //   //   console.error("Fetch error:", error);
-  //   // });
-  // }
-  
-  
-  //filtering and sorting
-  
-  
-  function applyFilter(page = 1) {
-    const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
-      .map(checkbox => checkbox.value);
-    const selectedBrands = Array.from(document.querySelectorAll('input[name="brands"]:checked'))
-      .map(checkbox => checkbox.value);
-    const maxPrice = document.getElementById('maxPrice').value;
-  
-    currentFilterParams = {
-      selectedCategories: selectedCategories.join(','),
-      selectedBrands: selectedBrands.join(','),
-      maxPrice,
-      page,
-      limit: 6
-    };
-  
-    fetchProducts();
-  }
-  
-  function applySort() {
-    const sortValue = document.getElementById('sortSelect').value;
-    const params = new URLSearchParams(currentFilterParams);
-    params.append('sort', sortValue);
-  
-    fetch(`/filter-product?${params.toString()}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        displayProducts(data.products);
-        displayPagination(data.currentPage, data.totalPages, fetchProducts);
-      } else {
-        console.error("Error applying sort:", data.message);
-      }
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-    });
-  }
-  
-  function fetchProducts() {
-    const params = new URLSearchParams(currentFilterParams);
-    const sortValue = document.getElementById('sortSelect').value;
-    params.append('sort', sortValue);
-  
-    fetch(`/filter-product?${params.toString()}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        displayProducts(data.products);
-        displayPagination(data.currentPage, data.totalPages, fetchProducts);
-      } else {
-        console.error("Error fetching products:", data.message);
-      }
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-    });
-  }
-  
-  // Add event listeners when the DOM is fully loaded
-  document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener to the sort select element
-    const sortSelect = document.getElementById('sortSelect');
-    if (sortSelect) {
-      sortSelect.addEventListener('change', applySort);
-    }
-  
-    // Add event listeners to filter inputs (assuming you have a filter button)
-    const filterButton = document.getElementById('filterButton');
-    if (filterButton) {
-      filterButton.addEventListener('click', function() {
-        applyFilter(1); // Reset to first page when filter is applied
-      });
-    }
-  
-    // Initial load of products
-    fetchProducts();
-  });
-  
-  function searchProducts(page = 1) {
-    const inputValue = document.getElementById('searchInput').value;
-    const searchParams = new URLSearchParams({
-      inputValue,
-      page,
-      limit: 6
-    });
-  
-    fetch(`/searchProduct?${searchParams.toString()}`, {
-      method: 'POST',
-      headers: { 'Content-type': "application/json" },
-    })
-    .then((response) => response.json())
-    .then(response => {
-      if (response.success) {
-        displayProducts(response.products);
-        displayPagination(response.currentPage, response.totalPages, searchProducts);
-      } else {
-        console.error("Error applying filter:", response.message);
-      }
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-    });
-  }
-  
-  function displayPagination(currentPage, totalPages, pageChangeFunction) {
-    const paginationContainer = document.querySelector('.product__pagination');
-    let paginationHTML = '';
-  
-    if (currentPage > 1) {
-      paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${currentPage - 1})">&laquo;</a>`;
-    }
-  
-    for (let i = 1; i <= totalPages; i++) {
-      if (i === currentPage) {
-        paginationHTML += `<a class="active" href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${i})">${i}</a>`;
-      } else {
-        paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${i})">${i}</a>`;
-      }
-    }
-  
-    if (currentPage < totalPages) {
-      paginationHTML += `<a href="#" onclick="event.preventDefault(); ${pageChangeFunction.name}(${currentPage + 1})">&raquo;</a>`;
-    }
-  
-    paginationContainer.innerHTML = paginationHTML;
-  }
-  
-  function displayProducts(products) {
-    const productsGrid = document.querySelector('.product-grids');
-    productsGrid.innerHTML = '';
-  
-    if (products.length === 0) {
-      productsGrid.innerHTML = `
-        <div class="no-products">
-          <p>No products found</p>
-        </div>
-      `;
-      return;
-    }
-  
-    products.forEach(product => {
-      const productHTML = `
-        <div class="col-lg-4 col-md-6 col-sm-6">
-          <div class="product__item">
-            <ul class="product__hover">
-              <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
-              <li>
-                ${product.stockQuantity === 0 
-                  ? '<span style="background-color:red;" class="badge badge-danger">Out of Stock</span>'
-                  : product.stockQuantity > 5 && product.stockQuantity < 10
-                    ? '<span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>'
-                    : '<span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>'
-                }
-              </li>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .wallet-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 10px;
+        }
+        .transaction-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        .add-funds-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Wallet</h1>
+        <div class="wallet-card">
+            <div class="balance">Balance: $500.00</div>
+            <ul class="transaction-list">
+                <li class="transaction-item">
+                    <span>Purchase - Item A</span>
+                    <span>-$50.00</span>
+                </li>
+                <li class="transaction-item">
+                    <span>Refund - Item B</span>
+                    <span>+$25.00</span>
+                </li>
+                <li class="transaction-item">
+                    <span>Purchase - Item C</span>
+                    <span>-$30.00</span>
+                </li>
             </ul>
-            <div class="product__item__text">
-              <h6>${product.name}</h6>
-              <a style="cursor: pointer;" onclick="addToCart('${product._id}','${product.price}')" class="add-cart">+ Add To Cart</a>
-              <div class="rating">
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-              </div>
-              <h5>₹${product.price}</h5>
-            </div>
-          </div>
         </div>
-      `;
-      productsGrid.innerHTML += productHTML;
-    });
-  }
-  
-  document.getElementById('applyFilter').addEventListener('click', function(event) {
-    event.preventDefault();
-    applyFilter();
-  });
-  
-  document.getElementById('searchForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    searchProducts();
-  });
-  </script>
+        <a href="#" class="add-funds-btn">Add Funds</a>
+    </div>
+</body>
+</html>

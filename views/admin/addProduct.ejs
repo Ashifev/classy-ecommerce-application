@@ -101,7 +101,7 @@
                                 step="0.01"
                                 class="form-control"
                                 id="inputPrice"
-                                min="1"
+                                
                                 name="price"
                                 placeholder="Enter price"
                               />
@@ -180,7 +180,7 @@
                               <input
                                 type="number"
                                 class="form-control"
-                                id="inputStockQuantity" min="1"
+                                id="inputStockQuantity"
                                 name="stockQuantity"
                                 placeholder="Enter stock quantity"
                               />
@@ -322,11 +322,11 @@
         }
 
         function displaySelectedImages(input) {
-    const selectedImagesContainer = document.getElementById("selectedImagesContainer");
-    selectedImagesContainer.innerHTML = "";
-    const maxFileSize = 2 * 1024 * 1024; // 2MB limit
+        const selectedImagesContainer = document.getElementById("selectedImagesContainer");
+        selectedImagesContainer.innerHTML = "";
+        const maxFileSize = 2 * 1024 * 1024; // 2MB limit
 
-    for (let i = 0; i < input.files.length; i++) {
+        for (let i = 0; i < input.files.length; i++) {
         const file = input.files[i];
         
         // Validate file type and size

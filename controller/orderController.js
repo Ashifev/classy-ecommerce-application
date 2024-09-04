@@ -4,13 +4,16 @@ const productDB = require("../models/productModel");
 const userDB = require("../models/userModel");
 const addressDB = require('../models/addressModel');
 const orderDB = require('../models/orderModel');
+const walletDB = require('../models/walletModel');
+const razorpay = require('razorpay')
+const uuid = require('uuid');
 const { mongoose } = require("mongoose");
 
 module.exports = {
     getCheckout : async (req,res)=>{
         try{
             const userEmail = req.session.email;
-            const user = req.session.user
+            const user = req.session.username
 
             const User = await userDB.findOne({ email: userEmail });
             const userAddress = await addressDB.find({userId: User._id});
@@ -22,10 +25,10 @@ module.exports = {
 
 
             if(!userCart || userCart.length == 0){
-              if (userCart?.products.length === 0) {
-                await cartDB.findOneAndDelete({ userId:User.id });
-                userCart = null;
-              } 
+                if (userCart?.products.length === 0) {
+                    await cartDB.findOneAndDelete({ userId:User.id });
+                    userCart = null;
+                } 
                 res.render('user/userCart',{empty:"No Products Found"});
             }else{
                 const activeCartItems = userCart.products.filter((item) =>{
@@ -120,10 +123,11 @@ module.exports = {
         await cartDB.findOneAndDelete(
             { userId: User._id },
         );
-        req.session.orderId = order;
-        res.redirect('order-placed')
+        // req.session.orderId = order;
+        // res.redirect('/order-placed')
+        console.log(order);
         
-        // res.status(200).send('Order placed successfully');
+        return res.status(200).json(order);
     } catch (err) {
         console.error("error at order submit",err);
         res.render("500");
@@ -131,8 +135,7 @@ module.exports = {
 },
 orderplaced:async(req,res)=>{
     try{
-        const orderId = req.session.orderId;
-        req.session.orderId = null
+        const orderId = req.params.id;
         const order = await orderDB.findById(orderId)
         res.render('user/orderPlaced',{order});
     }catch(err){
@@ -182,6 +185,7 @@ orderCancel: async(req,res)=>{
 itemCancel: async(req,res)=>{
     try{
         const {orderId,orderItem} = req.query;
+        const userId = req.session.user;
         // const orderItem = req.params.id
         let itemQuantity = 0
         const orders = await orderDB.findById(orderId);
@@ -226,10 +230,54 @@ itemCancel: async(req,res)=>{
        if(count === orders.productItems.length){
         orders.status = "Cancelled"
        }
-
-       await orders.save();
-       console.log("count",count);
        
+       if(orders.paymentMethod !== "COD"){
+        const userExist = await walletDB.findOne({user : userId})
+        if(userExist){
+            orders.productItems.forEach((value)=>{
+                cancelItems.forEach(async (cancelItem) => {
+                    if (value.productId.toString() === cancelItem.productId.toString()) {
+                        await walletDB.findByIdAndUpdate(userExist._id,{
+                            $inc : {balance : value.price},
+                            $push : {
+                                transactions : {
+                                    transaction_id : `wallet${uuid.v4()}`,
+                                    amount : value.price,
+                                    type : 'credit',
+                                    description : 'order cancelled refunded',
+                                    orderId : orderId,
+                                    product : value.productId
+                                } 
+                            }
+                        })
+                   }
+               })
+           })  
+        }else{
+            orders.productItems.forEach((value)=>{
+                cancelItems.forEach(async (cancelItem) => {
+                    if (value.productId.toString() === cancelItem.productId.toString()) {
+                        await walletDB.create({
+                            user : userId,
+                            balance : value.price,
+                            transactions : {
+                                transaction_id : `wallet${uuid.v4()}`,
+                                amount : value.price,
+                                type : 'credit',
+                                description : 'order cancelled refunded',
+                                orderId : orderId,
+                                product : value.productId
+                            } 
+                        })
+                    }
+               })
+           })  
+        }
+       }
+
+
+        await orders.save();
+
         res.status(200).json({success:true,msg:"order cancelled successfully"})
     }catch(err){
         console.error("error at order cancel",err);

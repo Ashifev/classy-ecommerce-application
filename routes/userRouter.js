@@ -6,6 +6,8 @@ const addressController = require('../controller/addressControl')
 const cartController = require('../controller/cartController');
 const methodOverride = require('method-override');
 const orderController = require('../controller/orderController');
+const paymentController = require('../controller/paymentController');
+const wishlistController = require('../controller/wishlistController');
 
 
 /* GET Guest page. */
@@ -74,15 +76,25 @@ router.post('/delete-cart/:id',userAuth.userAuthentication,cartController.delete
 //user checkout
 router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
 router.post('/submit-order',userAuth.userAuthentication,orderController.orderSubmit)
-router.get('/order-placed',userAuth.userAuthentication,orderController.orderplaced)
+router.get('/order-placed/:id',userAuth.userAuthentication,orderController.orderplaced)
 router.post('/order-details/:id',userAuth.userAuthentication,orderController.getOrderDetails)
 router.post('/order-cancel/:id',userAuth.userAuthentication,orderController.orderCancel)
 router.post('/cancel-item',userAuth.userAuthentication,orderController.itemCancel)
 router.post('/return-item',userAuth.userAuthentication,orderController.itemReturn)
 
+//razorpay
+router.get("/razor-key",userAuth.userAuthentication,paymentController.getKey)
+router.post("/razor-order",userAuth.userAuthentication,paymentController.createRazerPayOrder)
+router.post("/razor-varify",userAuth.userAuthentication,paymentController.verifyPayment)
 
+//filtering and search
 router.get('/filter-product',userAuth.userAuthentication,userController.productFilter)
 router.post('/searchProduct',userAuth.userAuthentication,userController.productSearch)
+
+//wishlist router
+router.get('/wishlist',userAuth.userAuthentication,wishlistController.getWishList)
+
+
 //logout
 router.get("/logout",userController.logout) 
 

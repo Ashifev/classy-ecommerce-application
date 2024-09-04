@@ -9,6 +9,7 @@ const userManagement = require('../controller/userManagement');
 const brandController = require('../controller/brandController')
 const orderController = require('../controller/orderController');
 const orderManagement = require('../controller/orderManagement');
+const couponController = require('../controller/couponController');
 
 ///////////////////Admin Route
 /* GET Home Page */
@@ -81,5 +82,8 @@ router.get('/order-view/:id',adminAuth.adminExist,orderManagement.getAdminOrderV
 
 //accept return request
 router.post('/accept-request',adminAuth.adminExist,orderManagement.acceptReturn)
+
+//coupon
+router.get('/coupon',adminAuth.adminExist,couponController.getCoupon)
 
 module.exports = router;

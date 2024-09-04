@@ -20,12 +20,12 @@ module.exports = {
       await cartProduct.save()
    
       if (cartProduct.products !== null && cartProduct.products.length > 0) {
-        res.render("user/userCart", { user: req.session.user, cartProduct });
+        res.render("user/userCart", { user: req.session.username, cartProduct });
       } 
     }
       else {
         res.render("user/userCart", {
-          user: req.session.user,
+          user: req.session.username,
           empty: "Your cart is empty",
         });
       }

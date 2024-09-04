@@ -18,7 +18,7 @@ module.exports = {
   renderHome: async (req, res) => {
     try {
       const product = await productDb.find({ isActive: true }).sort({createdAt:-1}).limit(8);
-      res.render("user/homePage", { user: req.session.user, product });
+      res.render("user/homePage", { user: req.session.username, product });
     } catch (err) {
       console.log("error at home rendering", err);
       res.render("500");
@@ -67,7 +67,7 @@ module.exports = {
         res.redirect("/signup");
       } else {
         req.session.email = email;
-        req.session.user = name;
+        req.session.username = name;
        
 
         const salt = await bcrypt.genSalt(10);
@@ -242,7 +242,7 @@ module.exports = {
   //shop page render
   shopRender: async (req, res) => {
     try {
-      console.log("shop entered user:", req.session.user);
+      console.log("shop entered user:", req.session.username);
       
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
@@ -262,7 +262,7 @@ module.exports = {
       const totalPages = Math.ceil(totalProducts / limit);
       
       res.render("user/userShop", {
-        user: req.session.user,
+        user: req.session.username,
         product,
         allBrand,
         allCategory,
@@ -398,7 +398,7 @@ module.exports = {
       if(!mongoose.Types.ObjectId.isValid(id)){
        res.render("404");
       }
-      if (req.session.user) {
+      if (req.session.username) {
        
         console.log("params",req.params.id);
         console.log("productID : ",id);
@@ -418,7 +418,7 @@ module.exports = {
         } else if (products) {
           console.log("product dtails");
           res.render("user/productDetails", {
-            user: req.session.user,
+            user: req.session.username,
             products,
             relateProduct,
           });
@@ -437,7 +437,7 @@ module.exports = {
     try {
       const err = req.session.err;
       const success = req.session.success;
-      console.log("req.session.user",req.session.user);
+      console.log("req.session.user",req.session.username);
       console.log("req.session.email",req.session.email);
       req.session.success = null
       req.session.err = null;
@@ -451,7 +451,7 @@ module.exports = {
       console.log("profile adress");
       console.log("profile");
       res.render("user/userProfile", {
-        user: req.session.user, 
+        user: req.session.username, 
         profile,
         userEmail,
         address,
@@ -479,7 +479,7 @@ module.exports = {
         { name: name },
         { new: true }
       );
-      req.session.user = name;
+      req.session.username = name;
       console.log("updated", updateUser);
       req.session.success = "Profile changed successfully";
       res.redirect("/profile");
@@ -688,7 +688,8 @@ module.exports = {
         console.log("Password Matching is :", isPassword);
 
         if (isPassword) {
-          req.session.user = User.name;
+          req.session.user = User;
+          req.session.username = User.name;
           req.session.email = User.email;
           req.session.logged = true;
           return res.redirect("/");
@@ -721,6 +722,7 @@ module.exports = {
       // });
       if(req.session.logged){
         delete req.session.user 
+        delete req.session.username 
         delete  req.session.email
         req.session.logged = false;
         res.redirect("/");

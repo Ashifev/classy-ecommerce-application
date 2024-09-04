@@ -214,7 +214,7 @@
     <section class="checkout spad">
         <div class="container">
             <div class="checkout__form">
-                <form action="/submit-order" method="POST" method="post" onsubmit="return validateChekout(event)">
+                <form id="checkOutForm">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div id="addressBook" class="card" >
@@ -272,22 +272,40 @@
                                 <ul class="checkout__total__all">
                                     <li>Subtotal <span>₹<%=subTotal%></span></li>
                                     <li>Delivery Fee <span>Free <s>₹80</s></span></li>
-                                    <li>Total <span>₹<%=totalPrice%></span></li>
+                                    <li>Total <span id="totalAmt">₹<%=totalPrice%></span></li>
                                 </ul>
 
                                 <div class="checkout__input__checkbox">
-                                    <label for="payment">
-                                        Cash On Delivery
-                                        <input type="checkbox" id="payment" name="payment" value="COD">
-                                        <span class="checkmark"></span>
-                                    </label>
+                                  <!-- <label for="COD">
+                                    Cash On Delivery
+                                    <input type="radio" id="payment" name="payment" value="COD">
+                                    <label class="form-check-label" for="COD"></label>
+                                </label> <label for="razorpay" >
+                                  Razorpay
+                                  <input type="radio" name="payment" value="razorpay">
+
+                              </label> <label for="wallet">
+                                Wallet
+                                <input type="radio" id="payment" name="payment" value="Wallet">
+                                <span class="checkmark"></span>
+                            </label> -->
+                              
+                                <input  class="form-check-input me-1" type="radio" id="COD" name="payment" value="COD">
+                                <label class="form-check-label" for="COD">COD</label>
+
+                                <input class="form-check-input me-1" type="radio" name="payment" value="razorpay" id="razorpay" >
+                                <label class="form-check-label" for="razorpay">Razorpay</label>
+
+                                <input class="form-check-input me-1" type="radio" name="payment" value="Wallet" id="wallet" >
+                                <label class="form-check-label" id="walletBalace" data-balance="" for="wallet">Wallet </label>
+                                     
                                     <div class="error-message" id="confirmCheckoutError"></div>
                                 </div>
                                 
                                 <input type="hidden" name="cart" value='<%= JSON.stringify(userCart.products) %>'>
-                                <input type="hidden" name="totalPrice" value="<%= totalPrice %>">
+                                <input type="hidden" id name="totalPrice" value="<%= totalPrice %>">
                                 
-                                <button type="submit" class="site-btn">PLACE ORDER</button>
+                                <button type="submit" id="placeOrderBtn" class="site-btn">PLACE ORDER</button>
                             </div>
                         </div>
                     </div>
@@ -296,6 +314,30 @@
         </div>
     </section>
     <!-- Checkout Section End -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!--toast-->
+    <!-- Include Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+
+<!-- Include Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Custom showErrorToast Function -->
+<script>
+  function showErrorToast(message) {
+    toastr.error(message, "Error", {
+      closeButton: true,
+      progressBar: true,
+      positionClass: "toast-top-right",
+      timeOut: "5000",
+      extendedTimeOut: "1000",
+      showMethod: "slideDown",
+      hideMethod: "slideUp"
+    });
+  }
+</script>
 
 
     <script>
@@ -344,7 +386,7 @@
       }
     </script>
 
-<script>
+<!-- <script>
   function validateChekout(event){
       var paymentCheckbox = document.getElementById('payment');
       if (!paymentCheckbox.checked) {
@@ -368,7 +410,315 @@
       }
   }
   
+</script> -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const radioButtons = document.querySelectorAll(
+      'input[name="address"]'
+    );
+    const paymentMethods = document.querySelectorAll('input[name="payment"]');
+    const placeOrderBtn = document.querySelector("#placeOrderBtn");
+    let selectedAddress = null;
+    let selectedPayment = null;
+    
+
+
+    radioButtons.forEach((radioButton) => {
+      radioButton.addEventListener("change", () => {
+        selectedAddress = radioButton.value;
+      });
+    });
+
+    paymentMethods.forEach((paymentMethod) => {
+      paymentMethod.addEventListener("change", () => {
+        selectedPayment = paymentMethod.id;
+      });
+    });
+
+    placeOrderBtn.addEventListener("click", async function (e) {
+      e.preventDefault();
+      try {
+
+        const totalAmtElement = document.getElementById("totalAmt");
+        const totalAmtText = totalAmtElement.textContent.trim();
+        const totalAmt = totalAmtText.replace("₹", "");
+console.log("totl",totalAmt);
+
+        // const walletElement = document.getElementById("walletBalace");
+        // const walletBalance = walletElement.getAttribute("data-balance");
+        // console.log("walletBalance", walletBalance);
+
+       if(!selectedAddress){
+        alert("please select any address")
+        showErrorToast("please select any address");
+        return
+        }
+
+        if (
+          selectedPayment === "COD" ||
+          selectedPayment === "wallet"
+        ) {
+          saveOrderOnCashOnDelivery(totalAmt, selectedPayment, selectedAddress);
+        } else if (selectedPayment === "razorpay") {
+          initiateRazorPayPayment(totalAmt,selectedPayment, selectedAddress);
+          return;
+        } else {
+          alert("please select any payment method")
+          showErrorToast("please select any payment method");
+        }
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          title: "Something went wrong",
+          icon: "error",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          window.location.reload();
+        });
+      }
+    });
+  });
 </script>
+
+<!-- wallet and cashOnDelivery peyment function -->
+<script>
+  const saveOrderOnCashOnDelivery = async (
+    totalPrice,
+    selectedPayment,
+    selectedAddress,
+    // walletBalance
+  ) => {
+    if (selectedPayment === "wallet") {
+      console.log("here if");
+      
+      if (Number(walletBalance) < Number(totalPrice)) {
+
+        showErrorToast("Insufficient balance in Wallet");
+        return;
+      }
+    }
+    if (totalPrice > 6000 && selectedPayment === "cashOnDelivery") {
+      showErrorToast("Order above 6000 should not be allowed for COD");
+    } else {
+      try {
+        const response = await fetch("/submit-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            address: selectedAddress,
+            payment: selectedPayment,
+            totalPrice
+          }),
+        });
+        const data = await response.json();
+console.log("oooooorrrrdddder",data);
+
+        if (response.ok) {
+          Swal.fire({
+            title: "Your order has been created",
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK",
+          }).then(async (result) => {
+            window.location.href = `/order-placed/${data._id}`;
+          });
+        } else {
+          Swal.fire({
+            title: `${data.message}`,
+            icon: "error",
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          title: "Something went wrong",
+          icon: "error",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          window.location.reload();
+        });
+      }
+    }
+  };
+</script>
+
+<!-- intialising razorpay method -->
+<script>
+  const initiateRazorPayPayment = async (totalAmt, selectedPayment, selectedAddress) => {
+
+    //getting razor-pay secret key
+    const response = await fetch("/razor-key", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+console.log("data",data);
+console.log("in amt",totalAmt);
+
+    //creating razor pay order
+    const razorOrder = await fetch("/razor-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount: parseInt(totalAmt) }),
+    });
+
+    const order = await razorOrder.json();
+    console.log("order",order);
+    
+    //razor pay configurations
+    let options = {
+      key: data.key,
+      amount: parseInt(totalAmt) * 100,
+      currency: "INR",
+      name: "CALSSY",
+      description: "Test Transaction",
+      image: `img/fav.png`,
+      order_id: order.order.id,
+      handler: function (response) {
+        saveOrderRazor(response, selectedPayment, selectedAddress, totalAmt);
+      },
+      prefill: {
+        name: "jhone",
+        email: "jhone@example.com",
+        contact: "9000090000",
+      },
+      notes: {
+        address: "Razor pay Corporate Office",
+      },
+      theme: {
+        color: "#1818c4",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+
+
+    // If failed toast it.
+    razor.on("payment.failed", async function (response) {
+    
+      try {
+        const newOrder = await fetch("/faildOrder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            addressId: selectedAddress,
+            paymentMethod: selectedPayment,
+            // couponCode: couponCode,
+          }),
+        });
+        const data = await newOrder.json();
+ 
+//saving payment
+const verifyData = await fetch("/razor-verify-failedPayment", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    ...response,
+    orderId: data.newOrder.orderId,
+  }),
+});
+
+
+if(newOrder.ok){
+  Swal.fire({
+          title: "Payment failed Order created with payment status Failed",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          window.location.href = `/cart`;
+        });
+}else{
+  showErrorToast("something went wrong try again");
+}
+      } catch (error) {
+        console.log("faild payment error",error);
+        showErrorToast("something went wrong");
+      }
+    });
+  };
+</script>
+
+
+<!--Creating razorpay order-->
+<script>
+  const saveOrderRazor = async (razorResponse, selectedPayment, selectedAddress, totalAmt) => {
+    try {
+      //saving the order
+      const response = await fetch("/submit-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          address: selectedAddress,
+          payment: selectedPayment,
+          totalPrice : parseInt(totalAmt)
+        }),
+      });
+
+      const data = await response.json();
+
+      //saving payment
+      const verifyData = await fetch("/razor-varify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...razorResponse,
+        }),
+      });
+
+      if (verifyData.ok) {
+        Swal.fire({
+          title: "Your order has been created",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        }).then(async (result) => {
+          window.location.href = `/order-placed/${data._id}`;
+        });
+      }else{
+        showErrorToast("somthing went wrong");
+      }
+
+    } catch (error) {
+      console.log(error);
+      alert("errrrrrrrrrrr")
+      showErrorToast(error.response?.data?.error || "something went wrong");
+    }
+  };
+</script>
+
+
+
+
+
+
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>
 <!-- Footer Section End -->

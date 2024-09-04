@@ -1,0 +1,171 @@
+<!-- Header Section Begin -->
+<%- include('../partials/userHeader') %>
+<!-- Header Section End -->
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="breadcrumb__text">
+          <h4>Shopping Cart</h4>
+          <div class="breadcrumb__links">
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <span>Shopping Cart</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Shopping Cart Section Begin -->
+<section class="shopping-cart spad">
+  <div class="container">
+    <% if(locals.empty){ %>
+    <div
+      class="row d-flex flex-column justify-content-center align-items-center"
+    >
+      <img style="width: 50%" src="/images/emptycart.jpg" alt="" srcset="" />
+      <h6 class="m-2"><%= empty %></h6>
+    </div>
+
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="continue__btn">
+        <a href="/shop">Continue Shopping</a>
+      </div>
+    </div>
+    <% }else{ %>
+    <div class="row">
+      <div class="col-lg-8 d-flex flex-column justify-content-between">
+        <div class="shopping__cart__table">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cartProduct.products.forEach(function(product){ %>
+              <tr>
+                <td class="product__cart__item">
+                  <div class="product__cart__item__pic">
+                    <img src="<%=product.productId.image[0]%>" alt="" />
+                  </div>
+                  <div class="product__cart__item__text">
+                    <h6><%=product.productId.name%></h6>
+                    <h5>₹<%=product.productId.price%></h5>
+                  </div>
+                </td>
+            
+
+                <div class="product_price">
+                <td id="cart__price" datatd-product-id="<%= product.productId._id %>" class="cart__price">
+                  ₹<%= (product.quantity * product.productId.price).toFixed(2)
+                  %>
+                </td>
+              </div>
+                <td
+                  onclick="deleteBtn('<%= product.productId._id %>')"
+                  style="cursor: pointer"
+                  class="cart__close"
+                >
+                  <i class="fa fa-close"></i>
+                </td>
+              </tr>
+              <%})%>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="continue__btn">
+              <a href="/shop">Continue Shopping</a>
+            </div>
+          </div>
+         
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</section>
+<!-- Shopping Cart Section End -->
+
+<script>
+
+  function deleteBtn(productId) {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You want to remove this product",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: `/delete-cart/${productId}`,
+            type: "POST",
+            data: {
+              productId: productId,
+            },
+            success: function (response) {
+              console.log(response);
+              const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 800,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                },
+              });
+
+              Toast.fire({
+                icon: response.icon,
+                title: response.msg,
+              });
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 800);
+            },
+            error: function (xhr, status, error) {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to delete the item. Please try again.",
+              });
+            },
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Your item is safe :)",
+            icon: "error",
+          });
+        }
+      });
+  }
+</script>
+<!-- Footer Section Begin -->
+<%- include('../partials/userFooter') %>
+<!-- Footer Section End -->
