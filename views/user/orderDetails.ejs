@@ -86,22 +86,35 @@
                 <h6 class="text-charcoal mb-0 w-100">Total</h6>
                 <p class="text-pebble mb-0 w-100 mb-2 mb-md-0">₹<%= userOrder.totalPrice %></p>
               </div>
+              <% if(userOrder.discount){%>
+              <div class="col-6 col-md">
+                <h6 class="text-charcoal mb-0 w-100">Saved</h6>
+                <p class="text-pebble mb-0 w-100 mb-2 mb-md-0">₹<%= userOrder.discount %></p>
+              </div>
+              <% } %>
               <div class="col-6 col-md">
                 <h6 class="text-charcoal mb-0 w-100">Shipped To</h6>
                 <p class="text-pebble mb-0 w-100 mb-2 mb-md-0"><%= userOrder.billingAddress[0].locality %></p>
               </div>
               <div class="col-12 col-md-3">
-                <% if (['Return Requested', 'return request accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
+                <% if (['Return Requested', 'return request accepted','Return Request Accepted', 'return request rejected','Cancelled','product returned'].includes(userOrder.status)) { %>
                   <p style="font-size: 20px" class="text-danger"><%= userOrder.status %></p>
                 <% } else if(userOrder.status === 'Delivered') { %>
+                  
                   <div style="width: 80%" class="d-flex flex-row justify-content-between align-items-center">
                     <p class="text-green" style="font-size: 20px; margin: 0">Delivered</p>
-               
                   </div>
                 <% } else { %>
                   <a href="" data-orderId="<%= userOrder._id %>" id="orderCancell" class="btn btn-danger w-100">Cancel Order</a>
                 <% } %>
               </div>
+              <% if(userOrder.status === 'Delivered') { %>
+                <div class="col-6 col-md">
+                  <a type="button" style="font-size: 14px;" class="btn btn-outline-primary me-2" onclick="genDownloadInvoice('<%= userOrder._id %>')">
+                    <i class="fas fa-file-invoice"></i> Download Invoice
+                  </a>
+                </div>
+               <% } %> 
             </div>
           </div>
           <div class="list-group-item p-3 bg-white">
@@ -141,7 +154,10 @@
                         <a href="" class="text-charcoal"><%= product.quantity %> x <%= product.name %></a>
                       </h6>
                       <h6 class="text-charcoal text-left mb-0 mb-md-2">
-                        <b>₹<%= product.price %></b>
+                        <b>₹<%= (product.price) - (product.discountAmount) %></b>
+                        <%if(product.discountAmount){%>
+                        <b><s style="color: red; font-size: 12px;">₹<%= product.price %></s></b>
+                        <% } %>
                       </h6>
                     </div>
                     <div class="col-12 col-md-3 hidden-sm-down">
@@ -402,6 +418,52 @@
   });
 });
 
+
+async function genDownloadInvoice(orderId, index) {
+console.log("Generating invoice...");
+let timerInterval;
+
+Swal.fire({
+title: 'Download Started!',
+html: 'Your invoice will be ready in <b></b> milliseconds.',
+timer: 4000,
+timerProgressBar: true,
+didOpen: () => {
+Swal.showLoading();
+const b = Swal.getHtmlContainer().querySelector('b');
+timerInterval = setInterval(() => {
+    b.textContent = Swal.getTimerLeft();
+}, 100);
+},
+willClose: () => {
+clearInterval(timerInterval);
+}
+}).then((result) => {
+if (result.dismiss === Swal.DismissReason.timer) {
+console.log("Timer closed");
+}
+});
+
+try {
+const response = await fetch(`/generateInvoice/${orderId}`, {
+method: 'get',
+headers: {
+    'Content-Type': 'application/json',
+}
+});
+if (response.ok) {
+window.location.href = `/downloadInvoice/${orderId}`;
+}
+} catch (error) {
+console.error("Error in downloading the invoice:", error);
+Swal.fire({
+text: 'An error occurred while generating the invoice. Please try again.',
+icon: 'error',
+timer: 3000,
+showConfirmButton: false
+});
+}
+}
 </script>
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>

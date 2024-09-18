@@ -10,6 +10,7 @@ const brandController = require('../controller/brandController')
 const orderController = require('../controller/orderController');
 const orderManagement = require('../controller/orderManagement');
 const couponController = require('../controller/couponController');
+const offerController = require('../controller/offerController');
 
 ///////////////////Admin Route
 /* GET Home Page */
@@ -78,12 +79,27 @@ router.patch('/updateStatus/:id',adminAuth.adminExist,userManagement.updateStatu
 /* Order Listing */
 router.get('/order-list',adminAuth.adminExist,orderManagement.getAdminOrderList);
 router.post('/order/orderStatus',adminAuth.adminExist,orderManagement.updateOrderStatus);
+router.post('/order/order-item-status',adminAuth.adminExist,orderManagement.updateItemStatus);
 router.get('/order-view/:id',adminAuth.adminExist,orderManagement.getAdminOrderView);
 
 //accept return request
 router.post('/accept-request',adminAuth.adminExist,orderManagement.acceptReturn)
 
+//offer router
+router.get('/offers',adminAuth.adminExist,offerController.getOffer)
+router.get('/add-offer',adminAuth.adminExist,offerController.addOfferGet);
+router.post('/offer-added',adminAuth.adminExist,offerController.offerAdded);
+router.get('/edit-offer/:id',adminAuth.adminExist,offerController.editOffer);
+router.post('/offer-edited/:id',adminAuth.adminExist,offerController.offerEdited);
+router.delete('/delete-offer/:id',offerController.deleteOffer);
+
 //coupon
 router.get('/coupon',adminAuth.adminExist,couponController.getCoupon)
+router.get('/edit-coupon/:id',adminAuth.adminExist,couponController.getEditCoupon);
+router.get('/addCoupon',adminAuth.adminExist,couponController.addCouponGet);
+router.post('/coupon-added',adminAuth.adminExist,couponController.couponAdded);
+router.post('/coupon-edited/:id',adminAuth.adminExist,couponController.couponEdited);
+router.patch('/delete-coupon/:id',adminAuth.adminExist,couponController.deleteCoupon);
 
+router.post('/salesreport',adminAuth.adminExist,adminController.salesReport)
 module.exports = router;

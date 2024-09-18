@@ -1,85 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Wallet</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .wallet-card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .balance {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2ecc71;
-            margin-bottom: 10px;
-        }
-        .transaction-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-        .add-funds-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>My Wallet</h1>
-        <div class="wallet-card">
-            <div class="balance">Balance: $500.00</div>
-            <ul class="transaction-list">
-                <li class="transaction-item">
-                    <span>Purchase - Item A</span>
-                    <span>-$50.00</span>
-                </li>
-                <li class="transaction-item">
-                    <span>Refund - Item B</span>
-                    <span>+$25.00</span>
-                </li>
-                <li class="transaction-item">
-                    <span>Purchase - Item C</span>
-                    <span>-$30.00</span>
-                </li>
-            </ul>
-        </div>
-        <a href="#" class="add-funds-btn">Add Funds</a>
-    </div>
-</body>
-</html>
+<!-- 10th week  -->
+
+<!-- User side : -->
+<!-- Integrate online payment method(Razorpay or Paypal).  -->
+<!-- The integration of multiple payment gateways will be an add-on.. -->
+<!-- Change order status(cancel,return etc.) -->
+<!-- Coupon Management (Apply Coupon, Remove Coupon)  -->
+<!-- Search, Category filtering -->
+<!-- Wishlist (Add, Remove) -->
+<!-- Wallet (for canceled orders) -->
+
+<!-- Admin side :  -->
+<!-- Offer module(Product offer, Category offer, Referral offer). --> referel offer(pending)
+<!-- Sales report(Daily, Weekly, Yearly, Custom date)
+Generate sales report 
+Should be able to filter based on  
+Custom date range 
+ 1 Day / week / month 
+Show  discount and coupons deduction in sales report  -->
+<!-- Overall sales count   -->
+<!-- Overall order amount  -->
+<!-- Overall discount -->
+<!-- Validate the product edit form - admin -->
+
+
+<!-- 11th Week  -->
+User side :
+<!-- Invoice download (Pdf) -->
+<!-- Order above Rs 1000 should not be allowed for COD -->
+Delivery charge can be applied according to location / fixed charges ----(optional)----
+Handle error for failed payments (update status as payment pending), 
+Should be able to continue payment from my order page in case of failed payment
+
+
+Admin side :
+Admin Dashboard - Chart with filter(yearly,monthly etc.)
+<!-- Coupon Management (Create, Delete) -->
+Best selling product (top 10) 
+Best selling category (top 10) 
+Best selling brands (top 10) 
+Generate ledger book ----(optional)----
+
+
+<!-- Pendings -->
+<!-- Include discount value in the order page -->
+Consider each orders as separate in the admin side
+Status change of one order affecting the other order item status
+Wishlist favourite button when added and remove
+<!-- Summary of the report -->
+<!-- Do optional chaining -->
+<!-- Should be able to skip the coupon value for wallet checkout  -->
+<!-- Avoid time interval for custom data range -->
+

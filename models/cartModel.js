@@ -17,9 +17,16 @@ const cartSchema = new mongoose.Schema({
             },
             price :{
                 type : Number
+            },
+            discountAmount :{
+                type : Number
             }
         }
     ],
+    discount:{
+        type: Number,
+        default : 0
+    }
 })
 
 const cart = mongoose.model("carts",cartSchema);

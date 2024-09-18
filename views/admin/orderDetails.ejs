@@ -278,16 +278,14 @@
                     <% }else if(userOrder.status === 'Delivered'){ %>
                         <p>Delivered</p>
                     <% }else{ %>
-                <select name="status" data-order-id="<%= userOrder._id %>"
-                     onchange="updateStatus(this)">
-                    <% const statuses=['Pending', 'Processing' , 'Shipped' , 'Delivered' ]; %>
-                        <% statuses.forEach(status=> { %>
-                            <option value="<%= status %>" <%=userOrder.status===status
-                                ? 'selected' : '' %>><%= status %>
-                            </option>
-                            <% }) %>
-                            <% } %>
-                </select>
+                      <a href="" class="<%= userOrder.status === 'Pending' ? 'status-pending' : '' %>
+                        <%= userOrder.status === 'Delivered' ? 'status-delivered' : '' %>
+                        <%= userOrder.status === 'Processing' ? 'status-processing' : '' %>
+                        <%= userOrder.status === 'Shipped' ? 'status-shipped' : '' %>
+                        <%= userOrder.status === 'Cancelled' ? 'status-cancelled' : '' %>">
+                        <%= userOrder.status %>
+                      </a>
+                      <% } %>
                   </div>
                 </div>
                 <div class="customer-info">
@@ -327,6 +325,7 @@
                       <th>Status</th>
                       <th>Quantity</th>
                       <th>Unit Price</th>
+                      <th>Action</th>
                       <th>Total</th>
                     </tr>
                   </thead>
@@ -349,28 +348,52 @@
                       <%} else {%>
                         <td ><%=order.quantity%></td>
                       <td>₹<%=order.price%></td>
+                      <td>
+                        <% if(order.status === 'Delivered' || ['return request accepted','Cancelled','Return Request Accepted','product returned','Return Requested'].includes(order.status)){ %>
+                          <%=order.status%>
+                          <% }else {%>
+                        <select name="status" data-item-id="<%= order.productId._id %>" data-order-id="<%= userOrder._id %>"
+                          onchange="updateItemStatus(this)">
+                         <% const statuses=['Pending', 'Processing' , 'Shipped' , 'Delivered' ]; {%>
+                             <% statuses.forEach(status=> { %>
+                                 <option value="<%= status %>" <%=order.status===status
+                                     ? 'selected' : '' %>><%= status %>
+                                 </option>
+                                 <% }) %>
+                          <% } %>
+
+                          <%}%>
+                      </td>
                       <% } %>
                       <% if (['return request accepted','Cancelled','Return Request Accepted','product returned'].includes(order.status)) { %>
-                        <td style="color: red;"><s>₹<%=order.quantity * order.price%></s></td>
+                        <%if(order.discountAmount){%>
+                          <td style="color: red;"><s>₹<%=(order.quantity * order.price) - order.discountAmount%></s> <s style="color: red; font-size: 10px;">₹<%=order.quantity * order.price%></s></td>
+                          <% } %>
                         <%} else {%>
-                          <td>₹<%=order.quantity * order.price%></td>
+                          <%if(order.discountAmount){%>
+                          <td>₹<%=(order.quantity * order.price) - order.discountAmount%>  <s style="color: red; font-size: 12px;">₹<%=order.quantity * order.price%></s> </td>
+                          <% } %>
+                          <td>₹<%=(order.quantity * order.price) - order.discountAmount%></td>
                         <% } %>
-                      
                     </tr>
                     <%})%>
                   </tbody>
                   <tfoot>
                     <tr>
                       <td colspan="3">Subtotal</td>
-                      <td>₹<%=userOrder.totalPrice%></td>
+                      <td>₹<%=userOrder.totalPrice + userOrder.couponDiscount%></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">Coupon Discount</td>
+                      <td>-₹<%=userOrder.couponDiscount%></td>
                     </tr>
                     <tr>
                       <td colspan="3">Shipping cost</td>
-                      <td>₹40.00</td>
+                      <td>Free</td>
                     </tr>
                     <tr>
                       <td colspan="3">Grandtotal</td>
-                      <td>₹<%=userOrder.totalPrice + 40%></td>
+                      <td>₹<%=userOrder.totalPrice%></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -464,6 +487,59 @@
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify({ orderId, status }),
+        success: function (res) {
+          Swal.fire({
+            text: res.msg,
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          console.log("loggggggg");
+          setTimeout(() => {
+          window.location.reload();
+          }, 800);
+        },
+        error: function (err) {
+          Swal.fire({
+            text: "Something went wrong",
+            icon: "error",
+            timer: 3000,
+            showConfirmButton: false,
+          });
+          console.log(err);
+        },
+      });
+    }
+  });
+}
+
+</script>
+<script>
+  // Product status updation
+  function updateItemStatus(selectElement) {
+    const orderId = selectElement.getAttribute('data-order-id');
+    const itemId = selectElement.getAttribute('data-item-id');
+    const status = selectElement.value;
+    console.log("orderid",orderId);
+    console.log("stus",status);
+  // Show SweetAlert confirmation dialog
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You want to change the status!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, change it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log("ajax working");
+      $.ajax({
+        url: "/admin/order/order-item-status",
+        method: "post",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({ orderId,itemId, status }),
         success: function (res) {
           Swal.fire({
             text: res.msg,

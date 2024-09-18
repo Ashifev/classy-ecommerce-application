@@ -245,7 +245,7 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
                   <a href="#" class="list-group-item list-group-item-action border-0 active" onclick="showAddressBook()">
                     Address Book
                   </a>
-                  <a href="#" class="list-group-item list-group-item-action border-0" onclick="showWallet()">
+                  <a href="/wallet" class="list-group-item list-group-item-action border-0" onclick="showWallet()">
                     Wallet
                 </a>
                   <a href="/logout" class="list-group-item list-group-item-action border-0">Logout</a>
@@ -321,6 +321,9 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
                         </td>
                         <td>
                           ₹<%=order.totalPrice%>
+                          <% if(order.discount){%>
+                            <span style="color: red; font-size: 10px;">saved ₹<%= order.discount %></span>
+                            <% } %>
                         </td>
                         <td>
                         <form method="post" action="/order-details/<%=order._id%>">
@@ -424,106 +427,7 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
             </div>
 
             <!--Wallet-->
-            <div id="wallet-section" class="main-content p-4" style="display:none;">
-              <div class="container">
-                  <h3 class="mb-4 text-success">WALLET</h3>
-          
-                  <div class="row">
-                      <div class="col-md-4 mb-4">
-                          <div class="card balance-card h-100">
-                              <div class="card-body d-flex flex-column justify-content-between">
-                                  <h5 class="card-title text-muted">Current Balance</h5>
-                                  <h4 class="balance-amount" >₹0.00</h4>
-                                  <div>
-                                      <!-- Additional content can go here -->
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-          
-                      <div class="col-md-8 mb-4">
-                          <div class="card transaction-summary-card h-100">
-                              <div class="card-body">
-                                  <h5 class="card-title text-muted mb-4">Transaction Summary</h5>
-                                  <div class="row">
-                                      <div class="col-6 col-md-3 mb-3">
-                                          <div class="summary-item">
-                                              <h6 class="text-muted">This Month</h6>
-                                              <h4 class="text-success">₹0.00</h4>
-                                          </div>
-                                      </div>
-                                      <div class="col-6 col-md-3 mb-3">
-                                          <div class="summary-item">
-                                              <h6 class="text-muted">Last Month</h6>
-                                              <h4 class="text-info">₹0.00</h4>
-                                          </div>
-                                      </div>
-                                      <div class="col-6 col-md-3 mb-3">
-                                          <div class="summary-item">
-                                              <h6 class="text-muted">Total In</h6>
-                                              <h4 class="text-success">₹0.00</h4>
-                                          </div>
-                                      </div>
-                                      <div class="col-6 col-md-3 mb-3">
-                                          <div class="summary-item">
-                                              <h6 class="text-muted">Total Out</h6>
-                                              <h4 class="text-danger">₹0.00</h4>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-          
-                  <div class="card transaction-log-card mt-4">
-                      <div class="card-body">
-                          <h5 class="card-title text-muted mb-4">Recent Transactions</h5>
-                          <div id="transaction-list" class="transaction-list">
-                              <div class="transaction-item bg-light">
-                                  <div class="row align-items-center">
-                                      <div class="col-md-1 col-2">
-                                          <div class="transaction-icon bg-success">
-                                              <i class="fas fa-arrow-down"></i>
-                                          </div>
-                                      </div>
-                                      <div class="col-md-7 col-6">
-                                          <h6 class="mb-0">Sample Credit Transaction</h6>
-                                          <small class="text-muted">01/01/2024, 12:00 PM</small>
-                                      </div>
-                                      <div class="col-md-2 col-4 text-right">
-                                          <span class="transaction-amount text-success">+₹1000.00</span>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="transaction-item">
-                                  <div class="row align-items-center">
-                                      <div class="col-md-1 col-2">
-                                          <div class="transaction-icon bg-danger">
-                                              <i class="fas fa-arrow-up"></i>
-                                          </div>
-                                      </div>
-                                      <div class="col-md-7 col-6">
-                                          <h6 class="mb-0">Sample Debit Transaction</h6>
-                                          <small class="text-muted">02/01/2024, 12:00 PM</small>
-                                      </div>
-                                      <div class="col-md-2 col-4 text-right">
-                                          <span class="transaction-amount text-danger">-₹500.00</span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-          
-                          <!-- Pagination -->
-                          <nav aria-label="Transaction log pagination" class="mt-4">
-                              <ul id="pagination" class="pagination justify-content-center">
-                                  <!-- Pagination will be dynamically populated here -->
-                              </ul>
-                          </nav>
-                      </div>
-                  </div>
-              </div>
-          </div>
+            
           
 
           </div>
@@ -574,17 +478,17 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
       document.getElementById('addressBook').style.display = 'block';
       setActiveLink(2);
     }
-    function showWallet() {
-      hideAllSections();
-      document.getElementById('wallet-section').style.display = 'block';
-      setActiveLink(3);
-    }
+    // function showWallet() {
+    //   hideAllSections();
+    //   document.getElementById('wallet-section').style.display = 'block';
+    //   setActiveLink(3);
+    // }
 
     function hideAllSections() {
       document.getElementById('orderDetails').style.display = 'none';
       document.getElementById('profileDetails').style.display = 'none';
       document.getElementById('addressBook').style.display = 'none';
-      document.getElementById('wallet-section').style.display = 'none';
+      // document.getElementById('wallet-section').style.display = 'none';
     }
 
     function setActiveLink(index) {

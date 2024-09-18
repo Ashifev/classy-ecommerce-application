@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Coupon = require('./couponModel');
 
 const addressSchema = new mongoose.Schema({
     name : String,
@@ -24,6 +25,7 @@ const productSchema = new mongoose.Schema({
     quantity: Number,
     price: Number,
     total: Number,
+    discountAmount : Number,
     status: {
         type: String,
         default: 'Pending'
@@ -64,6 +66,28 @@ const orderSchema = new mongoose.Schema({
         required: true,
         enum: ['COD', 'razorpay', 'Wallet'],
         default: 'COD'
+    },
+    paymentStatus : {
+        type : String,
+        enum : ['pending','Paid','failed'],
+        default : 'pending'
+    },
+    paymentDetails : {
+        razorpayOrderId : String,
+        razorpayPaymentId : String,
+        razorpaySignature : String
+    },
+    coupon : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : Coupon
+    },
+    couponDiscount : {
+        type : Number,
+        default : 0
+    },
+    discount : {
+        type : Number,
+        default : 0
     },
     dateOrdered: {
         type: Date,

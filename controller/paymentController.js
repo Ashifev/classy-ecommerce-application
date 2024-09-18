@@ -25,6 +25,8 @@ exports.createRazerPayOrder = async (req, res) => {
         console.log("in err",error);
         throw Error(error);
       }
+      console.log("create razorpay order",order);
+      
       res.status(200).json({ order });
     });
   } catch (error) {
@@ -35,9 +37,9 @@ exports.createRazerPayOrder = async (req, res) => {
 exports.verifyPayment = async (req, res) => {
   try {
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, wallet} =
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature,orderId, wallet} =
       req.body;
-console.log("entrrt");
+    console.log("entrrt varify payment ",req.body);
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -50,6 +52,7 @@ console.log("entrrt");
       throw Error("Invalid Signature sent");
     }
 
+ 
 
     return res
       .status(200)
@@ -149,3 +152,31 @@ exports.getKey = (req, res) => {
 //     res.status(500).json({message: "somthing went wrong"});  
 //   }
 // }
+
+exports.verifyPaymentFailedPayment = async (req, res) =>{
+  try {
+    console.log("failed order enter here");
+    
+    const userId = req.session.user._id;
+    console.log("req.body : ",req.body);
+
+    const { error: { metadata: { payment_id, order_id } }, orderId } = req.body;
+
+    
+    const order = await Order.findOne({orderId});
+
+    await Payment.create({
+      payment_id: payment_id,
+      razorpay_order_id: order_id,
+      orderId,
+      amount: order.totalPrice,
+      user: userId,
+      status: "failed",
+      paymentMode: "razorPay",
+    });
+
+    return res.status(200).json({ success: true, message: "Failed payment recorded" })
+  } catch (error) {
+    res.status(500).json({message: "somthing went wrong"});  
+  }
+}

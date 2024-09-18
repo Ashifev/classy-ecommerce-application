@@ -32,10 +32,10 @@ module.exports = {
     productAdded : async(req,res)=>{
         try{
             console.log("Uploading Files");
-            const {name,price,description,category,brand,stockQuantity} = req.body;
+            const {name,price,description,category,brand,stockQuantity,discountAmount} = req.body;
             const files = req.files;
             const image = Object.values(files).flat().map((file)=> `/uploads/products/${file.filename}`)
-            const newProduct = new productDb({name,price,description,image,category,brand,stockQuantity});
+            const newProduct = new productDb({name,price,description,image,category,brand,stockQuantity,discountAmount});
             await newProduct.save();
             req.session.success = "Product Added Successfully";
             res.redirect('/admin/products')

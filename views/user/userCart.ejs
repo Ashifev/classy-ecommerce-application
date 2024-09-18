@@ -59,7 +59,7 @@
                   </div>
                   <div class="product__cart__item__text">
                     <h6><%=product.productId.name%></h6>
-                    <h5>₹<%=product.productId.price%></h5>
+                    <h5>₹<%=(product.productId.price) - product.productId.discountAmount%> <s style="color: red; font-size: 12px;">₹<%=product.productId.price%></s> </h5>
                   </div>
                 </td>
                 <td class="quantity__item">
@@ -90,7 +90,7 @@
 
                 <div class="product_price">
                 <td id="cart__price" datatd-product-id="<%= product.productId._id %>" class="cart__price">
-                  ₹<%= (product.quantity * product.productId.price).toFixed(2)
+                  ₹<%= ((product.quantity * product.productId.price) - product.discountAmount).toFixed(2)
                   %>
                 </td>
               </div>
@@ -133,6 +133,12 @@
               >
             </li>
             <li>
+              Discount
+              <span id="discount"
+              style="color: red;;">₹<%= (cartProduct.discount).toFixed(2) %></span
+              >
+            </li>
+            <li>
               Delivery Fee
               <span style="color: red; font-weight: 900;"
                 >Free <s>₹80</s></span
@@ -141,7 +147,7 @@
             <li>
               Total
               <span id="totalPrice"
-                >₹<%= cartProduct.products ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0).toFixed(2) : '0.00' %></span
+                >₹<%= cartProduct.products ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0) - (cartProduct.discount).toFixed(2) : '0.00' %></span
               >
             </li>
           </ul>
@@ -221,13 +227,15 @@
 
       // Update the product price dynamically
       document.querySelectorAll(`[datatd-product-id="${productId}"]`).forEach(function (element) {
-          element.innerHTML = "₹" + response.price;
+          element.innerHTML = "₹" + response.discountedAmount;
       });
 
         const subTotal = document.getElementById('subTotal');
+        const discount = document.getElementById('discount');
         const totalPrice = document.getElementById('totalPrice');
         subTotal.innerHTML =  "₹" + response.subtotal;
         totalPrice.innerHTML = "₹" + response.total;
+        discount.innerHTML = "₹" + response.discount;
        
       },
       error: function (xhr, status, error) {

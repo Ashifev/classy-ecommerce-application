@@ -131,10 +131,11 @@
                   <i class="fa fa-star-o"></i>
                   <span> - 5 Reviews</span>
                 </div>
-                <h3>₹<%=products.price%> </h3>
+                <h6><s style="color: red;">₹<%= products.price %></s></h6>
+                <h3>₹<%= products.discountedPrice %> </h3>
                 <!-- <span>₹3000.00</span> -->
                 <div class="product__details__cart__option">
-                  <a href="#" id="add-to-bag-btn" class="primary-btn" onclick="addToCart('<%=products._id%>','<%=products.price%>')">add to cart</a>
+                  <a href="#" id="add-to-bag-btn" class="primary-btn" onclick="addToCart('<%=products._id%>','<%=products.price%>','<%=products.discountAmount%>')">add to cart</a>
                 <div class="product__details__btns__option">
                   <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
                   <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
@@ -340,7 +341,7 @@
                   <i class="fa fa-star-o"></i>
                   <i class="fa fa-star-o"></i>
                 </div>
-                <h5>₹<%= rProduct.price %></h5>
+                <h5>₹<%= rProduct.discountedPrice %></h5>
               </div>
             </div>
           </div>
@@ -436,7 +437,7 @@
         });
       });
 
-      function addToCart(productId,price) {
+      function addToCart(productId,price,discountAmount) {
         var url = '/add-cart'
 
         $.ajax({
@@ -444,7 +445,8 @@
           type: 'POST',
           data:{
             productId : productId,
-            price : price
+            price : price,
+            discountAmount :discountAmount
           },
           success: function(response) {
             console.log(response)

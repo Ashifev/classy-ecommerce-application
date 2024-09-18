@@ -78,13 +78,19 @@
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>Subtotal</span> </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹<%=order.totalPrice%></span> </div>
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹<%=(order.totalPrice) + (order.discount)%></span> </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>Discounts</span> </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span style="color: red;">₹<%=(order.discount)%></span> </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>Delivery Fee</span> </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="p-3 d-flex justify-content-center align-items-center"><span style="color: red; font-weight: bold;">Free </span> <span><s>₹<%=order.totalPrice%></s></span> </div>
+                                    <div class="p-3 d-flex justify-content-center align-items-center"><span style="color: red; font-weight: bold;">Free </span> <span><s>₹50</s></span> </div>
                                 </div>
                             </div>
                             

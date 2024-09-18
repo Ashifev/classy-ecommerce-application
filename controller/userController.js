@@ -69,7 +69,6 @@ module.exports = {
         req.session.email = email;
         req.session.username = name;
        
-
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -295,7 +294,8 @@ module.exports = {
       }
 
       if (maxPrice) {
-        filter.price = { $lte: parseFloat(maxPrice) };
+        // filter.price = { $lte: parseFloat(maxPrice) };
+        filter.discountedPrice = { $lte: parseFloat(maxPrice) };
       }
 
     let sortOption = {};
@@ -304,13 +304,12 @@ module.exports = {
         sortOption = { createdAt: -1 };
         break;
       case 'low_to_high':
-        sortOption = { price: 1 };
+        sortOption = { discountedPrice: 1 };
         break;
       case 'high_to_low':
-        sortOption = { price: -1 };
+        sortOption = { discountedPrice: -1 };
         break;
       default:
-        
         sortOption = {createdAt: 1 }; 
     }
 

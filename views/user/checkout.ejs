@@ -190,6 +190,156 @@
         }
       </style>
 
+<style>
+  .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+  .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+  .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: bold;
+  }
+  .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+  }
+  .close:hover {
+      color: #000;
+  }
+  .coupon-input {
+      display: flex;
+      margin-bottom: 20px;
+  }
+  .coupon-input input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      font-size: 14px;
+  }
+  .coupon-input button {
+      padding: 10px 15px;
+      background-color: #179500;
+      color: white;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  .coupon-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #bcffa7;
+      color: #0a0a0a;
+      border: 1px dashed #a0cc00;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+  }
+  .coupon-badge:hover {
+      background-color: #179500;
+      color: white;
+  }
+
+  .copy-icon {
+      margin-left: 5px;
+      font-size: 12px;
+  }
+  #couponDetails h3 {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #179500;
+  }
+  #couponDetails p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333;
+  }
+  #couponDetails .expiry {
+      font-size: 12px;
+      color: #888;
+  }
+  #applyCoupon {
+      width: 100%;
+      padding: 10px;
+      background-color: #179500;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+  }
+  #applyCoupon:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+  }
+  #availableCouponsList {
+      max-height: 300px;
+      overflow-y: auto;
+  }
+
+  .coupon-item {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+  }
+
+  .coupon-item .coupon-badge {
+      cursor: pointer;
+  }
+
+  .coupon-item .coupon-badge:hover {
+      background-color: #179500;
+      color: white;
+  }
+
+  .remove-coupon-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      background-color: #179500;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+  }
+  @media (max-width: 768px) {
+      .modal-content {
+          width: 95%;
+      }
+  }
+  
+</style>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
         <div class="container">
@@ -217,6 +367,10 @@
                 <form id="checkOutForm">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
+                          <div class="col-lg-4 col-md-3">
+                            <h6 class="coupon__code"><span class="icon_tag_alt"></span> <a href="#" id="openAvailableCouponModal" style="color: red;">Available Coupons</a></h6>
+                            </div>
+                            <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <a href="#" id="openCouponModal" style="color: #ff003c;">Click here</a> to enter your code</h6>
                             <div id="addressBook" class="card" >
 
                                 <div  class="card-body">
@@ -265,12 +419,21 @@
                                 <h4 class="order__title">Your order</h4>
                                 <div class="checkout__order__products">Product <span>Total</span></div>
                                 <ul class="checkout__total__products">
-                                    <% userCart.forEach(function(product,index){ %>
+                                    <% userCart.products.forEach(function(product,index){ %>
                                     <li><%= index + 1%>. <%=product.productId.name%><em style="padding-left: 70px;font-size: 12px;"><%=product.quantity%> x ₹<%=product.productId.price%></em><span>₹<%=product.productId.price * product.quantity%></span></li>
                                     <%})%>
                                 </ul>
                                 <ul class="checkout__total__all">
                                     <li>Subtotal <span>₹<%=subTotal%></span></li>
+                                    <% if(userCart.discount > 0){ %>
+                                      <li>Discount<span>-₹<%= userCart.discount.toFixed(2) %></span></li>
+                                      <% } %>
+                                      <% if(appliedCoupon) { %>
+                                          <li>Coupon Discount <span>-₹<%= discountAmount.toFixed(2) %></span></li>
+                                        
+                                      <% } else { %>
+                                          <li>Total <span>₹<%= totalPrice %></span></li>
+                                      <% } %>
                                     <li>Delivery Fee <span>Free <s>₹80</s></span></li>
                                     <li>Total <span id="totalAmt">₹<%=totalPrice%></span></li>
                                 </ul>
@@ -296,8 +459,8 @@
                                 <input class="form-check-input me-1" type="radio" name="payment" value="razorpay" id="razorpay" >
                                 <label class="form-check-label" for="razorpay">Razorpay</label>
 
-                                <input class="form-check-input me-1" type="radio" name="payment" value="Wallet" id="wallet" >
-                                <label class="form-check-label" id="walletBalace" data-balance="" for="wallet">Wallet </label>
+                                <input class="form-check-input me-1" type="radio" name="payment" value="Wallet" id="Wallet" >
+                                <label class="form-check-label" id="walletBalace" data-balance="" for="Wallet">Wallet (bal : ₹<%= wallet?.balance ? wallet?.balance : 0 %>) </label>
                                      
                                     <div class="error-message" id="confirmCheckoutError"></div>
                                 </div>
@@ -313,31 +476,116 @@
             </div>
         </div>
     </section>
+
+    <!-- Coupon Modal -->
+<div id="couponModal" class="modal" style="display: none;">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h2>APPLY COUPON</h2>
+          <span class="close">&times;</span>
+      </div>
+      <div class="modal-body">
+          <div class="coupon-input">
+              <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code">
+              <button id="checkCoupon">CHECK</button>
+          </div>
+          <div id="couponDetails" style="display: none;">
+              <div class="coupon-badge"></div>
+              <h3></h3>
+              <p class="description"></p>
+              <p class="expiry"></p>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button id="applyCoupon" disabled>APPLY</button>
+      </div>
+  </div>
+</div>
+
+<!-- Available Coupons Modal -->
+<div id="availableCouponsModal" class="modal" style="display: none;">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h2>AVAILABLE COUPONS</h2>
+          <span class="close">&times;</span>
+      </div>
+      <div class="modal-body">
+          <div id="availableCouponsList">
+              <% coupons.forEach(coupon => { %>
+                  <div class="coupon-item">
+                      <div class="coupon-badge" data-coupon="<%= coupon.couponCode %>">
+                          <%= coupon.couponCode %>
+                          <span class="copy-icon"></span>
+                      </div>
+                      <h5>Save ₹<%= coupon.discountAmount %></h5>
+                      <p class="description"><%= coupon.description %></p>
+                      <p class="expiry">Expires on: <%= new Date(coupon.validTo).toLocaleDateString() %></p>
+                  </div>
+              <% }) %>
+          </div>
+      </div>
+  </div>
+</div>
+
     <!-- Checkout Section End -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <!-- <script src="path/to/toastr.js"></script> -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <!--toast-->
     <!-- Include Toastr CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
 
-<!-- Include Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- Custom showErrorToast Function -->
+
 <script>
-  function showErrorToast(message) {
-    toastr.error(message, "Error", {
-      closeButton: true,
-      progressBar: true,
-      positionClass: "toast-top-right",
-      timeOut: "5000",
-      extendedTimeOut: "1000",
-      showMethod: "slideDown",
-      hideMethod: "slideUp"
-    });
-  }
+  const showErrorToast = async (message) => {
+    Swal.fire({
+    position: "top",
+    icon: "error",
+    title: message,
+    showConfirmButton: false,
+    timer: 1500
+});
+  };
 </script>
+
+<!-- <script>
+  const showErrorToast = async (message)=> {
+  toastr.error(message, "Error", {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    timeOut: 5000,
+    extendedTimeOut: 1000,
+    showMethod: "fadeIn",   // Replace "slideDown" with "fadeIn"
+    hideMethod: "fadeOut"   // Replace "slideUp" with "fadeOut"
+  });
+} 
+
+  function showError(input, message) {
+    let errorElement = input.parentElement.querySelector(".error-message");
+    if (!errorElement) {
+      errorElement = document.createElement("div");
+      errorElement.classList.add("error-message");
+      errorElement.style.color = "red";
+      input.parentElement.appendChild(errorElement);
+    }
+    errorElement.textContent = message;
+  }
+
+  function removeError(input) {
+    const errorElement = input.parentElement.querySelector(".error-message");
+    if (errorElement) {
+      errorElement.remove();
+    }
+  }
+</script>  -->
 
 
     <script>
@@ -413,22 +661,268 @@
 </script> -->
 
 <script>
+  var couponsData = JSON.parse('<%- JSON.stringify(coupons) %>'.replace(/&#34;/g, '"'));
   document.addEventListener("DOMContentLoaded", () => {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const couponSection = document.querySelector('.coupon__code');
+    const modal = document.getElementById("couponModal");
+    const availableCouponsModal = document.getElementById("availableCouponsModal");
+    const openCouponModalBtn = document.getElementById("openCouponModal");
+    const openAvailableCouponsModalBtn = document.getElementById("openAvailableCouponModal");
+    const closeBtns = document.getElementsByClassName("close");
+    const checkCouponBtn = document.getElementById("checkCoupon");
+    const couponCodeInput = document.getElementById("couponCode");
+    const couponDetails = document.getElementById("couponDetails");
+    const applyCouponBtn = document.getElementById("applyCoupon");
+
+    // Modal functionality
+    openCouponModalBtn.onclick = function(e) {
+        e.preventDefault();
+        modal.style.display = "flex";
+    }
+
+    openAvailableCouponsModalBtn.onclick = function(e) {
+        e.preventDefault();
+        availableCouponsModal.style.display = "flex";
+    }
+
+    Array.from(closeBtns).forEach(btn => {
+        btn.onclick = function() {
+            modal.style.display = "none";
+            availableCouponsModal.style.display = "none";
+        }
+    });
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        if (event.target == availableCouponsModal) {
+            availableCouponsModal.style.display = "none";
+        }
+    }
+
+    // Coupon functionality
+    checkCouponBtn.onclick = function() {
+        var couponCode = couponCodeInput.value.trim().toUpperCase();
+        var coupon = couponsData.find(c => c.couponCode === couponCode);
+        
+        if (coupon) {
+            document.querySelector('.coupon-badge').textContent = coupon.couponCode;
+            document.querySelector('#couponDetails h3').textContent = `Save ₹${coupon.discountAmount}`;
+            document.querySelector('#couponDetails .description').textContent = coupon.description;
+            document.querySelector('#couponDetails .expiry').textContent = `Expires on: ${new Date(coupon.validTo).toLocaleDateString()}`;
+            
+            couponDetails.style.display = "block";
+            applyCouponBtn.disabled = false;
+        } else {
+            showNotification("Invalid coupon code", true);
+            couponDetails.style.display = "none";
+            applyCouponBtn.disabled = true;
+        }
+    }
+
+    applyCouponBtn.onclick = function() {
+        var couponCode = couponCodeInput.value.trim().toUpperCase();
+
+        Swal.fire({
+            title: 'Applying Coupon',
+            text: 'Please wait...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch('/applycoupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ couponCode: couponCode }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+              console.log("enter successsfully hereee");
+              
+                showNotification(`Coupon applied successfully! You saved ₹${data.discountAmount}`, false);
+                updateTotalPrice(data.newTotal, data.discountAmount);
+                modal.style.display = "none";
+                addRemoveCouponButton(couponCode);
+            } else {
+                showNotification(data.message || "Failed to apply coupon", true);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification("An error occurred while applying the coupon", true);
+        })
+        .finally(() => {
+            Swal.close();
+        });
+    }
+
+    function addRemoveCouponButton(couponCode) {
+        const existingButton = document.getElementById('removeCouponBtn');
+        if (existingButton) {
+            existingButton.remove();
+        }
+        const removeCouponButton = document.createElement('button');
+        removeCouponButton.textContent = 'Remove Coupon';
+        removeCouponButton.id = 'removeCouponBtn';
+        removeCouponButton.classList.add('remove-coupon-btn');
+        removeCouponButton.type = 'button'; 
+        couponSection.appendChild(removeCouponButton);
+    }
+
+    function removeCoupon(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        Swal.fire({
+            title: 'Removing Coupon',
+            text: 'Please wait...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch('/removecoupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Coupon removed successfully',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                throw new Error(data.message || "Failed to remove coupon");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: error.message || "An error occurred while removing the coupon",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+
+    function updateTotalPrice(newTotal, discountAmount) {
+        const totalSpan = document.querySelector('.checkout__total__all li:last-child span');
+        totalSpan.textContent = `₹${newTotal.toFixed(2)}`;
+
+        const discountLi = document.createElement('li');
+        discountLi.classList.add('discount-line');
+        discountLi.textContent = `Coupon Discount`;
+        const discountSpan = document.createElement('span');
+        discountSpan.textContent = `-₹${discountAmount.toFixed(2)}`;
+        discountLi.appendChild(discountSpan);
+
+        const totalAllUl = document.querySelector('.checkout__total__all');
+        totalAllUl.insertBefore(discountLi, totalAllUl.lastElementChild);
+    }
+
+    function showNotification(message, isError = false) {
+        Toastify({
+            text: message,
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            backgroundColor: isError ? "red" : "#179500",
+        }).showToast();
+    }
+
+        // Clipboard functionality for coupon codes
+        document.querySelectorAll('.coupon-badge').forEach(badge => {
+        badge.addEventListener('click', function() {
+            const couponCode = this.dataset.coupon;
+            navigator.clipboard.writeText(couponCode).then(() => {
+                showNotification('Coupon code copied!', false);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showNotification('Failed to copy coupon code', true);
+            });
+        });
+    });
+
+     // Keyboard accessibility for modals
+     document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            modal.style.display = 'none';
+            availableCouponsModal.style.display = 'none';
+        }
+    });
+
+    const modalElement = document.querySelector('.modal-content');
+    modalElement.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+            const focusableContent = modalElement.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstFocusableElement = focusableContent[0];
+            const lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    e.preventDefault();
+                }
+            }
+        }
+    });
+
+    // Event delegation for remove coupon button
+    document.body.addEventListener('click', function(event) {
+        if (event.target && event.target.id === 'removeCouponBtn') {
+            removeCoupon(event);
+        }
+    });
+
     const radioButtons = document.querySelectorAll(
       'input[name="address"]'
     );
     const paymentMethods = document.querySelectorAll('input[name="payment"]');
     const placeOrderBtn = document.querySelector("#placeOrderBtn");
-    let selectedAddress = null;
+    // let selectedAddress = null;
     let selectedPayment = null;
     
 
 
     radioButtons.forEach((radioButton) => {
-      radioButton.addEventListener("change", () => {
-        selectedAddress = radioButton.value;
-      });
-    });
+  if (radioButton.checked) {
+    selectedAddress = radioButton.value;
+  }
+
+  // Add event listener for when a radio button changes
+  radioButton.addEventListener("change", () => {
+    selectedAddress = radioButton.value;
+  });
+});
 
     paymentMethods.forEach((paymentMethod) => {
       paymentMethod.addEventListener("change", () => {
@@ -443,7 +937,7 @@
         const totalAmtElement = document.getElementById("totalAmt");
         const totalAmtText = totalAmtElement.textContent.trim();
         const totalAmt = totalAmtText.replace("₹", "");
-console.log("totl",totalAmt);
+        console.log("totl",totalAmt);
 
         // const walletElement = document.getElementById("walletBalace");
         // const walletBalance = walletElement.getAttribute("data-balance");
@@ -457,7 +951,7 @@ console.log("totl",totalAmt);
 
         if (
           selectedPayment === "COD" ||
-          selectedPayment === "wallet"
+          selectedPayment === "Wallet"
         ) {
           saveOrderOnCashOnDelivery(totalAmt, selectedPayment, selectedAddress);
         } else if (selectedPayment === "razorpay") {
@@ -480,6 +974,9 @@ console.log("totl",totalAmt);
         });
       }
     });
+
+    
+
   });
 </script>
 
@@ -489,9 +986,12 @@ console.log("totl",totalAmt);
     totalPrice,
     selectedPayment,
     selectedAddress,
-    // walletBalance
+    walletBalance
   ) => {
-    if (selectedPayment === "wallet") {
+    console.log("total Price",totalPrice);
+    console.log("method",selectedPayment);
+    
+    if (selectedPayment === "Wallet") {
       console.log("here if");
       
       if (Number(walletBalance) < Number(totalPrice)) {
@@ -500,9 +1000,11 @@ console.log("totl",totalAmt);
         return;
       }
     }
-    if (totalPrice > 6000 && selectedPayment === "cashOnDelivery") {
-      showErrorToast("Order above 6000 should not be allowed for COD");
-    } else {
+    if (Number(totalPrice) < 1000 && selectedPayment === "COD") {
+        console.log("payment method COD and total below 1000rs");
+        showErrorToast("COD is not allowed for orders below 1000.");
+        return;
+      } else {
       try {
         const response = await fetch("/submit-order", {
           method: "POST",
@@ -516,7 +1018,7 @@ console.log("totl",totalAmt);
           }),
         });
         const data = await response.json();
-console.log("oooooorrrrdddder",data);
+        console.log("oooooorrrrdddder",data);
 
         if (response.ok) {
           Swal.fire({
@@ -566,8 +1068,8 @@ console.log("oooooorrrrdddder",data);
     });
 
     const data = await response.json();
-console.log("data",data);
-console.log("in amt",totalAmt);
+    console.log("data",data);
+    console.log("in amt",totalAmt);
 
     //creating razor pay order
     const razorOrder = await fetch("/razor-order", {
@@ -614,7 +1116,7 @@ console.log("in amt",totalAmt);
     razor.on("payment.failed", async function (response) {
     
       try {
-        const newOrder = await fetch("/faildOrder", {
+        const newOrder = await fetch("/failedOrder", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -715,9 +1217,16 @@ if(newOrder.ok){
 </script>
 
 
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"> -->
+<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script> -->
 
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/> -->
 
+<!-- Include Toastr JS -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> -->
 
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Footer Section Begin -->
 <%- include('../partials/userFooter') %>

@@ -201,6 +201,19 @@
                               />
                               <span class="error-message" id="quantity-error"></span>
                             </div>
+                            <div class="col-12">
+                                <label for="inputDiscount" class="form-label"
+                                  >Discount Amount</label>
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="inputDiscount"
+                                  name="discountAmount"
+                                  value="<%=product.discountAmount%>"
+                                  placeholder="Enter Discount Amount"
+                                />
+                                <span class="error-message" id="discount-error"></span>
+                            </div>
                             <input type="hidden" name="deletedImages" id="deletedImagesInput">
                             <input type="hidden" name="editedImages" id="editedImagesInput">
                             <div class="col-12">
@@ -291,6 +304,7 @@
         const description = form.elements['description'].value.trim();
         const price = form.elements['price'].value.trim();
         const quantity = form.elements['stockQuantity'].value.trim();
+        const discountAmount = form.elements['discountAmount'].value.trim();
         const category = form.elements['category'].value;
         const brand = form.elements['brand'].value;
         const fileInput = document.getElementById('newImages');
@@ -320,6 +334,11 @@
 
         if (quantity === '' || isNaN(quantity) || parseInt(quantity) < 1) {
             displayErrorMessage('Please enter a valid positive quantity', 'quantity-error');
+            isValid = false;
+        }
+
+        if (isNaN(discountAmount) || parseInt(discountAmount) < 1) {
+            displayErrorMessage('Please enter a valid positive discount', 'quantity-error');
             isValid = false;
         }
 

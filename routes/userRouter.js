@@ -8,6 +8,8 @@ const methodOverride = require('method-override');
 const orderController = require('../controller/orderController');
 const paymentController = require('../controller/paymentController');
 const wishlistController = require('../controller/wishlistController');
+const walletController = require('../controller/walletController');
+const couponController = require('../controller/couponController');
 
 
 /* GET Guest page. */
@@ -86,14 +88,30 @@ router.post('/return-item',userAuth.userAuthentication,orderController.itemRetur
 router.get("/razor-key",userAuth.userAuthentication,paymentController.getKey)
 router.post("/razor-order",userAuth.userAuthentication,paymentController.createRazerPayOrder)
 router.post("/razor-varify",userAuth.userAuthentication,paymentController.verifyPayment)
+router.post("/failedOrder",userAuth.userAuthentication,paymentController.verifyPaymentFailedPayment)
 
 //filtering and search
 router.get('/filter-product',userAuth.userAuthentication,userController.productFilter)
 router.post('/searchProduct',userAuth.userAuthentication,userController.productSearch)
 
+//wallet router
+router.get('/wallet',userAuth.userAuthentication,walletController.getWallet)
+
 //wishlist router
 router.get('/wishlist',userAuth.userAuthentication,wishlistController.getWishList)
+router.post('/add-to-wishlist',userAuth.userAuthentication,wishlistController.addWishToWishList);
+router.post('/delete-wishlist',userAuth.userAuthentication,wishlistController.removeFromWishlist);
+router.post('/remove-wishlist',userAuth.userAuthentication,wishlistController.removeFromWishlist);
 
+// coupons
+router.post('/applycoupon',couponController.applyCoupon);
+router.post('/removecoupon',couponController.removeCoupon);
+
+// invoice
+router.get('/generateInvoice/:orderId',orderController.generateInvoice);
+
+// download invoice
+router.get('/downloadInvoice/:orderId',orderController.downloadInvoice);
 
 //logout
 router.get("/logout",userController.logout) 

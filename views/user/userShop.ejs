@@ -1,4 +1,78 @@
-    <!-- Header Section Begin -->
+<style>
+    .in-wishlist {
+    filter: invert(1);
+    }
+  .original-price {
+        text-decoration: line-through;
+        color: #999;
+        margin-right: 10px;
+        }
+
+        .discounted-price {
+        color: #000000;
+        font-weight: bold;
+        }
+
+        .discount-badge {
+        background-color: #e53637;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 12px;
+        margin-left: 10px;
+        }
+        .ribbon{
+            position: absolute;
+            right: 40px;
+            top: -5px;
+            z-index: 1;
+            overflow: hidden;
+            width: 75px;
+            height: 75px;
+            text-align: left;
+        }
+        .ribbon span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #FFF;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 20px;
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            width: 100px;
+            display: block;
+            background: #FF0000;
+            box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+            position: absolute;
+            top: 19px;
+            left: -11px;
+        }
+        .ribbon span ::before{
+            content: "";
+            position: absolute;
+            left: 0px;
+            top: 100%;
+            z-index: -1;
+            border-left: 3px solid #FF0000;
+            border-right: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+            border-top: 3px solid #FF0000;
+        }
+        .ribbon span::after{
+            content: "";
+            position: absolute;
+            right: 0px;
+            top: 100%;
+            z-index: -1;
+            border-left: 3px solid transparent;
+            border-right: 3px solid #FF0000;
+            border-bottom: 3px solid transparent;
+            border-top: 3px solid #FF0000;
+        }
+</style>
+
+<!-- Header Section Begin -->
     <%- include('../partials/userHeader') %>
     <!-- Header Section End -->
 
@@ -152,28 +226,43 @@
                       <!-- <div class="favorite-icon" style="position: absolute; z-index: 2; " onclick="toggleFavorite('<%=product._id%>')">
                         
                       </div> -->
+                      <div>
                         <div class="product__item">
-                                <ul class="product__hover">
-                                  <li>
-                                    <img src="images/icon/heart.png" alt="" srcset="">
-                                  </li>
-                                    <li><a href="/product-details/<%=product._id%>"><img src="<%=product.image[0]%>" alt=""></a></li>
-                                    <li>
-                                        <% if ( product.stockQuantity==0) { %>
-                                            <span style="background-color:red;" class="badge badge-danger">Out of Stock</span>
-                                        <% }else if (product.stockQuantity>5&&product.stockQuantity<10) { %>
-                                            <span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>
-                                        <% }else { %>
-                                            <span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>
-                                        <% } %>
-                                        
-                                    </li>
-                                    
-                                </ul>
+                          <div class="favBtn" style="position: absolute; z-index: 3; ">
+                            <img src="images/icon/heart.png" alt="" srcset="">
+                          </div>
+                          <a href="/product-details/<%=product._id%>">
+                          <div class="product__item__pic set-bg" data-setbg="<%=product.image[0]%>">
+                            <%if(product.discountAmount >0){%>
+                            <div class="ribbon">
+                              <span>
+                                  <span class="discount-badge"><%= Math.round(((product.price - product.discountedPrice) / product.price) * 100) %>% OFF</span>
+                              </span>
+                          </div>
+                          <%}%>
+                            <ul class="product__hover">
+                              
+                              <li>
+                                  <% if ( product.stockQuantity==0) { %>
+                                      <span style="background-color:red;" class="badge badge-danger">Out of Stock</span>
+                                  <% }else if (product.stockQuantity>5&&product.stockQuantity<10) { %>
+                                      <span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>
+                                  <% }else { %>
+                                      <span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>
+                                  <% } %>
+                              </li>
+                          </ul>
+                        </div>
+                      </a>
+                    </div>    
                             <div class="product__item__text">
                               
                                 <h6><%=product.name%></h6>
-                                <a style="cursor: pointer;" onclick="addToCart('<%=product._id%>','<%=product.price%>')" class="add-cart">+ Add To Cart</a>
+                                <%if(product.discountAmount > 0){%>
+                                <a style="cursor: pointer;" id="discountAmt" data-discount-amt ='<%=product.discountAmount%>' onclick="addToCart('<%=product._id%>','<%=product.price%>')" class="add-cart">+ Add To Cart</a>
+                                <%}else{%>
+                                  <a style="cursor: pointer;" onclick="addToCart('<%=product._id%>','<%=product.price%>')" class="add-cart">+ Add To Cart</a>
+                                <% } %>
                                 <div class="rating">
                                     <i class="fa fa-star-o"></i>
                                     <i class="fa fa-star-o"></i>
@@ -181,8 +270,14 @@
                                     <i class="fa fa-star-o"></i>
                                     <i class="fa fa-star-o"></i>
                                 </div>
+                                <%if(product.discountAmount > 0){ %>
+                                  <h5>
+                                    <h6><s style="color: red;">₹<%= product.price %></s></h6>
+                                    <h5>₹<%= product.discountedPrice %></h5>
+                                  <%}else{%>
                                 <h5>₹<%=product.price%></h5>
-                                
+                                <%}%>
+                                <a onclick="addToWishList('<%=product._id%>')">add to favorite</a>
                             </div>
                         </div>
                     </div>
@@ -217,7 +312,21 @@
 <!-- Shop Section End -->
 
 <script>
-    function addToCart(productId,price) {
+  function toggleWishlist(heartElement, productId) {
+    const heartIcon = heartElement.querySelector('.wishlist-icon');
+    const inWishlist = heartIcon.getAttribute('data-in-wishlist') === 'true';  // Check if it's still the icon
+
+    if (!inWishlist) {
+        addToWishList(heartElement, productId); // Add to wishlist
+    } else {
+        removeFromWish(heartElement, productId); // Remove from wishlist
+    }
+}
+</script>
+
+<script>
+    function addToCart(productId,price,discountAmount) {
+      console.log("discount amount",discountAmount);
         var url = '/add-cart'
 
         $.ajax({
@@ -225,7 +334,8 @@
           type: 'POST',
           data:{
             productId : productId,
-            price : price
+            price : price,
+            discountAmount :discountAmount
           },
           success: function(response) {
             console.log(response)
@@ -254,6 +364,89 @@
           }
         });
       }      
+</script>
+
+<!--add product into wishlist-->
+<script>
+  function addToWishList(heartElement, productId) {
+    var url = '/add-to-wishlist';
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            productId: productId,
+        },
+        success: function(response) {
+            console.log(response);
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 800,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: response.icon,
+                title: response.msg
+            });
+
+            // Replace the Font Awesome icon with the image
+            const heartIcon = heartElement.querySelector('.wishlist-icon');
+            heartIcon.outerHTML = '<i class="fa-solid fa-heart wishlist-icon" data-in-wishlist="true"></i> ';
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to add item to wishlist. Please try again.',
+            });
+        }
+    });
+}
+
+function removeFromWish(heartElement, productId) {
+    var url = '/remove-wishlist';
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            productId: productId,
+        },
+        success: function(response) {
+            console.log(response);
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 800,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: response.icon,
+                title: response.msg
+            });
+
+            // Replace the image back with the Font Awesome heart icon
+            const heartIcon = heartElement.querySelector('.wishlist-icon');
+            heartIcon.outerHTML = '<img src="images/icon/heart.png" data-in-wishlist="false" alt="" class="wishlist-icon">';
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to remove item from wishlist. Please try again.',
+            });
+        }
+    });
+}
 </script>
 
 <!--update price-->
@@ -441,10 +634,23 @@ function displayProducts(products) {
   }
 
   products.forEach(product => {
+    const discountPercentage = product.discountAmount > 0 
+      ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
+      : 0;
     const productHTML = `
       <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="product__item">
+          ${discountPercentage > 0 ? `
+            <div class="ribbon">
+              <span>
+                <span class="discount-badge">${discountPercentage}% OFF</span>
+              </span>
+            </div>` 
+          : ''}
           <ul class="product__hover">
+            <li onclick="toggleWishlist(this, '${product._id}')">
+              <a href="#"><img  class="wishlist-icon" data-in-wishlist="false" src="images/icon/heart.png" alt=""></a>
+            </li>
             <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
             <li>
               ${product.stockQuantity === 0 
@@ -457,7 +663,7 @@ function displayProducts(products) {
           </ul>
           <div class="product__item__text">
             <h6>${product.name}</h6>
-            <a style="cursor: pointer;" onclick="addToCart('${product._id}','${product.price}')" class="add-cart">+ Add To Cart</a>
+            <a style="cursor: pointer;" onclick="addToCart('${product._id}','${product.price}','${product.discountAmount}')" class="add-cart">+ Add To Cart</a>
             <div class="rating">
               <i class="fa fa-star-o"></i>
               <i class="fa fa-star-o"></i>
@@ -465,7 +671,10 @@ function displayProducts(products) {
               <i class="fa fa-star-o"></i>
               <i class="fa fa-star-o"></i>
             </div>
-            <h5>₹${product.price}</h5>
+            <h5>${product.discountAmount > 0 
+                ? `<s style="color: red; font-size:12px">₹${product.price}</s> ₹${product.discountedPrice}` 
+                : `₹ ${product.price}`
+              }</h5>
           </div>
         </div>
       </div>

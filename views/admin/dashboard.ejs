@@ -55,13 +55,33 @@
 
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
+                <% if (success) { %>
+                    <div class="alert alert-success text-center">
+                      <%= success %>
+                    </div>
+                    <% } else if(err){ %>
+                        <div class="alert alert-danger text-center">
+                            <%= err %>
+                          </div>
+                    <% } else{ %>
+                    <% } %>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#salesReportModal">
+                                <i class='bx bx-download me-1'></i>
+                                Sales Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="row g-4">
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Today Sale</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0"><%=totalSales%></h6>
                             </div>
                         </div>
                     </div>
@@ -70,7 +90,7 @@
                             <i class="fa fa-chart-bar fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Total Sale</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0"><%=totalSales%></h6>
                             </div>
                         </div>
                     </div>
@@ -79,7 +99,7 @@
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0">₹<%=totalRevenue%></h6>
                             </div>
                         </div>
                     </div>
@@ -122,80 +142,105 @@
             </div>
             <!-- Sales Chart End -->
 
+            
 
             <!-- Recent Sales Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Recent Salse</h6>
-                        <a href="">Show All</a>
+                        <h6 class="mb-0">Top Products</h6>
+                        <a href="/admin/products">Show All</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table text-start align-middle table-bordered table-hover mb-0">
                             <thead>
                                 <tr class="text-dark">
-                                    <th scope="col"><input class="form-check-input" type="checkbox"></th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Invoice</th>
-                                    <th scope="col">Customer</th>
-                                    <th scope="col">Amount</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">sl</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Total Sold</th>
+                                    <th scope="col">Quantity</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <% topProducts.forEach((product,index) => { %>
                                 <tr>
-                                    <td><input class="form-check-input" type="checkbox"></td>
-                                    <td>01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td>Jhon Doe</td>
-                                    <td>$123</td>
-                                    <td>Paid</td>
+                                    <td><%= index+1 %></td>
+                                    <td><img style="width: 70px;" src="<%= product.image[0] %>" alt="" /></td>
+                                    <td><%= product.name  %></td>
+                                    <td>₹<%= product.priceMRP %></td>
+                                    <td>₹<%= product.totalRevenues %></td>
+                                    <td><%= product.totalSold %></td>
                                     <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
                                 </tr>
-                                <tr>
-                                    <td><input class="form-check-input" type="checkbox"></td>
-                                    <td>01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td>Jhon Doe</td>
-                                    <td>$123</td>
-                                    <td>Paid</td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td><input class="form-check-input" type="checkbox"></td>
-                                    <td>01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td>Jhon Doe</td>
-                                    <td>$123</td>
-                                    <td>Paid</td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td><input class="form-check-input" type="checkbox"></td>
-                                    <td>01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td>Jhon Doe</td>
-                                    <td>$123</td>
-                                    <td>Paid</td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td><input class="form-check-input" type="checkbox"></td>
-                                    <td>01 Jan 2045</td>
-                                    <td>INV-0123</td>
-                                    <td>Jhon Doe</td>
-                                    <td>$123</td>
-                                    <td>Paid</td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                                </tr>
+                                <% }) %>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <!-- Recent Sales End -->
+            <!-- Top Brands Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-light text-center rounded p-4">
+                    <div class="col">
+                        <div class="card radius-10 w-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h5 class="mb-0">Top Brands</h5>
+                                    </div>
+                                    <div class="font-22 ms-auto">
+                                        <i class='bx bx-dots-horizontal-rounded'></i>
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <% topBrands.forEach(brand => { %>
+                                        <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                                            <%= brand.name %> 
+                                            <span class="badge bg-success rounded-pill"><%= brand.totalSold %></span>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Top Brands End -->
+            <!-- Top Category Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-light text-center rounded p-4">
+                    <div class="col">
+                        <div class="card radius-10 w-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h5 class="mb-0">Top Categories</h5>
+                                    </div>
+                                    <div class="font-22 ms-auto">
+                                        <i class='bx bx-dots-horizontal-rounded'></i>
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <% topCategories.forEach(category => { %>
+                                        <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">
+                                            <%= category.name %> 
+                                            <span class="badge bg-success rounded-pill"><%= category.totalSold %></span>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Top Category End -->
 
+			
+		
 
             <!-- Widgets Start -->
             <div class="container-fluid pt-4 px-4">
@@ -318,6 +363,7 @@
             </div>
             <!-- Widgets End -->
 
+            
 
             <!-- Footer Start -->
             <!-- Footer End -->
@@ -328,6 +374,58 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+    <!-- Sales Report Modal -->
+<div class="modal fade" id="salesReportModal" tabindex="-1" aria-labelledby="salesReportModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form id="salesReportForm" action="/admin/salesreport" method="POST">
+				<div class="modal-header">
+					<h5 class="modal-title" id="salesReportModalLabel">Sales Report</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- Input fields for start date, end date, and download format -->
+					<div class="mb-3">
+						<label for="startDate" class="form-label">Start Date</label>
+						<input type="date" class="form-control" id="startDate" name="startdate" oninput="validateForm()">
+						<small id="startDateError" class="text-danger"></small>
+					</div>
+					<div class="mb-3">
+						<label for="endDate" class="form-label">End Date</label>
+						<input type="date" class="form-control" id="endDate" name="enddate" oninput="validateForm()">
+						<small id="endDateError" class="text-danger"></small>
+					</div>
+					<!-- <div class="mb-3">
+						<label for="timeInterval" class="form-label">Time Interval</label>
+						<select class="form-select" name="timeInterval" id="timeInterval" oninput="validateForm()">
+							<option value="" disabled selected>Options</option>
+							<option value="day">Daily</option>
+							<option value="week">Weekly</option>
+							<option value="month">Monthly</option>
+							<option value="year">Yearly</option>
+						</select>
+					</div> -->
+					<div class="mb-3">
+						<label for="downloadFormat" class="form-label">Download Format</label>
+						<select class="form-select" id="downloadFormat" name="downloadformat" oninput="validateForm()">
+							<option value="" disabled selected>Select Format</option>
+							<option value="pdf">PDF</option>
+							<option value="excel">Excel</option>
+						</select>
+						<small id="downloadFormatError" class="text-danger"></small>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary" id="generateReportBtn" disabled>Generate Report</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- modal sales report -->
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -342,6 +440,56 @@
 
     <!-- Template Javascript -->
     <script src="/admin/js/main.js"></script>
+
+    <!-- Updated JavaScript code for form validation -->
+<script>
+    // Function to validate the form
+    function validateForm() {
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        // const timeInterval = document.getElementById("timeInterval").value;
+        const downloadFormat = document.getElementById("downloadFormat").value;
+
+        let isValid = true;
+
+        // Reset all error messages
+        document.getElementById("startDateError").innerText = "";
+        document.getElementById("endDateError").innerText = "";
+        document.getElementById("downloadFormatError").innerText = "";
+
+        // Start date and end date validation
+        if (!startDate) {
+            document.getElementById("startDateError").innerText = "Start Date is required.";
+            isValid = false;
+        }
+        if (!endDate) {
+            document.getElementById("endDateError").innerText = "End Date is required.";
+            isValid = false;
+        }
+        if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+            document.getElementById("endDateError").innerText = "End Date cannot be earlier than Start Date.";
+            isValid = false;
+        }
+
+        // Time Interval validation
+        // if (!timeInterval) {
+        //     isValid = false;
+        // }
+
+        // Download format validation
+        if (!downloadFormat) {
+            document.getElementById("downloadFormatError").innerText = "Please select a download format.";
+            isValid = false;
+        }
+
+        // Enable or disable the generate report button
+        document.getElementById("generateReportBtn").disabled = !isValid;
+    }
+
+    // Add event listener for real-time validation
+    document.getElementById("salesReportForm").addEventListener("input", validateForm);
+</script>
+
 </body>
 
 </html>
