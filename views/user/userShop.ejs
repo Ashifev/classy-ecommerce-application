@@ -309,6 +309,7 @@
         </div>
     </div>
 </section>
+<input type="hidden" name="" id="wishlist" value="<%= wishlist %>">
 <!-- Shop Section End -->
 
 <!-- <script>
@@ -662,6 +663,7 @@ function addToWishList(heartElement, productId) {
       wishlistIcon.classList.remove('fa-regular');
       wishlistIcon.classList.add('fa-solid');
       wishlistIcon.setAttribute('data-in-wishlist', 'true');
+      wishlistIcon.style.color = 'black';
     },
     error: function(xhr, status, error) {
       Swal.fire({
@@ -704,6 +706,7 @@ function removeFromWish(heartElement, productId) {
       wishlistIcon.classList.remove('fa-solid');
       wishlistIcon.classList.add('fa-regular');
       wishlistIcon.setAttribute('data-in-wishlist', 'false');
+      // wishlistIcon.style.color = 'inherit';
     },
     error: function(xhr, status, error) {
       Swal.fire({
@@ -716,6 +719,9 @@ function removeFromWish(heartElement, productId) {
 }
 
 function displayProducts(products) {
+  const wishlist = document.getElementById('wishlist').value;
+  console.log("wishlist input value ",wishlist);
+  
   const productsGrid = document.querySelector('.product-grids');
   productsGrid.innerHTML = '';
 
@@ -728,56 +734,65 @@ function displayProducts(products) {
     return;
   }
 
-  products.forEach(product => {
-    const discountPercentage = product.discountAmount > 0 
-      ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
-      : 0;
-    const productHTML = `
-      <div class="col-lg-4 col-md-6 col-sm-6">
-        <div class="product__item">
-          ${discountPercentage > 0 ? `
-            <div class="ribbon">
-              <span>
-                <span class="discount-badge">${discountPercentage}% OFF</span>
-              </span>
-            </div>` 
-          : ''}
-          <ul class="product__hover">
-            <li>
-              <a  style='text-decoration: none;' href="#" onclick="toggleWishlist(this, '${product._id}'); return false;">
-                <i style="list-style: none;" class="fa-regular fa-heart wishlist-icon" data-in-wishlist="false"></i>
-              </a>
-            </li>
-            <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
-            <li>
-              ${product.stockQuantity === 0 
-                ? '<span style="background-color:red;" class="badge badge-danger">Out of Stock</span>'
-                : product.stockQuantity > 5 && product.stockQuantity < 10
-                  ? '<span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>'
-                  : '<span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>'
-              }
-            </li>
-          </ul>
-          <div class="product__item__text">
-            <h6>${product.name}</h6>
-            <a style="cursor: pointer;" onclick="addToCart('${product._id}','${product.price}','${product.discountAmount}')" class="add-cart">+ Add To Cart</a>
-            <div class="rating">
-              <i class="fa fa-star-o"></i>
-              <i class="fa fa-star-o"></i>
-              <i class="fa fa-star-o"></i>
-              <i class="fa fa-star-o"></i>
-              <i class="fa fa-star-o"></i>
+  
+  
+    console.log("wishlist");
+    products.forEach(product => {
+    
+      const isInWishlist = wishlist.includes(product._id);
+      const discountPercentage = product.discountAmount > 0 
+        ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
+        : 0;
+      const productHTML = `
+        <div class="col-lg-4 col-md-6 col-sm-6">
+          <div class="product__item">
+            ${discountPercentage > 0 ? `
+              <div class="ribbon">
+                <span>
+                  <span class="discount-badge">${discountPercentage}% OFF</span>
+                </span>
+              </div>` 
+            : ''}
+            <ul class="product__hover">
+              <li style="list-style: none;">
+                <a style="text-decoration:none;" href="#" onclick="toggleWishlist(this, '${product._id}'); return false;">
+                  <i class="fa-heart wishlist-icon ${isInWishlist ? 'fa-solid' : 'fa-regular'}" 
+                     data-in-wishlist="${isInWishlist}" 
+                     style="color: ${isInWishlist ? 'black' : 'inherit'}; list-style: none;">
+                  </i>
+                </a>
+              </li>
+              <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
+              <li>
+                ${product.stockQuantity === 0 
+                  ? '<span style="background-color:red;" class="badge badge-danger">Out of Stock</span>'
+                  : product.stockQuantity > 5 && product.stockQuantity < 10
+                    ? '<span style="background-color:rgb(212, 156, 4);" class="badge badge-warning">Limited Stock</span>'
+                    : '<span style="background-color:rgb(3, 158, 3);" class="badge badge-success">InStock</span>'
+                }
+              </li>
+            </ul>
+            <div class="product__item__text">
+              <h6>${product.name}</h6>
+              <a style="cursor: pointer;" onclick="addToCart('${product._id}','${product.price}','${product.discountAmount}')" class="add-cart">+ Add To Cart</a>
+              <div class="rating">
+                <i class="fa fa-star-o"></i>
+                <i class="fa fa-star-o"></i>
+                <i class="fa fa-star-o"></i>
+                <i class="fa fa-star-o"></i>
+                <i class="fa fa-star-o"></i>
+              </div>
+              <h5>${product.discountAmount > 0 
+                  ? `<s style="color: red; font-size:12px">₹${product.price}</s> ₹${product.discountedPrice}` 
+                  : `₹ ${product.price}`
+                }</h5>
             </div>
-            <h5>${product.discountAmount > 0 
-                ? `<s style="color: red; font-size:12px">₹${product.price}</s> ₹${product.discountedPrice}` 
-                : `₹ ${product.price}`
-              }</h5>
           </div>
         </div>
-      </div>
-    `;
-    productsGrid.innerHTML += productHTML;
-  });
+      `;
+      productsGrid.innerHTML += productHTML;
+    });
+ 
 }
 
 document.getElementById('applyFilter').addEventListener('click', function(event) {

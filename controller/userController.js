@@ -9,6 +9,7 @@ const nodeMailer = require("../services/nodeMailer");
 const bcrypt = require("bcrypt");
 const category = require("../models/categoryModel");
 const brand = require("../models/brandModel");
+const wishlistDB = require('../models/wishlistModel');
 const mongoose = require('mongoose');
 const createError = require("../config/createError");
 require("dotenv").config();
@@ -241,6 +242,8 @@ module.exports = {
   //shop page render
   shopRender: async (req, res) => {
     try {
+      const userId = req.session.user._id;
+      let wishlist = await wishlistDB.findOne({user : userId});
       console.log("shop entered user:", req.session.username);
       
       const page = parseInt(req.query.page) || 1;
@@ -265,6 +268,7 @@ module.exports = {
         product,
         allBrand,
         allCategory,
+        wishlist,
         currentPage: page,
         totalPages
       });

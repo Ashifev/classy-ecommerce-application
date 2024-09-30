@@ -37,7 +37,6 @@ module.exports = {
 
             wishlist.items.push({product : productId})
             await wishlist.save();
-            
             res.json({icon : 'success', msg : "Product Successfully added to the wishlist"})
 
         }catch(err){
@@ -63,6 +62,7 @@ module.exports = {
             }
 
             wishlist.items = updatedItems;
+            
             await wishlist.save()
             if(wishlist.items.length === 0) await wishlistDB.findOneAndDelete({_id:wishlist._id});
 
