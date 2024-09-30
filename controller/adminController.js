@@ -145,7 +145,7 @@ module.exports = {
         const salesCount = await orderDB.aggregate([
             {
                 $match :{
-                    status : "Delivered",
+                    paymentStatus : "Paid",
                 }
             },
             {
@@ -159,7 +159,7 @@ module.exports = {
         //     { $group : {_id : null , amounts : {$sum : "$totalAmount"}}}
         // ])
         const revenue = await orderDB.aggregate([
-            { $match : {status : "Delivered"}},
+            { $match : {paymentStatus : "Paid"}},
             { $group : {_id : null , amounts : {$sum : "$totalPrice"}}}
         ]);
 
@@ -189,13 +189,13 @@ module.exports = {
         const salesGraphData = await orderDB.aggregate([
             {
                 $match: {
-                    status: "Delivered",
-                    createdAt: { $exists: true, $ne: null }
+                    paymentStatus : "Paid",
+                    dateOrdered: { $exists: true, $ne: null }
                 }
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$dateOrdered" } },
                     count: { $sum: 1 }
                 }
             },
@@ -343,6 +343,25 @@ module.exports = {
         }catch(err){
             console.log("error at salereport",err);
             res.render('500');
+        }
+    },
+    getTransaction:async(req,res)=>{
+        try{
+            const err = req.session.err;
+            const success = req.session.success;
+            req.session.success = null;
+            req.session.err = null;
+
+            const recentSales = await orderDB.find()
+            .sort({createdAt : -1})
+            .limit(10)
+            .populate('productItems.productId')
+            
+            res.render('admin/transactions',{recentSales,err,success})
+        }catch(err){
+            console.log("error at rendering transaction",err);
+            res.render('500');
+            
         }
     },
     logout: (req,res)=>{

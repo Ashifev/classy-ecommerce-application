@@ -69,6 +69,9 @@ updateItemStatus: async(req,res)=>{
         //         userOrder.productItems[i].status = status;
         //     }
         // }
+        if(status === "Delivered"){
+            userOrder.paymentStatus = 'Paid';
+        }
         
         await userOrder.save();
         let msg = "Order status changed Successfully"

@@ -4,7 +4,7 @@ const path = require('path');
 
 
 module.exports = {
-    generateInvoice : async (orderDetails,deliveredProducts) => {
+    generateInvoice : async (orderDetails) => {
 
         try{
             const formDate = (date) => {
@@ -37,7 +37,7 @@ module.exports = {
                     "date" : formDate(orderDetails.dateOrdered),
                     "invoice date" : formDate(orderDetails.dateOrdered)
                 },
-                "products" : deliveredProducts.map(product => ({
+                "products" : orderDetails.productItems.map(product => ({
                     "quantity" : product.quantity.toString(),
                     "description" : product.productId.name,
                     "tax-rate" : 1,

@@ -79,16 +79,17 @@ router.post('/delete-cart/:id',userAuth.userAuthentication,cartController.delete
 router.get('/checkout',userAuth.userAuthentication,orderController.getCheckout)
 router.post('/submit-order',userAuth.userAuthentication,orderController.orderSubmit)
 router.get('/order-placed/:id',userAuth.userAuthentication,orderController.orderplaced)
-router.post('/order-details/:id',userAuth.userAuthentication,orderController.getOrderDetails)
+router.get('/order-details/:id',userAuth.userAuthentication,orderController.getOrderDetails)
 router.post('/order-cancel/:id',userAuth.userAuthentication,orderController.orderCancel)
 router.post('/cancel-item',userAuth.userAuthentication,orderController.itemCancel)
 router.post('/return-item',userAuth.userAuthentication,orderController.itemReturn)
-
+router.post('/save-order',userAuth.userAuthentication,orderController.saveFailedOrder)
 //razorpay
 router.get("/razor-key",userAuth.userAuthentication,paymentController.getKey)
 router.post("/razor-order",userAuth.userAuthentication,paymentController.createRazerPayOrder)
 router.post("/razor-varify",userAuth.userAuthentication,paymentController.verifyPayment)
 router.post("/failedOrder",userAuth.userAuthentication,paymentController.verifyPaymentFailedPayment)
+router.post("/failed-order-submit",userAuth.userAuthentication,orderController.failedOrderSubmit)
 
 //filtering and search
 router.get('/filter-product',userAuth.userAuthentication,userController.productFilter)
@@ -99,6 +100,7 @@ router.get('/wallet',userAuth.userAuthentication,walletController.getWallet)
 
 //wishlist router
 router.get('/wishlist',userAuth.userAuthentication,wishlistController.getWishList)
+router.get('/get-wishlist',userAuth.userAuthentication,wishlistController.fetchWishList)
 router.post('/add-to-wishlist',userAuth.userAuthentication,wishlistController.addWishToWishList);
 router.post('/delete-wishlist',userAuth.userAuthentication,wishlistController.removeFromWishlist);
 router.post('/remove-wishlist',userAuth.userAuthentication,wishlistController.removeFromWishlist);

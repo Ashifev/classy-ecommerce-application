@@ -17,7 +17,7 @@ module.exports = {
         try{
             const user = req.session.username
             const userId = req.session.user;
-            const wallet = await walletDB.findOne({user:userId});
+            const wallet = await walletDB.findOne({user:userId._id});
 
             const userAddress = await addressDB.find({userId: userId._id});
             let userCart = await cartDB.findOne({userId:userId._id}).populate({
@@ -245,7 +245,7 @@ failedOrderSubmit: async (req, res) => {
         if(coupon){
             var discount = coupon.discountAmount + userProduct.discount;
         }
-        const order = new orderDB({
+        const newOrder = new orderDB({
             userId: User._id,
             userName: User.name,
             productItems: cartProducts,
@@ -258,11 +258,12 @@ failedOrderSubmit: async (req, res) => {
             discount
         });
 
-        if(order.paymentMethod=="razorpay"){
-            order.paymentStatus = "failed";
+        if(newOrder.paymentMethod=="razorpay"){
+            newOrder.status = "Payment failed"
+            newOrder.paymentStatus = "failed";
         }
 
-        await order.save();
+        await newOrder.save();
 
         for (const item of activeCartItems) {
             await productDB.findByIdAndUpdate(
@@ -277,12 +278,41 @@ failedOrderSubmit: async (req, res) => {
         );
         // req.session.orderId = order;
         // res.redirect('/order-placed')
-        console.log(order);
+        console.log(newOrder);
         delete req.session.appliedCoupon;
-        return res.status(200).json(order);
+        console.log("failed order saved");
+        
+        return res.status(200).json(newOrder);
     } catch (err) {
         console.error("error at order submit",err);
         res.render("500");
+    }
+},
+saveFailedOrder : async(req,res)=>{
+    try{
+        const {orderId} = req.body;
+        const userId = req.session.user._id;
+
+        if(!userId){
+        return res.status(401).json({ message: "User not authenticated" });
+        }
+
+        const order =  await orderDB.findOneAndUpdate({_id:orderId},{
+            $set: {
+                paymentStatus: "Paid",
+                status : 'Pending'
+            }
+        },{ new: true });
+
+        if(!order){
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+
+    return res.status(200).json({ message: "Order repayment successfully" });
+    }catch(err){
+        console.log("error at saving failed order",err);
+        res.render('500');
     }
 },
 orderplaced:async(req,res)=>{
@@ -520,10 +550,10 @@ generateInvoice : async(req,res)=>{
     try{
         const {orderId} = req.params;
         const orderDetails = await orderDB.findOne({_id:orderId}).populate('productItems.productId')
-        const deliveredProducts = orderDetails.productItems.filter(product => product.status === "Delivered")
+        // const deliveredProducts = orderDetails.productItems.filter(product => product.status === "Delivered")
 
         if(orderDetails){
-            const invoice = await generateInvoice(orderDetails,deliveredProducts);
+            const invoice = await generateInvoice(orderDetails);
             res.json({success: true, message:"Invoice generated Successfully",invoice})
         }else{
             res.status(500).json({success:false, message:"Invoice generation Failed"})

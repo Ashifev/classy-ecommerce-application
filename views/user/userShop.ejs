@@ -311,7 +311,7 @@
 </section>
 <!-- Shop Section End -->
 
-<script>
+<!-- <script>
   function toggleWishlist(heartElement, productId) {
     const heartIcon = heartElement.querySelector('.wishlist-icon');
     const inWishlist = heartIcon.getAttribute('data-in-wishlist') === 'true';  // Check if it's still the icon
@@ -322,7 +322,7 @@
         removeFromWish(heartElement, productId); // Remove from wishlist
     }
 }
-</script>
+</script> -->
 
 <script>
     function addToCart(productId,price,discountAmount) {
@@ -367,7 +367,7 @@
 </script>
 
 <!--add product into wishlist-->
-<script>
+<!-- <script>
   function addToWishList(heartElement, productId) {
     var url = '/add-to-wishlist';
 
@@ -447,7 +447,7 @@ function removeFromWish(heartElement, productId) {
         }
     });
 }
-</script>
+</script> -->
 
 <!--update price-->
 <script>
@@ -620,6 +620,101 @@ function searchProducts(page = 1) {
   });
 }
 
+function toggleWishlist(heartElement, productId) {
+  const wishlistIcon = heartElement.querySelector('.wishlist-icon');
+  const isInWishlist = wishlistIcon.getAttribute('data-in-wishlist') === 'true';
+
+  if (isInWishlist) {
+    removeFromWish(heartElement, productId);
+  } else {
+    addToWishList(heartElement, productId);
+  }
+}
+
+function addToWishList(heartElement, productId) {
+  var url = '/add-to-wishlist';
+
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: {
+      productId: productId,
+    },
+    success: function(response) {
+      console.log(response);
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timer: 800,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: response.icon,
+        title: response.msg
+      });
+
+      // Update the heart icon
+      const wishlistIcon = heartElement.querySelector('.wishlist-icon');
+      wishlistIcon.classList.remove('fa-regular');
+      wishlistIcon.classList.add('fa-solid');
+      wishlistIcon.setAttribute('data-in-wishlist', 'true');
+    },
+    error: function(xhr, status, error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to add item to wishlist. Please try again.',
+      });
+    }
+  });
+}
+
+function removeFromWish(heartElement, productId) {
+  var url = '/remove-wishlist';
+
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: {
+      productId: productId,
+    },
+    success: function(response) {
+      console.log(response);
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timer: 800,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire({
+        icon: response.icon,
+        title: response.msg
+      });
+
+      // Update the heart icon
+      const wishlistIcon = heartElement.querySelector('.wishlist-icon');
+      wishlistIcon.classList.remove('fa-solid');
+      wishlistIcon.classList.add('fa-regular');
+      wishlistIcon.setAttribute('data-in-wishlist', 'false');
+    },
+    error: function(xhr, status, error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to remove item from wishlist. Please try again.',
+      });
+    }
+  });
+}
+
 function displayProducts(products) {
   const productsGrid = document.querySelector('.product-grids');
   productsGrid.innerHTML = '';
@@ -648,8 +743,10 @@ function displayProducts(products) {
             </div>` 
           : ''}
           <ul class="product__hover">
-            <li onclick="toggleWishlist(this, '${product._id}')">
-              <a href="#"><img  class="wishlist-icon" data-in-wishlist="false" src="images/icon/heart.png" alt=""></a>
+            <li>
+              <a  style='text-decoration: none;' href="#" onclick="toggleWishlist(this, '${product._id}'); return false;">
+                <i style="list-style: none;" class="fa-regular fa-heart wishlist-icon" data-in-wishlist="false"></i>
+              </a>
             </li>
             <li><a href="/product-details/${product._id}"><img src="${product.image[0]}" alt=""></a></li>
             <li>

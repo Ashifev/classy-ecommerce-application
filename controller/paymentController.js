@@ -162,20 +162,9 @@ exports.verifyPaymentFailedPayment = async (req, res) =>{
 
     const { error: { metadata: { payment_id, order_id } }, orderId } = req.body;
 
-    
-    const order = await Order.findOne({orderId});
 
-    await Payment.create({
-      payment_id: payment_id,
-      razorpay_order_id: order_id,
-      orderId,
-      amount: order.totalPrice,
-      user: userId,
-      status: "failed",
-      paymentMode: "razorPay",
-    });
-
-    return res.status(200).json({ success: true, message: "Failed payment recorded" })
+    // return res.status(200).json({ success: true, message: "Failed payment recorded" })
+    res.redirect('/failed-order-submit');
   } catch (error) {
     res.status(500).json({message: "somthing went wrong"});  
   }

@@ -40,6 +40,29 @@
       text-decoration: none;
       cursor: pointer;
   }
+
+.status-pending {
+    color: #909000;
+}
+
+.status-delivered {
+    color: green;
+}
+
+.status-processing {
+    color: orange;
+}
+
+.status-shipped {
+    color: blue;
+}
+
+.status-cancelled {
+    color: red;
+}
+.status-request{
+  color: red;
+}
 </style>
 
 <!-- Breadcrumb Section Begin -->
@@ -108,13 +131,13 @@
                   <a href="" data-orderId="<%= userOrder._id %>" id="orderCancell" class="btn btn-danger w-100">Cancel Order</a>
                 <% } %>
               </div>
-              <% if(userOrder.status === 'Delivered') { %>
+             
                 <div class="col-6 col-md">
                   <a type="button" style="font-size: 14px;" class="btn btn-outline-primary me-2" onclick="genDownloadInvoice('<%= userOrder._id %>')">
                     <i class="fas fa-file-invoice"></i> Download Invoice
                   </a>
                 </div>
-               <% } %> 
+               
             </div>
           </div>
           <div class="list-group-item p-3 bg-white">
@@ -127,12 +150,22 @@
                     </div>
                   <% } else if(userOrder.status === 'Delivered') { %>
                     <div class="alert p-2 alert-success w-100 mb-0">
-                      <p class="text-green hidden-sm-down mb-0">Delivered</p>
+                      <p class="<%= userOrder.status === 'Pending' ? 'status-pending' : '' %>
+                        <%= userOrder.status === 'Delivered' ? 'status-delivered' : '' %>
+                        <%= userOrder.status === 'Processing' ? 'status-processing' : '' %>
+                        <%= userOrder.status === 'Shipped' ? 'status-shipped' : '' %>
+                        <%= userOrder.status === 'Return Requested' ? 'status-request' : '' %>
+                        <%= userOrder.status === 'Cancelled' ? 'status-cancelled' : '' %>  hidden-sm-down mb-0">Delivered</p>
                     </div>
                   <% } else { %>
-                    <div class="alert p-2 alert-success w-100 mb-0">
-                      <h6 class="text-green mb-0"><b>Shipped</b></h6>
-                      <p class="text-green hidden-sm-down mb-0">
+                    <div class="<%= userOrder.status === 'Pending' ? 'alert-warning' : '' %>
+                      <%= userOrder.status === 'Delivered' ? 'alert-success' : '' %>
+                      <%= userOrder.status === 'Processing' ? 'alert-primary' : '' %>
+                      <%= userOrder.status === 'Shipped' ? 'alert-primary' : '' %>
+                      <%= userOrder.status === 'Return Requested' ? 'alert-danger' : '' %>
+                      <%= userOrder.status === 'Cancelled' ? 'alert-danger' : '' %> alert p-2 w-100 mb-0">
+                      <h6 class="mb-0"><b><%= userOrder.status %></b></h6>
+                      <p class="text-black hidden-sm-down mb-0">
                         <% var date = new Date(userOrder.dateOrdered); function formatDate(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); } var deliveryStartDate = new Date(date); deliveryStartDate.setDate(date.getDate() + 10); var deliveryEndDate = new Date(date); deliveryEndDate.setDate(date.getDate() + 17); var formattedStartDate = formatDate(deliveryStartDate); var formattedEndDate = formatDate(deliveryEndDate); %>
                         Est. delivery between <%= formattedStartDate %> and <%= formattedEndDate %>
                       </p>
@@ -159,12 +192,19 @@
                         <b><s style="color: red; font-size: 12px;">₹<%= product.price %></s></b>
                         <% } %>
                       </h6>
+                      <span style="font-size: 0.5em;" class="badge <%= product.status === 'Pending' ? 'badge-warning' : '' %>
+                        <%= product.status === 'Delivered' ? 'badge-success' : '' %>
+                        <%= product.status === 'Processing' ? 'badge-warning' : '' %>
+                        <%= product.status === 'Shipped' ? 'badge-primary' : '' %>
+                        <%= product.status === 'Return Requested' ? 'badge-danger' : '' %>
+                        <%= product.status === 'Cancelled' ? 'badge-danger' : '' %>"><%= product.status %></span>
                     </div>
+                    
                     <div class="col-12 col-md-3 hidden-sm-down">
                       <% if (['Return Requested', 'return request accepted','return requested','Return Request Accepted', 'return request rejected','Cancelled','product returned'].includes(product.status)) { %>
                         <a href="/product-details/<%= product.productId._id %>" class="btn btn-secondary w-100 mb-2">Buy It Again</a>
                         <p style="font-size: 20px; text-align: center" class="text-danger"><%= product.status %></p>
-                      <% } else if(userOrder.status === 'Delivered') { %>
+                      <% } else if(product.status === 'Delivered') { %>
                         <div class="alert w-100 mb-0">
                           <p class="text-green hidden-sm-down mb-0">Delivered</p>
                         </div>

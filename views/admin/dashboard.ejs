@@ -75,75 +75,74 @@
                         </div>
                     </div>
                 </div>
-                <div class="row g-4">
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-line fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Sale</p>
-                                <h6 class="mb-0"><%=totalSales%></h6>
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                    <div class="col">
+                        <div class="card radius-10">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Revenue</p>
+                                        <h4 class="my-1">₹<%= totalRevenue %></h4>
+                                        <p class="mb-0 font-13 <%= revenueChange >= 0 ? 'text-success' : 'text-danger' %>">
+                                            <i class='<%= revenueChange >= 0 ? "bx bxs-up-arrow" : "bx bxs-down-arrow" %> align-middle'></i>
+                                            <%= revenueChange %>% Since last week
+                                        </p>
+                                    </div>
+                                    <div class="widgets-icons bg-light-success text-success ms-auto"><i class='bx bxs-wallet'></i>
+                                    </div>
+                                </div>
+                                <div id="chart100"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Total Sale</p>
-                                <h6 class="mb-0"><%=totalSales%></h6>
+                    <div class="col">
+                        <div class="card radius-10">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Total Customers</p>
+                                        <h4 class="my-1"><%= customers %></h4>
+                                        <p class="mb-0 font-13 <%= customersChange >= 0 ? 'text-success' : 'text-danger' %>">
+                                            <i class='<%= customersChange >= 0 ? "bx bxs-up-arrow" : "bx bxs-down-arrow" %> align-middle'></i>
+                                            <%= customersChange %>% Since last week
+                                        </p>
+                                    </div>
+                                    <div class="widgets-icons bg-light-warning text-warning ms-auto"><i class='bx bxs-group'></i>
+                                    </div>
+                                </div>
+                                <div id="chart200"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-area fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0">₹<%=totalRevenue%></h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Total Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
+                    <div class="col">
+                        <div class="card radius-10">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Sales</p>
+                                        <h4 class="my-1"><%= totalSales %></h4>
+                                        <p class="mb-0 font-13 <%= salesChange >= 0 ? 'text-success' : 'text-danger' %>">
+                                            <i class='<%= salesChange >= 0 ? "bx bxs-up-arrow" : "bx bxs-down-arrow" %> align-middle'></i>
+                                            <%= salesChange %>% Since last week
+                                        </p>
+                                    </div>
+                                    <div class="widgets-icons bg-light-danger text-danger ms-auto"><i class='bx bxs-binoculars'></i>
+                                    </div>
+                                </div>
+                                <div id="chart300"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!--end row-->
             </div>
             <!-- Sale & Revenue End -->
 
-
-            <!-- Sales Chart Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light text-center rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Worldwide Sales</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <canvas id="worldwide-sales"></canvas>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light text-center rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Salse & Revenue</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <canvas id="salse-revenue"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Sales Chart End -->
+            <div class="col-12">
+				<div id="salesChart"></div>
+			</div>
 
             
-
             <!-- Recent Sales Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-light text-center rounded p-4">
@@ -173,7 +172,7 @@
                                     <td>₹<%= product.priceMRP %></td>
                                     <td>₹<%= product.totalRevenues %></td>
                                     <td><%= product.totalSold %></td>
-                                    <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                                    <td><a class="btn btn-sm btn-primary" href="/admin/products">Detail</a></td>
                                 </tr>
                                 <% }) %>
                             </tbody>
@@ -237,133 +236,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Top Category End -->
-
-			
-		
-
-            <!-- Widgets Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12 col-md-6 col-xl-4">
-                        <div class="h-100 bg-light rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <h6 class="mb-0">Messages</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center pt-3">
-                                <img class="rounded-circle flex-shrink-0" src="/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Jhon Doe</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                    <span>Short message goes here...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-xl-4">
-                        <div class="h-100 bg-light rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Calender</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <div id="calender"></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-xl-4">
-                        <div class="h-100 bg-light rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">To Do List</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <input class="form-control bg-transparent" type="text" placeholder="Enter task">
-                                <button type="button" class="btn btn-primary ms-2">Add</button>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-2">
-                                <input class="form-check-input m-0" type="checkbox">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-2">
-                                <input class="form-check-input m-0" type="checkbox">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-2">
-                                <input class="form-check-input m-0" type="checkbox" checked>
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <span><del>Short task goes here...</del></span>
-                                        <button class="btn btn-sm text-primary"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center border-bottom py-2">
-                                <input class="form-check-input m-0" type="checkbox">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center pt-2">
-                                <input class="form-check-input m-0" type="checkbox">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <span>Short task goes here...</span>
-                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Widgets End -->
-
-            
+            <!-- Top Category End -->            
 
             <!-- Footer Start -->
             <!-- Footer End -->
@@ -427,6 +300,14 @@
 
 <!-- modal sales report -->
 
+    <input type="hidden" name="" id="lastWeekSales" value="<%=lastWeekSales%>">
+    <input type="hidden" name="" id="lastMonthSales" value="<%=lastMonthSales%>">
+    <input type="hidden" name="" id="lastYearSales" value="<%=lastYearSales%>">
+    <input type="hidden" name="" id="customers" value="<%=customers%>">
+    <input type="hidden" name="" id="totalSales" value="<%=totalSales%>">
+    <input type="hidden" name="" id="salesDates" value="<%=salesDates%>">
+    <input type="hidden" name="" id="salesCounts" value="<%=salesCounts%>">
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -438,9 +319,317 @@
     <script src="/admin/lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="/admin/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <!-- Template Javascript -->
     <script src="/admin/js/main.js"></script>
 
+    <script>
+        
+      </script>
+    <!--chart functionality-->
+    <script>
+        // Parse values from hidden inputs
+        const lastWeekSales = parseFloat(document.getElementById('lastWeekSales').value);
+        const lastMonthSales = parseFloat(document.getElementById('lastMonthSales').value);
+        const lastYearSales = parseFloat(document.getElementById('lastYearSales').value);
+        const customers = parseInt(document.getElementById('customers').value);
+        const totalSales = parseInt(document.getElementById('totalSales').value);
+        const salesDates = JSON.parse(document.getElementById('salesDates').value);
+        const salesCounts = JSON.parse(document.getElementById('salesCounts').value);
+
+
+
+        $(document).ready(function() {
+            // $('#Transaction-History').DataTable({
+            //     lengthMenu: [[6, 10, 20, -1], [6, 10, 20, 'All']]
+            // });
+    
+            // Initialize charts when the DOM is fully loaded
+            initCharts();
+        });
+    
+        function initCharts() {
+            // Revenue Chart
+            var options1 = {
+                chart: {
+                    type: 'area',
+                    height: 80,
+                    sparkline: { enabled: true }
+                },
+                series: [{
+                    name: 'Revenue',
+                    data: [lastWeekSales ,  lastMonthSales , lastYearSales]
+                }],
+                stroke: { curve: 'smooth', width: 2 },
+                fill: { opacity: 0.3 },
+                colors: ['#17a00e'],
+                tooltip: {
+                    fixed: { enabled: false },
+                    x: { show: false },
+                    y: {
+                        title: {
+                            formatter: function (seriesName) { return 'Revenue:' }
+                        }
+                    },
+                    marker: { show: false }
+                }
+            };
+            new ApexCharts(document.querySelector("#chart100"), options1).render();
+    
+            // Total Customers Chart
+            var options2 = {
+                chart: {
+                    type: 'area',
+                    height: 80,
+                    sparkline: { enabled: true }
+                },
+                series: [{
+                    name: 'Customers',
+                    data: [ customers, customers + 10,  customers + 20]
+                }],
+                stroke: { curve: 'smooth', width: 2 },
+                fill: { opacity: 0.3 },
+                colors: ['#ffc107'],
+                tooltip: {
+                    fixed: { enabled: false },
+                    x: { show: false },
+                    y: {
+                        title: {
+                            formatter: function (seriesName) { return 'Customers:' }
+                        }
+                    },
+                    marker: { show: false }
+                }
+            };
+            new ApexCharts(document.querySelector("#chart200"), options2).render();
+    
+            // Sales Chart
+            var options3 = {
+                chart: {
+                    type: 'area',
+                    height: 80,
+                    sparkline: { enabled: true }
+                },
+                series: [{
+                    name: 'Sales',
+                    data: [totalSales,  totalSales + 5,  totalSales + 10]
+                }],
+                stroke: { curve: 'smooth', width: 2 },
+                fill: { opacity: 0.3 },
+                colors: ['#f41127'],
+                tooltip: {
+                    fixed: { enabled: false },
+                    x: { show: false },
+                    y: {
+                        title: {
+                            formatter: function (seriesName) { return 'Sales:' }
+                        }
+                    },
+                    marker: { show: false }
+                }
+            };
+            new ApexCharts(document.querySelector("#chart300"), options3).render();
+    
+        }
+    
+    
+    document.addEventListener('DOMContentLoaded', function() {
+  // Parse salesDates and salesCounts from hidden input fields
+  var salesDates = JSON.parse(document.getElementById('salesDates').value);
+  var salesCounts = JSON.parse(document.getElementById('salesCounts').value);
+
+  console.log('Sales Dates:', salesDates);
+  console.log('Sales Counts:', salesCounts);
+  // Calculate cumulative sales
+  var cumulativeSales = salesCounts.reduce((acc, curr, i) => {
+    acc.push((acc[i-1] || 0) + curr);
+    return acc;
+  }, []);
+
+  // Function to group data by month or year
+  function groupData(dates, counts, cumulative, groupBy) {
+    let groupedData = {};
+    dates.forEach((date, index) => {
+      let key = groupBy === 'year' ? date.substring(0, 4) : date.substring(0, 7);
+      if (!groupedData[key]) {
+        groupedData[key] = { date: key, count: 0, cumulative: 0 };
+      }
+      groupedData[key].count += counts[index];
+      groupedData[key].cumulative = cumulative[index];
+    });
+    return Object.values(groupedData);
+  }
+
+  // Initial chart options
+  var options = {
+    series: [{
+      name: 'Daily Sales',
+      type: 'column',
+      data: salesCounts
+    }, {
+      name: 'Cumulative Sales',
+      type: 'line',
+      data: cumulativeSales
+    }],
+    chart: {
+      height: 400,
+      type: 'line',
+      stacked: false,
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+          selection: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+          pan: true,
+          reset: true
+        },
+      },
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350
+        }
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: [0, 4]
+    },
+    title: {
+      text: 'Sales Report',
+      align: 'left',
+      style: {
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: '#333'
+      }
+    },
+    grid: {
+      borderColor: '#e7e7e7',
+      row: {
+        colors: ['#f3f3f3', 'transparent'],
+        opacity: 0.5
+      },
+    },
+    markers: {
+      size: 5
+    },
+    xaxis: {
+      categories: salesDates,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        maxHeight: 60
+      },
+      title: {
+        text: 'Date'
+      }
+    },
+    yaxis: [{
+      title: {
+        text: 'Daily Sales'
+      },
+    }, {
+      opposite: true,
+      title: {
+        text: 'Cumulative Sales'
+      }
+    }],
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+      floating: true,
+      offsetY: -25,
+      offsetX: -5
+    },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: [{
+        formatter: function (y) {
+          if(typeof y !== "undefined") {
+            return y.toFixed(0) + " orders";
+          }
+          return y;
+        }
+      }, {
+        formatter: function (y) {
+          if(typeof y !== "undefined") {
+            return y.toFixed(0) + " total orders";
+          }
+          return y;
+        }
+      }]
+    },
+    colors: ['#008FFB', '#00E396']
+  };
+
+  var chart = new ApexCharts(document.querySelector("#salesChart"), options);
+  chart.render();
+
+  // Add filter dropdown
+  var filterHtml = `
+    <div class="mb-3">
+      <label for="timeFrame" class="form-label">Time Frame</label>
+      <select class="form-select" id="timeFrame">
+        <option value="daily">Daily</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+    </div>
+  `;
+  document.querySelector("#salesChart").insertAdjacentHTML('beforebegin', filterHtml);
+
+  // Event listener for filter change
+  document.getElementById('timeFrame').addEventListener('change', function() {
+    var timeFrame = this.value;
+    var groupedData;
+
+    if (timeFrame === 'daily') {
+      groupedData = { 
+        dates: salesDates, 
+        counts: salesCounts,
+        cumulative: cumulativeSales
+      };
+    } else {
+      groupedData = groupData(salesDates, salesCounts, cumulativeSales, timeFrame === 'monthly' ? 'month' : 'year');
+    }
+
+    chart.updateOptions({
+      xaxis: {
+        categories: groupedData.dates || groupedData.map(d => d.date)
+      },
+      series: [{
+        name: 'Daily Sales',
+        type: 'column',
+        data: groupedData.counts || groupedData.map(d => d.count)
+      }, {
+        name: 'Cumulative Sales',
+        type: 'line',
+        data: groupedData.cumulative || groupedData.map(d => d.cumulative)
+      }]
+    });
+  });
+});
+    </script>
+
+    <!-- Perfect Scrollbar -->
+    <script>
+        new PerfectScrollbar('.product-list');
+        new PerfectScrollbar('.customers-list');
+    </script>
     <!-- Updated JavaScript code for form validation -->
 <script>
     // Function to validate the form

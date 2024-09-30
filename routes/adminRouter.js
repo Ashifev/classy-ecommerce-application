@@ -101,5 +101,7 @@ router.post('/coupon-added',adminAuth.adminExist,couponController.couponAdded);
 router.post('/coupon-edited/:id',adminAuth.adminExist,couponController.couponEdited);
 router.patch('/delete-coupon/:id',adminAuth.adminExist,couponController.deleteCoupon);
 
+router.get('/transaction',adminAuth.adminExist,adminController.getTransaction)
+
 router.post('/salesreport',adminAuth.adminExist,adminController.salesReport)
 module.exports = router;

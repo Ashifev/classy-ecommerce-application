@@ -117,9 +117,10 @@ function generateTableRowNoLine(doc, y, c1, c2, c3, c4, c5) {
                 doc.fontSize(10);
                 doc.text(`Total Orders: ${orders.length}`, 50, summaryPosition + 20);
                 doc.text(`Unique Customers: ${uniqueUsers.size}`, 50, summaryPosition + 40);
-                doc.text(`Total Amount: $${sum.toFixed(2)}`, 50, summaryPosition + 60);
-                doc.text(`Total Discount: $${totalDiscount.toFixed(2)}`, 50, summaryPosition + 80);
-                doc.text(`Total Coupon Discount: $${totalCouponDiscount.toFixed(2)}`, 50, summaryPosition + 100);
+                doc.text(`Total Amount: ₹${sum.toFixed(2)}`, 50, summaryPosition + 60);
+                doc.text(`Total Discount: ₹${totalDiscount.toFixed(2)}`, 50, summaryPosition + 80);
+                doc.text(`Total Coupon Discount: ₹${totalCouponDiscount.toFixed(2)}`, 50, summaryPosition + 100);
+
                 
                 doc.text("Payment Methods:", 50, summaryPosition + 120);
                 Object.entries(paymentMethods).forEach(([method, count], index) => {

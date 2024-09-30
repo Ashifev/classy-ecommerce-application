@@ -37,6 +37,7 @@ module.exports = {
 
             wishlist.items.push({product : productId})
             await wishlist.save();
+            
             res.json({icon : 'success', msg : "Product Successfully added to the wishlist"})
 
         }catch(err){
@@ -69,6 +70,18 @@ module.exports = {
         }catch(err){
             console.log("errror at remove product from wishlist",err);
             res.render('500')
+        }
+    },
+    fetchWishList:async(req,res)=>{
+        try{
+            const user = req.session.user
+            const userId = user._id;
+            const wishlist = await wishlistDB.findOne({user:userId}).populate('items.product');
+            res.json({wishlist})
+        }catch(err){
+            console.log("error at fetch wishlist",err);
+            res.render('500')
+            
         }
     }
 }

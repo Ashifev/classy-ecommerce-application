@@ -71,7 +71,6 @@
                     >
                       <span
                         class="fa fa-angle-left dec decr qtybtn"
-                        onclick="dcreaseBtn('<%= product.productId._id %>','product.quantity')"
                         aria-label="Decrease quantity"
                       ></span>
                       <input
@@ -81,7 +80,6 @@
                       />
                       <span
                         class="fa fa-angle-right inc qtybtn"
-                        onclick="incBtn('<%= product.productId._id %>')"
                         aria-label="Increase quantity"
                       ></span>
                     </div>
@@ -193,6 +191,8 @@
   });
 
   function updateCartQuantity(productId, quantity , maxQuantity) {
+    console.log("update cart quantity finction call");
+    
     $.ajax({
       url: `/update-cart/${productId}`,
       type: "POST",
