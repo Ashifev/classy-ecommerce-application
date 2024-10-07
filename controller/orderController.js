@@ -132,7 +132,6 @@ module.exports = {
         }
         const order = new orderDB({
             userId: User._id,
-            userName: User.name,
             productItems: cartProducts,
             billingAddress: userAddress,
             paymentMethod: payment,
@@ -247,7 +246,6 @@ failedOrderSubmit: async (req, res) => {
         }
         const newOrder = new orderDB({
             userId: User._id,
-            userName: User.name,
             productItems: cartProducts,
             billingAddress: userAddress,
             paymentMethod: payment,

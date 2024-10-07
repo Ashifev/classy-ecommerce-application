@@ -10,7 +10,7 @@ module.exports = {
             if(!wishlist){
                 return res.render('user/wishlist',{wishlist : [], user})
             }
-            res.render('user/wishlist',{wishlist : wishlist.items, user})
+            res.render('user/wishlist',{wishlist : wishlist.items, user:user.name})
         }catch(err){
             console.log("error at getting wish list",err);
             res.render('500')

@@ -249,7 +249,7 @@ module.exports = {
                     endDate.setHours(23, 59, 59, 999);
 
                 var orders = await orderDB.find(
-                     {status : "Delivered" , dateOrdered : {$gte : startDate , $lte : endDate}}
+                     {paymentStatus : "Paid" , dateOrdered : {$gte : startDate , $lte : endDate}}
                  ).populate('productItems.productId')
         
                 } else if (timeInterval) {
@@ -275,7 +275,7 @@ module.exports = {
                             return res.status(400).json({ message: "Invalid time interval" });
                     }
                         
-                    var orders = await orderDB.find({status: "Delivered",
+                    var orders = await orderDB.find({paymentStatus : "Paid",
                         dateOrdered: { 
                             $gte: startDate,
                             $lte: endDate

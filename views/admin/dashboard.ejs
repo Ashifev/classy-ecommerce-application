@@ -433,29 +433,20 @@
         }
     
     
-    document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('DOMContentLoaded', function() {
   // Parse salesDates and salesCounts from hidden input fields
   var salesDates = JSON.parse(document.getElementById('salesDates').value);
   var salesCounts = JSON.parse(document.getElementById('salesCounts').value);
 
-  console.log('Sales Dates:', salesDates);
-  console.log('Sales Counts:', salesCounts);
-  // Calculate cumulative sales
-  var cumulativeSales = salesCounts.reduce((acc, curr, i) => {
-    acc.push((acc[i-1] || 0) + curr);
-    return acc;
-  }, []);
-
   // Function to group data by month or year
-  function groupData(dates, counts, cumulative, groupBy) {
+  function groupData(dates, counts, groupBy) {
     let groupedData = {};
     dates.forEach((date, index) => {
       let key = groupBy === 'year' ? date.substring(0, 4) : date.substring(0, 7);
       if (!groupedData[key]) {
-        groupedData[key] = { date: key, count: 0, cumulative: 0 };
+        groupedData[key] = { date: key, count: 0 };
       }
       groupedData[key].count += counts[index];
-      groupedData[key].cumulative = cumulative[index];
     });
     return Object.values(groupedData);
   }
@@ -463,68 +454,32 @@
   // Initial chart options
   var options = {
     series: [{
-      name: 'Daily Sales',
-      type: 'column',
+      name: 'Sales by orders',
       data: salesCounts
-    }, {
-      name: 'Cumulative Sales',
-      type: 'line',
-      data: cumulativeSales
     }],
     chart: {
-      height: 400,
+      height: 350,
       type: 'line',
-      stacked: false,
-      toolbar: {
-        show: true,
-        tools: {
-          download: true,
-          selection: true,
-          zoom: true,
-          zoomin: true,
-          zoomout: true,
-          pan: true,
-          reset: true
-        },
-      },
-      animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 800,
-        animateGradually: {
-          enabled: true,
-          delay: 150
-        },
-        dynamicAnimation: {
-          enabled: true,
-          speed: 350
-        }
+      zoom: {
+        enabled: false
       }
     },
     dataLabels: {
       enabled: false
     },
     stroke: {
-      width: [0, 4]
+      curve: 'smooth',
+      width: 3,
     },
     title: {
-      text: 'Sales Report',
-      align: 'left',
-      style: {
-        fontSize: '18px',
-        fontWeight: 'bold',
-        color: '#333'
-      }
+      text: 'Reports (Sales/Order)',
+      align: 'left'
     },
     grid: {
-      borderColor: '#e7e7e7',
       row: {
         colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5
       },
-    },
-    markers: {
-      size: 5
     },
     xaxis: {
       categories: salesDates,
@@ -532,48 +487,17 @@
         rotate: -45,
         rotateAlways: true,
         maxHeight: 60
-      },
-      title: {
-        text: 'Date'
       }
     },
-    yaxis: [{
+    yaxis: {
       title: {
-        text: 'Daily Sales'
+        text: 'Number of Orders'
       },
-    }, {
-      opposite: true,
-      title: {
-        text: 'Cumulative Sales'
-      }
-    }],
-    legend: {
-      position: 'top',
-      horizontalAlign: 'right',
-      floating: true,
-      offsetY: -25,
-      offsetX: -5
+      min: 0,
+      max: Math.max(...salesCounts) + 1,
+      tickAmount: 5
     },
-    tooltip: {
-      shared: true,
-      intersect: false,
-      y: [{
-        formatter: function (y) {
-          if(typeof y !== "undefined") {
-            return y.toFixed(0) + " orders";
-          }
-          return y;
-        }
-      }, {
-        formatter: function (y) {
-          if(typeof y !== "undefined") {
-            return y.toFixed(0) + " total orders";
-          }
-          return y;
-        }
-      }]
-    },
-    colors: ['#008FFB', '#00E396']
+    colors: ['#0000FF']
   };
 
   var chart = new ApexCharts(document.querySelector("#salesChart"), options);
@@ -598,13 +522,11 @@
     var groupedData;
 
     if (timeFrame === 'daily') {
-      groupedData = { 
-        dates: salesDates, 
-        counts: salesCounts,
-        cumulative: cumulativeSales
-      };
+      groupedData = { dates: salesDates, counts: salesCounts };
+    } else if (timeFrame === 'monthly') {
+      groupedData = groupData(salesDates, salesCounts, 'month');
     } else {
-      groupedData = groupData(salesDates, salesCounts, cumulativeSales, timeFrame === 'monthly' ? 'month' : 'year');
+      groupedData = groupData(salesDates, salesCounts, 'year');
     }
 
     chart.updateOptions({
@@ -612,13 +534,7 @@
         categories: groupedData.dates || groupedData.map(d => d.date)
       },
       series: [{
-        name: 'Daily Sales',
-        type: 'column',
         data: groupedData.counts || groupedData.map(d => d.count)
-      }, {
-        name: 'Cumulative Sales',
-        type: 'line',
-        data: groupedData.cumulative || groupedData.map(d => d.cumulative)
       }]
     });
   });

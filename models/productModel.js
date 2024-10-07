@@ -79,6 +79,7 @@ const productSchema = new mongoose.Schema({
             this.inCategoryOffer = false;
             this.discountAmount = 0;
             this.beforeOffer = 0;
+            this.discountedPrice = this.price;
         }
 
         this.discountedPrice = this.price - this.discountAmount

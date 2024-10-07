@@ -208,7 +208,7 @@ module.exports = {
 
     try {
       const user = await otpDb.findOne({ email });
-
+      
       if (!user) {
         req.session.errMessage = "User is not there";
         return res.redirect("/otp-redirect");
@@ -231,7 +231,9 @@ module.exports = {
       });
       await newUser.save();
       await otpDb.deleteOne({ email: email });
+      const User = await userDB.findOne({ email });
       req.session.logged = true;
+      req.session.user = User
       res.redirect("/");
     } catch (error) {
       console.log("Error", error);
@@ -242,7 +244,9 @@ module.exports = {
   //shop page render
   shopRender: async (req, res) => {
     try {
+      
       const userId = req.session.user._id;
+      // console.log("session user",req.session.user._id)
       let wishlist = await wishlistDB.findOne({user : userId});
       console.log("shop entered user:", req.session.username);
       

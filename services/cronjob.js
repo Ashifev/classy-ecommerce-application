@@ -20,6 +20,7 @@ cron.schedule('* * * * *', async () => {
 
             for(const product of products){
                 await product.updateCategoryOffer(null);
+                // product.discountedPrice = product.price;
             }
 
             console.log(`Deactivated offer${offer.categoryId} && updated products.`);

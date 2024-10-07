@@ -93,14 +93,14 @@ function generateTableRowNoLine(doc, y, c1, c2, c3, c4, c5) {
                     sum -= x.couponDiscount;
                     totalDiscount += x.discount;
                     totalCouponDiscount += x.couponDiscount;
-                    uniqueUsers.add(x.userName);
+                    uniqueUsers.add(x.billingAddress[0].name);
                     paymentMethods[x.paymentMethod] = (paymentMethods[x.paymentMethod] || 0) + 1;
                     generateTableRow(
                         doc,
                         position,
                         i + 1,
                         x._id.toString().slice(0, 7),
-                        x.userName,
+                        x.billingAddress[0].name,
                         x.dateOrdered.toLocaleDateString() + x.dateOrdered.toLocaleTimeString(),
                         x.paymentMethod,
                         x.discount,

@@ -908,7 +908,7 @@
     );
     const paymentMethods = document.querySelectorAll('input[name="payment"]');
     const placeOrderBtn = document.querySelector("#placeOrderBtn");
-    // let selectedAddress = null;
+    let selectedAddress;
     let selectedPayment = null;
     
 
@@ -943,8 +943,7 @@
         // const walletBalance = walletElement.getAttribute("data-balance");
         // console.log("walletBalance", walletBalance);
 
-       if(!selectedAddress){
-        alert("please select any address")
+       if(!selectedAddress){        
         showErrorToast("please select any address");
         return
         }
@@ -1090,7 +1089,7 @@
       currency: "INR",
       name: "CALSSY",
       description: "Test Transaction",
-      image: `img/fav.png`,
+      image: `/images/logo3.png`,
       order_id: order.order.id,
       handler: function (response) {
         saveOrderRazor(response, selectedPayment, selectedAddress, totalAmt);

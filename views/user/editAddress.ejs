@@ -137,12 +137,7 @@ button[type="button"]:hover {
             </div>
             <div class="form-group">
               <label for="state">State: <span style="color: red;">*</span></label>
-              <select name="state" id="state" >
-                <option value="<%=address.state%>">Select a state</option>
-                <option value="State 1">State 1</option>
-                <option value="State 2">State 2</option>
-                <option value="State 3">State 3</option>
-              </select>
+              <input name="state" type="text" value="<%=address.state%>" id="state"/>
               <span class="error-message" id="stateError"></span>
             </div>
           </div>
