@@ -128,18 +128,18 @@ acceptReturn : async(req,res)=>{
                            value.productId,
                            { $inc: { stockQuantity: value.quantity } },
                            { new: true }
-                       );
-                    }
+                    );
+                   
 
-                    if(orders.paymentMethod === 'Wallet' || orders.paymentMethod === 'razorpay'){
+                    if(orders.paymentMethod === 'Wallet' || orders.paymentMethod === 'razorpay' || orders.paymentMethod === 'COD'){
                         const userExists = await walletDB.findOne({user : orders.userId})
                         if(userExists){
                             await walletDB.findByIdAndUpdate(userExists._id,{
-                                $inc : {balance : item.price - item.discountAmount},
+                                $inc : {balance : item.total},
                                 $push : {
                                     transactions: {
                                         transaction_Id : `myWallet${uuid.v4()}`,
-                                        amount : item.price - item.discountAmount,
+                                        amount : item.total,
                                         type : 'credit',
                                         description : 'Order Cancelled Refund',
                                         orderId : orders._id,
@@ -162,6 +162,7 @@ acceptReturn : async(req,res)=>{
                             })
                         }
                     }
+                }
                })
            })
 

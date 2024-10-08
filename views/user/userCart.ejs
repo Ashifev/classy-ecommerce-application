@@ -88,7 +88,7 @@
 
                 <div class="product_price">
                 <td id="cart__price" datatd-product-id="<%= product.productId._id %>" class="cart__price">
-                  ₹<%= ((product.quantity * product.productId.price) - product.discountAmount).toFixed(2)
+                  ₹<%= (product.quantity * product.productId.discountedPrice).toFixed(2)
                   %>
                 </td>
               </div>
@@ -133,7 +133,7 @@
             <li>
               Discount
               <span id="discount"
-              style="color: red;;">₹<%= (cartProduct.discount).toFixed(2) %></span
+              style="color: red;;">₹<%= discount.toFixed(2) %></span
               >
             </li>
             <li>
@@ -145,7 +145,7 @@
             <li>
               Total
               <span id="totalPrice"
-                >₹<%= cartProduct.products ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.price),0) - (cartProduct.discount).toFixed(2) : '0.00' %></span
+                >₹<%= cartProduct.products ? cartProduct.products.reduce((acc, product)=> acc + (product.quantity * product.productId.discountedPrice),0).toFixed(2) : '0.00' %></span
               >
             </li>
           </ul>

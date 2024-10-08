@@ -238,7 +238,7 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
                 <div class="d-flex flex-column align-items-center text-center">
                   <img src="/images/user_profile.jpeg" alt="Admin" class="rounded-circle p-1 bg-warning" width="110">
                   <div class="mt-3">
-                    <h4><%= profile.name %></h4>
+                    <h4><%= typeof profile.name === 'object' ? profile.displayName : profile.name %></h4>
                   </div>
                 </div>
                 <div class="list-group list-group-flush text-center mt-4">
@@ -358,9 +358,9 @@ href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css"
                     </div>
                   
                   
-                  <p><strong>Name:</strong> <%= profile.name %></p>
-                  <p><strong>Email Address:</strong> <%= profile.email %></p>
-                  <p class="<%= profile.status === true ? true : false %>"><strong>Status:</strong> <%= profile.status === true ? 'Active' : 'Deactive' %></p>
+                  <p><strong>Name:</strong> <%= typeof profile.name === 'object' ? profile.displayName : profile.name %></p>
+                  <p><strong>Email Address:</strong> <%= profile.email|| profile.emails[0].value %></p>
+                  <p class="<%= profile.status === true ? true : false %>"><strong>Status:</strong> Active</p>
                   <button class="add_address_button" onclick="showPasswordModal()">Change Password</button>
                 </div>
               </div>

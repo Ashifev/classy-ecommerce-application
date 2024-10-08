@@ -115,6 +115,8 @@ router.get('/generateInvoice/:orderId',orderController.generateInvoice);
 // download invoice
 router.get('/downloadInvoice/:orderId',orderController.downloadInvoice);
 
+//contact
+router.get('/contact',userController.contact)
 //logout
 router.get("/logout",userController.logout) 
 

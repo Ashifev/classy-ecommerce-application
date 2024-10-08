@@ -37,18 +37,26 @@ module.exports = {
             }
                 
                    
-                 console.log("user address",userAddress);
+            console.log("user address",userAddress);
                  
-                    var subTotal = userCart.products.reduce((price,curr) => {
-                        return price + curr.price * curr.quantity
-                    },0);
+            // const updateCart = await cartDB.findOne({ userId: user._id }).populate('products.productId');
+            let subTotal  = userCart.products.reduce((acc,item) => {
+                return acc + (item.quantity * item.productId.price);
+            },0);
+
+            let finalTotal = userCart.products.reduce((acc,product)=>acc + (product.quantity * product.productId.discountedPrice),0)
+                    // var subTotal = userCart.products.reduce((price,curr) => {
+                    //     return price + curr.price * curr.quantity
+                    // },0);
                  
                  
                 //  console.log("total before",totalPrice);
 
-                 let finalTotal = subTotal - userCart.discount;
+                //  let finalTotal = subTotal
     
-                //  console.log("total after",totalPrice);
+                //  console.log("subtotal",subTotal);
+                 
+                //  console.log("total",finalTotalPrice);
                  
                 console.log("user cart",userCart);
                 
@@ -62,9 +70,19 @@ module.exports = {
                 const coupons = await couponDB.find(
                     {minPurchaseAmount : {$lte : finalTotal}}
                 )
-                
+                let discount = 0;
+                for(let item of userCart.products){
+                    const productDetails = await productDB.findById(item.productId);
+                    let itemDiscount = 0;
+                    if (productDetails.inCategoryOffer === true) {
+                        itemDiscount = (productDetails.price - productDetails.discountedPrice) * item.quantity;
+                    } else if (productDetails.discountAmount > 0) {
+                        itemDiscount = productDetails.discountAmount * item.quantity;
+                    }
+                    discount += itemDiscount; 
+                }
 
-                res.render('user/checkout',{userAddress,userCart,coupons, totalPrice:finalTotal, subTotal : subTotal ,appliedCoupon : req.session.appliedCoupon,discountAmount:couponDiscount,newTotal:finalTotal,user,wallet})
+                res.render('user/checkout',{userAddress,userCart,coupons, totalPrice:finalTotal, subTotal : subTotal ,appliedCoupon : req.session.appliedCoupon,discountAmount:couponDiscount,newTotal:finalTotal,user,wallet,discount})
             
 
         }catch(err){
@@ -115,9 +133,9 @@ module.exports = {
             productId: item.productId,
             name: item.productId.name,
             quantity: item.quantity,
-            price: item.price,
-            discountAmount : item.discountAmount,
-            totalPrice: item.quantity * item.price
+            price: item.productId.price,
+            discountAmount : item.productId.discountAmount,
+            total: item.quantity * item.productId.discountedPrice
         }));
 
         console.log("cart Product ...",cartProducts);
@@ -127,8 +145,25 @@ module.exports = {
         const couponDiscount = req.session?.appliedCoupon?.discountAmount;
 
         const coupon = await couponDB.findOne({couponCode})
+
+        let subtotal  = userProduct.products.reduce((acc,item) => {
+            return acc + (item.quantity * item.productId.price);
+        },0);
+
+        let discount = 0;
+            for(let item of userProduct.products){
+                const productDetails = await productDB.findById(item.productId);
+                let itemDiscount = 0;
+                if (productDetails.inCategoryOffer === true) {
+                    itemDiscount = (productDetails.price - productDetails.discountedPrice) * item.quantity;
+                } else if (productDetails.discountAmount > 0) {
+                    itemDiscount = productDetails.discountAmount * item.quantity;
+                }
+                discount += itemDiscount; 
+            }
+
         if(coupon){
-            var discount = coupon.discountAmount + userProduct.discount;
+            discount = coupon.discountAmount + discount;
         }
         const order = new orderDB({
             userId: User._id,
@@ -137,6 +172,7 @@ module.exports = {
             paymentMethod: payment,
             totalQuantity,
             totalPrice,
+            subtotal,
             coupon,
             couponDiscount,
             discount

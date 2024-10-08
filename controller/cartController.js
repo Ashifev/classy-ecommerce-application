@@ -6,11 +6,13 @@ const userDB = require("../models/userModel");
 module.exports = {
   getCart: async (req, res) => {
     try {
-      const userEmail = req.session.email;
-      const user = await userDB.findOne({ email: userEmail });
+      // const userEmail = req.session.email;
+      const User = req.session.user;
+      const userId = User._id;
+      // const user = await userDB.findOne({ userId});
 
       let cartProduct = await cartDB
-        .findOne({ userId: user.id })
+        .findOne({ userId})
         .populate("products.productId");
 
       if(cartProduct){
@@ -19,13 +21,24 @@ module.exports = {
       await cartProduct.save()
 
       if(cartProduct.products === null){
-        await cartDB.findOneAndDelete({ userId: user.id })
+        await cartDB.findOneAndDelete({ userId})
       }
    
       if (cartProduct.products !== null && cartProduct.products.length > 0) {
 
+        let discount = 0;
+            for(let item of cartProduct.products){
+                const productDetails = await productDB.findById(item.productId);
+                let itemDiscount = 0;
+                if (productDetails.inCategoryOffer === true) {
+                    itemDiscount = (productDetails.price - productDetails.discountedPrice) * item.quantity;
+                } else if (productDetails.discountAmount > 0) {
+                    itemDiscount = productDetails.discountAmount * item.quantity;
+                }
+                discount += itemDiscount; 
+            }
         
-      res.render("user/userCart", { user: req.session.username, cartProduct });
+      res.render("user/userCart", { user: req.session.username, cartProduct,discount });
       } else {
         res.render("user/userCart", {
           user: req.session.username,
@@ -48,8 +61,9 @@ module.exports = {
   addCart: async (req, res) => {
     try {
       const { productId , price, discountAmount } = req.body;
-      const userEmail = req.session.email;
-      const user = await userDB.findOne({ email: userEmail });
+      // const userEmail = req.session.email;
+      // const user = await userDB.findOne({ email: userEmail });
+      const user = req.session.user;
 
       console.log("discountAmount",discountAmount);
       
@@ -81,22 +95,8 @@ module.exports = {
             res.json({ icon: "info", msg: "Product Exist in Cart" });
             return;
           } else {
-            cart.products.push({ productId, quantity: 1 ,price , discountAmount });
+            cart.products.push({ productId, quantity: 1});
           }
-    
-            cart.discount = 0;
-    
-            for(let item of cart.products){
-                const productDetails = await productDB.findById(item.productId);
-                let itemDiscount = 0;
-                if (productDetails.inCategoryOffer === true) {
-                    itemDiscount = (productDetails.price - productDetails.discountedPrice) * item.quantity;
-                } else if (productDetails.discountAmount > 0) {
-                    itemDiscount = productDetails.discountAmount * item.quantity;
-                }
-                cart.discount += itemDiscount; 
-            }
-            cart.discount = Number(cart.discount.toFixed(2));
 
             await cart.save();
         
@@ -111,8 +111,9 @@ module.exports = {
     try {
       const id = req.params.id;
       const { productId, quantity } = req.body;
-      const userEmail = req.session.email;
-      const user = await userDB.findOne({ email: userEmail });
+      // const userEmail = req.session.email;
+      // const user = await userDB.findOne({ email: userEmail });
+      const user = req.session.user;
 
       const userCart = await cartDB.findOne({ userId: user._id });
       const productIndex = userCart.products.findIndex(
@@ -130,14 +131,28 @@ module.exports = {
                 return acc + (item.quantity * item.productId.price);
             },0);
 
-            const total = subtotal - updateCart.discount;
-            const discount = updateCart.discount;
-            const productPrice = parseInt(userCart.products[productIndex].quantity) * parseInt(updateCart.products[productIndex].productId.price);
-            const discountedAmount =  productPrice - parseInt(userCart.products[productIndex].discountAmount) 
-            // console.log("product price",productPrice); 
+            const total = updateCart.products.reduce((acc,product)=>acc + (product.quantity * product.productId.discountedPrice),0)
+            let discount = 0;
+            for(let item of updateCart.products){
+                const productDetails = await productDB.findById(item.productId);
+                let itemDiscount = 0;
+                if (productDetails.inCategoryOffer === true) {
+                    itemDiscount = (productDetails.price - productDetails.discountedPrice) * item.quantity;
+                } else if (productDetails.discountAmount > 0) {
+                    itemDiscount = productDetails.discountAmount * item.quantity;
+                }
+                discount += itemDiscount; 
+            }
+            // const discount = updateCart.discount;
+            const productPrice = parseInt(updateCart.products[productIndex].quantity) * parseInt(updateCart.products[productIndex].productId.price);
+            const discountedAmount =  parseInt(updateCart.products[productIndex].quantity) * parseInt(updateCart.products[productIndex].productId.discountedPrice)
+            console.log("total",total); 
+            console.log("discount",discount); 
+            console.log("product price",productPrice); 
+            console.log("discount price",discountedAmount); 
 
-            userCart.total = total;
-            userCart.subTotal = subtotal;
+            // userCart.total = total;
+            // userCart.subTotal = subtotal;
             await userCart.save();
       res.json({ icon: "success", msg: "Cart Updated"  , total : total.toFixed(2) , subtotal : subtotal.toFixed(2) , price : productPrice.toFixed(2),discount : discount.toFixed(2), discountedAmount:discountedAmount.toFixed(2)});
     } catch (err) {
@@ -149,8 +164,7 @@ module.exports = {
   deleteFromCart: async (req, res) => {
     try {
       const {productId} = req.body;
-      const userEmail = req.session.email;
-      const user = await userDB.findOne({ email: userEmail });
+      const user = req.session.user
 
       const userCart = await cartDB.findOne({ userId: user._id });
       const productIndex = userCart.products.findIndex(
@@ -158,7 +172,7 @@ module.exports = {
       );
 
       if (productIndex > -1) {
-        userCart.discount = userCart.discount - userCart.products[productIndex].discountAmount
+        // userCart.discount = userCart.discount - userCart.products[productIndex].productId.discountAmount
         userCart.products.splice(productIndex, 1);
         await userCart.save();
       }

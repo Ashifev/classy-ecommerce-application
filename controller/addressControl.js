@@ -4,7 +4,7 @@ const addressDb = require("../models/addressModel");
 
 module.exports = {
   getAddressPage:async(req,res)=>{
-    const userEmail = req.session.email;
+    const userEmail = req.session.email ;
     try{
       res.render('user/userAddress',{userEmail,user:req.session.email});
     }catch(err){
@@ -13,6 +13,8 @@ module.exports = {
     }
   },
   saveAddress: async (req, res) => {
+    console.log("save address");
+    
     const url = req.url
     console.log("url ",url);
     
@@ -32,8 +34,10 @@ module.exports = {
     const id = req.params.id;
     console.log("id", id);
     try {
-      const userEmail = await userDB.findOne({ email: id });
-      const userId = userEmail._id;
+      // const userEmail = await userDB.findOne({ email: id });
+      // const userId = userEmail._id;
+      const user = req.session.user
+      const userId = user._id
       console.log("user Id", userId);
 
       // Check the number of addresses already saved for this user
@@ -44,7 +48,7 @@ module.exports = {
         return res.status(400).send("User can only save up to 4 addresses");
       }
 
-      if (userId.id) {
+      if (userId) {
         const newAddress = await new addressDb({
           userId: userId,
           name,

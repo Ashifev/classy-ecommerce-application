@@ -18,6 +18,8 @@ module.exports = {
   //render Home page
   renderHome: async (req, res) => {
     try {
+      console.log("home here");
+      
       const product = await productDb.find({ isActive: true }).sort({createdAt:-1}).limit(8);
       res.render("user/homePage", { user: req.session.username, product });
     } catch (err) {
@@ -450,13 +452,14 @@ module.exports = {
       req.session.err = null;
 
       const userEmail = req.session.email;
+      const profile = req.session.user
       console.log("profile render req user");
-      const profile = await userDB.findOne({ email: userEmail });
+      // const profile = await userDB.findOne({ email: userEmail });
       const userId = profile._id;
       const address = await addressDb.find({ userId: userId });
       const orderData = await orderDB.find({userId:userId}).populate('productItems.productId').sort({dateOrdered:-1})
       console.log("profile adress");
-      console.log("profile");
+      console.log("profile",profile);
       res.render("user/userProfile", {
         user: req.session.username, 
         profile,
@@ -474,7 +477,7 @@ module.exports = {
   editedProfile: async (req, res) => {
     const { name, email } = req.body;
     try {
-      const userEdit = await userDB.findOne({ email: email });
+      const userEdit = req.session.user
       console.log("reqqq", req.body);
       console.log("UserEdit", userEdit);
       if (!userEdit) {
@@ -715,6 +718,14 @@ module.exports = {
     }
   },
 
+  contact:async(req,res)=>{
+    try{
+      res.render('user/contact',{user:req.session.user?.name})
+    }catch(err){
+      console.log("Error :", err);
+      res.render("500");
+    }
+  },
   //logout
   logout: (req, res) => {
     try {

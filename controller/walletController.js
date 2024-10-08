@@ -4,9 +4,21 @@ module.exports = {
     getWallet : async(req,res)=>{
         try{
             const user = req.session.user;
-            const wallet = await walletDB.findOne({user:user});
+            const wallet = await walletDB.findOne(
+                { user: user },
+                {
+                  user: 1,
+                  balance: 1,
+                  transactions: {
+                    $sortArray: { 
+                      input: "$transactions", 
+                      sortBy: { createdAt: -1 } 
+                    }
+                  }
+                }
+              );
             if(!wallet){
-                return res.render('user/wallet',{wallet : null,user,summary : null})
+                return res.render('user/wallet',{wallet : null,user:user?.name,summary : null,profile:user})
             }
             const currentDate = new Date();
             const firstDayOfMonth = new Date(currentDate.getFullYear(),currentDate.getMonth(), 1);

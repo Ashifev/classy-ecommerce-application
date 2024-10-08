@@ -45,6 +45,9 @@ const orderSchema = new mongoose.Schema({
     totalQuantity: {
         type :Number
     },
+    subtotal :{
+        type: Number
+    },
     totalPrice: {
         type: Number
     },

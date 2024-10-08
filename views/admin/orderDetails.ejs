@@ -381,11 +381,15 @@
                   <tfoot>
                     <tr>
                       <td colspan="3">Subtotal</td>
-                      <td>₹<%=userOrder.totalPrice + userOrder.couponDiscount%></td>
+                      <td>₹<%=userOrder.totalPrice + userOrder.discount%></td>
                     </tr>
                     <tr>
                       <td colspan="3">Coupon Discount</td>
                       <td>-₹<%=userOrder.couponDiscount%></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">Discount</td>
+                      <td>-₹<%=userOrder.discount - userOrder.couponDiscount%></td>
                     </tr>
                     <tr>
                       <td colspan="3">Shipping cost</td>

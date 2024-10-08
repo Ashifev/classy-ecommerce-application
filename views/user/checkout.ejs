@@ -425,9 +425,9 @@
                                 </ul>
                                 <ul class="checkout__total__all">
                                     <li>Subtotal <span>₹<%=subTotal%></span></li>
-                                    <% if(userCart.discount > 0){ %>
-                                      <li>Discount<span>-₹<%= userCart.discount.toFixed(2) %></span></li>
-                                      <% } %>
+                                    
+                                      <li>Discount<span>-₹<%=discount.toFixed(2)%></span></li>
+                                    
                                       <% if(appliedCoupon) { %>
                                           <li>Coupon Discount <span>-₹<%= discountAmount.toFixed(2) %></span></li>
                                         
